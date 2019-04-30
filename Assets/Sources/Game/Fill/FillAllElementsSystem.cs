@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 using UnityEngine;
 
 public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitializeSystem
 {
-    private readonly Contexts _contexts;
+    private readonly GenericContexts _contexts;
     private readonly ElementService _elementService;
 
-    public FillAllElementsSystem(Contexts contexts, Services services) : base(contexts.game)
+    public FillAllElementsSystem(Contexts contexts, GenericContexts genericContexts, Services services) : base(contexts.game)
     {
-        _contexts = contexts;
+        _contexts = genericContexts;
         _elementService = services.ElementService;
     }
 
@@ -40,7 +41,9 @@ public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitial
 
     private void Fill()
     {
-        var size = _contexts.config.mapSize.value;
+        //var size = _contexts.config.mapSize.value;
+
+        var size = _contexts.Config.Get<MapSizeComponent>().value;
 
         for (int row = 0; row < size.y; row++)
         {

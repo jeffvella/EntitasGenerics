@@ -1,10 +1,13 @@
-﻿using Entitas;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Entitas;
 
-namespace EntitasGeneric
+namespace EntitasGenerics
 {
     public interface IComponentDefinition
     {
-
+        bool IsUnique { get; }
     }
 
     public interface IComponentDefinition<T> : IComponentDefinition
@@ -17,6 +20,8 @@ namespace EntitasGeneric
         where TContext : IContext
         where TEntity : class, IEntity, new()
     {
-        public static IMatcher<TEntity> GetMatcher() => Matcher<TContext, TEntity, TComponent>.AllOf;
+        public bool IsUnique => ComponentHelper<TContext, TComponent>.IsUnique;
+
+        public static IMatcher<TEntity> Matcher => Matcher<TContext, TEntity, TComponent>.AllOf;
     }
 }

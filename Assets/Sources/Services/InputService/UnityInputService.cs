@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using EntitasGenerics;
+using UnityEngine;
 
 public sealed class UnityInputService : Service, IInputService
 {
@@ -39,7 +40,7 @@ public sealed class UnityInputService : Service, IInputService
 
     #endregion
 
-    public UnityInputService(Contexts contexts, Camera camera) : base(contexts)
+    public UnityInputService(Contexts contexts, GenericContexts genericContexts, Camera camera) : base(contexts, genericContexts)
     {
         _camera = camera;
     }

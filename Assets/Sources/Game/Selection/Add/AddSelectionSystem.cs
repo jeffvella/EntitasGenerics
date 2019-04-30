@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class AddSelectionSystem : ReactiveSystem<InputEntity>
 {
     private readonly Contexts _contexts;
-    
-    public AddSelectionSystem(Contexts contexts) : base(contexts.input)
+    private readonly GenericContexts _genericContexts;
+
+    public AddSelectionSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.input)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
@@ -26,9 +29,10 @@ public sealed class AddSelectionSystem : ReactiveSystem<InputEntity>
             return;
 
         var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
+        var mapSize = _genericContexts.Config.Get<MapSizeComponent>().value;
 
-        var horizontalBounded = position.x >= 0 && position.x < _contexts.config.mapSize.value.x;
-        var verticalBounded = position.y >= 0 && position.y < _contexts.config.mapSize.value.y;
+        var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
+        var verticalBounded = position.y >= 0 && position.y < mapSize.y;
 
         if (horizontalBounded && verticalBounded)
         {

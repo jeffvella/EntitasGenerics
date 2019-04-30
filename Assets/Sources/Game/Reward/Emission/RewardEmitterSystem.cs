@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class RewardEmitterSystem : ReactiveSystem<GameEntity>
 {
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public RewardEmitterSystem(Contexts contexts) : base(contexts.game)
+    public RewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -22,7 +25,9 @@ public sealed class RewardEmitterSystem : ReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var table = _contexts.config.scoringTable.value;
+        //var table = _contexts.config.scoringTable.value;
+        var table = _genericContexts.Config.Get<ScoringTableComponent>().value;
+
         var scoreId = entities.Count;
         scoreId--;
 

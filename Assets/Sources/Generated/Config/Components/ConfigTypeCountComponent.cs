@@ -52,14 +52,14 @@ public partial class ConfigEntity {
     public void AddTypeCount(int newValue) {
         var index = ConfigComponentsLookup.TypeCount;
         var component = CreateComponent<TypeCountComponent>(index);
-        component.value = newValue;
+        component.Value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTypeCount(int newValue) {
         var index = ConfigComponentsLookup.TypeCount;
         var component = CreateComponent<TypeCountComponent>(index);
-        component.value = newValue;
+        component.Value = newValue;
         ReplaceComponent(index, component);
     }
 

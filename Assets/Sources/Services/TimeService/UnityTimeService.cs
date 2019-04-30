@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using EntitasGenerics;
+using UnityEngine;
 
 public sealed class UnityTimeService : Service, ITimeService
 {
-    public UnityTimeService(Contexts contexts) : base(contexts)
+    public UnityTimeService(Contexts contexts, GenericContexts genericContexts) : base(contexts, genericContexts)
     {
     }
 

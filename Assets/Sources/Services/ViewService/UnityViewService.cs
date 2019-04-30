@@ -1,12 +1,13 @@
 ﻿using System;
 using Entitas;
+using EntitasGenerics;
 using UnityEngine;
 
 public sealed class UnityViewService : Service, IViewService
 {
     private Transform _root;
 
-    public UnityViewService(Contexts contexts) : base(contexts)
+    public UnityViewService(Contexts contexts, GenericContexts genericContexts) : base(contexts, genericContexts)
     {
     }
 

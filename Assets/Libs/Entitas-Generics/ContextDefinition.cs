@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Entitas;
 
-namespace EntitasGeneric
+namespace EntitasGenerics
 {
     public interface IContextDefinition
     {
@@ -12,6 +14,11 @@ namespace EntitasGeneric
     }
 
 
+    /// <summary>
+    /// The <see cref="ContextDefinition{TContext,TEntity}"/> defines the component types that will be in the context,
+    /// and produces a contextInfo object for the Context base constructor.
+    /// todo: evaluate if this should be replaced by a simple collection initializer of types  
+    /// </summary>
     public class ContextDefinition<TContext, TEntity> : IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
     {
         public List<IComponentDefinition> Components { get; } = new List<IComponentDefinition>();

@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 using UnityEngine;
 
 public sealed class ComboRewardEmitterSystem : ReactiveSystem<GameEntity>
 {
 
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public ComboRewardEmitterSystem(Contexts contexts) : base(contexts.game)
+    public ComboRewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -24,7 +27,8 @@ public sealed class ComboRewardEmitterSystem : ReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var definitions = _contexts.config.comboDefinitions.value;
+        //var definitions = _contexts.config.comboDefinitions.value;
+        var definitions = _genericContexts.Config.Get<ComboDefinitionsComponent>().value;
 
         foreach (var entity in entities)
         {

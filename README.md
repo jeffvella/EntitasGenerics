@@ -4,7 +4,7 @@ An experiment to replace the code generation part of EntitasECS C# version with 
 
 Currently working in the context of this Entitas example project: https://github.com/RomanZhu/Match-Line-Entitas-ECS
 
-Note: work in progress...
+Note: work in progress... i am slowly replacing all the game code with the new implementation.
 
-* My changes are (mostly) in the "Sources\Generic" folder. 
-* Regenerating the files will probably break everything because i have some hacks in the contexts file.
+* The code to replace generation is in the "Assets\Libs\Entitas-Generics" folder.
+* Generating files will break everything.

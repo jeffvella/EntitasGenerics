@@ -18,8 +18,8 @@ public class UIActionCountView : MonoBehaviour, IActionCountListener, IMaxAction
         Contexts.sharedInstance.config.CreateEntity().AddMaxActionCountListener(this);
         _triggerHash = Animator.StringToHash(_triggerName);
 
-        var e = Contexts.sharedInstance.config.maxActionCountEntity;
-        OnMaxActionCount(e, e.maxActionCount.value);
+        //var e = Contexts.sharedInstance.config.maxActionCountEntity;
+        //OnMaxActionCount(e, e.maxActionCount.value);
     }
 
     public void OnActionCount(GameStateEntity entity, int value)

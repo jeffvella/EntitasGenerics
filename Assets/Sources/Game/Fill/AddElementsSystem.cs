@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class AddElementsSystem : ReactiveSystem<GameEntity>
 {
     private readonly Contexts _contexts;
     private readonly ElementService _elementService;
+    private GenericContexts _genericContexts;
 
-    public AddElementsSystem(Contexts contexts, Services services) : base(contexts.game)
+    public AddElementsSystem(Contexts contexts, GenericContexts genericContexts, Services services) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
         _elementService = services.ElementService;
     }
 
@@ -24,7 +27,9 @@ public sealed class AddElementsSystem : ReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var size = _contexts.config.mapSize.value;
+        //var size = _contexts.config.mapSize.value;
+        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+
         for (int x = 0; x < size.x; x++)
         {
             var position = new GridPosition(x, size.y - 1);

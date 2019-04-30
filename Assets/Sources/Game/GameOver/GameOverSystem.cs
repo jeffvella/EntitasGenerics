@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class GameOverSystem : ReactiveSystem<GameStateEntity>
 {
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public GameOverSystem(Contexts contexts) : base(contexts.gameState)
+    public GameOverSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.gameState)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameStateEntity> GetTrigger(IContext<GameStateEntity> context)
@@ -22,9 +25,17 @@ public sealed class GameOverSystem : ReactiveSystem<GameStateEntity>
 
     protected override void Execute(List<GameStateEntity> entities)
     {
-        if (_contexts.gameState.actionCount.value >= _contexts.config.maxActionCount.value)
+        //if (_contexts.gameState.actionCount.value >= _contexts.config.maxActionCount.value)
+        //{
+        //    _contexts.gameState.isGameOver = true;
+        //}
+
+        var maxActions = _genericContexts.Config.Get<MaxActionCountComponent>().value;
+
+        if (_contexts.gameState.actionCount.value >= maxActions)
         {
             _contexts.gameState.isGameOver = true;
         }
+
     }
 }

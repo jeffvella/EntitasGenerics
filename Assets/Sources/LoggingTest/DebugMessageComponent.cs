@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace EntitasGeneric
+namespace EntitasGenerics
 {
     public sealed class DebugMessageComponent : IComponent
     {

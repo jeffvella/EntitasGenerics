@@ -1,19 +1,24 @@
 ﻿using Entitas;
+using EntitasGenerics;
 
 public sealed class MoveSystem : IExecuteSystem
 {
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public MoveSystem(Contexts contexts)
+    public MoveSystem(Contexts contexts, GenericContexts genericContexts)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     public void Execute()
     {
         int moveCount = 0;
 
-        var size = _contexts.config.mapSize.value;
+        //var size = _contexts.config.mapSize.value;
+        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+
         for (int x = 0; x < size.x; x++)
         {
             for (int y = 1; y < size.y; y++)

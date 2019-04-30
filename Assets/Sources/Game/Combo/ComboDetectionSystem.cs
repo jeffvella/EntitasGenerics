@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
 {
 
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
     private readonly Dictionary<int, GameEntity> _buffer;
     private readonly List<GameEntity> _currentBuffer;
 
-    public ComboDetectionSystem(Contexts contexts) : base(contexts.game)
+    public ComboDetectionSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
         _buffer = new Dictionary<int, GameEntity>(64);
         _currentBuffer = new List<GameEntity>(64);
     }
@@ -27,8 +30,12 @@ public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var definitions = _contexts.config.comboDefinitions.value;
-        var size = _contexts.config.mapSize.value;
+        //var definitions = _contexts.config.comboDefinitions.value;
+        //var size = _contexts.config.mapSize.value;
+
+        var definitions = _genericContexts.Config.Get<ComboDefinitionsComponent>().value;
+        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+        
 
         var elementCount = entities.Count;
         

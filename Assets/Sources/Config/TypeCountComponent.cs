@@ -5,5 +5,5 @@ using Entitas.CodeGeneration.Attributes;
 [Unique]
 public sealed class TypeCountComponent : IComponent
 {
-    public int value;
+    public int Value;
 }
