@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class ApplyRewardSystem : ReactiveSystem<GameEntity>
 {
 
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public ApplyRewardSystem(Contexts contexts) : base(contexts.game)
+    public ApplyRewardSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)

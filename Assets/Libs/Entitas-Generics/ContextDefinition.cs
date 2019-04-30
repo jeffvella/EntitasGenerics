@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,7 @@ namespace EntitasGenerics
     /// and produces a contextInfo object for the Context base constructor.
     /// todo: evaluate if this should be replaced by a simple collection initializer of types  
     /// </summary>
-    public class ContextDefinition<TContext, TEntity> : IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
+    public class ContextDefinition<TContext, TEntity> : IEnumerable<IComponentDefinition>, IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
     {
         public List<IComponentDefinition> Components { get; } = new List<IComponentDefinition>();
 
@@ -27,7 +28,7 @@ namespace EntitasGenerics
 
         public List<Type> ComponentTypes { get; } = new List<Type>();
 
-        protected IComponentDefinition<T> Register<T>() where T : class, IComponent
+        public IComponentDefinition<T> Add<T>() where T : class, IComponent
         {
             var def = new ComponentDefinition<TContext, TEntity, T>();
             Components.Add(def);
@@ -43,5 +44,9 @@ namespace EntitasGenerics
         {
             return new ContextInfo(typeof(TContext).Name, ComponentNames.ToArray(), ComponentTypes.ToArray());
         }
+
+        public IEnumerator<IComponentDefinition> GetEnumerator() => Components.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

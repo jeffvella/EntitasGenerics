@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 
 [Config]
 [Unique]
-public sealed class ExsplosiveScoringTableComponent : IComponent
+public sealed class ExplosiveScoringTableComponent : IComponent
 {
     public List<int> value;
 }

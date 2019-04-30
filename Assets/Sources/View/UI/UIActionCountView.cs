@@ -8,16 +8,15 @@ public class UIActionCountView : MonoBehaviour, IActionCountListener, IMaxAction
     [SerializeField] private string _triggerName;
 
     private int _triggerHash;
-
     private int _actionCount;
     private int _maxActionCount;
 
     private void Start()
     {
-        Contexts.sharedInstance.gameState.CreateEntity().AddActionCountListener(this);
-        Contexts.sharedInstance.config.CreateEntity().AddMaxActionCountListener(this);
-        _triggerHash = Animator.StringToHash(_triggerName);
-
+        //todo fix events
+        //Contexts.sharedInstance.gameState.CreateEntity().AddActionCountListener(this);
+        //Contexts.sharedInstance.config.CreateEntity().AddMaxActionCountListener(this);
+        //_triggerHash = Animator.StringToHash(_triggerName);
         //var e = Contexts.sharedInstance.config.maxActionCountEntity;
         //OnMaxActionCount(e, e.maxActionCount.value);
     }

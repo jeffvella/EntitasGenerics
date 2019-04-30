@@ -12,7 +12,9 @@ namespace EntitasGenerics
 
     public interface IComponentDefinition<T> : IComponentDefinition
     {
+        IMatcher<IEntity> Matcher { get; }
 
+        int ComponentIndex { get; }        
     }
 
     public class ComponentDefinition<TContext, TEntity, TComponent> : IComponentDefinition<TComponent>  
@@ -22,6 +24,8 @@ namespace EntitasGenerics
     {
         public bool IsUnique => ComponentHelper<TContext, TComponent>.IsUnique;
 
-        public static IMatcher<TEntity> Matcher => Matcher<TContext, TEntity, TComponent>.AllOf;
+        public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)Matcher<TContext, TEntity, TComponent>.AllOf;
+
+        public int ComponentIndex => ComponentHelper<TContext, TComponent>.ComponentIndex;
     }
 }

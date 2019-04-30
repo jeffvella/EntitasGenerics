@@ -9,12 +9,12 @@
 public partial class ConfigContext {
 
     public ConfigEntity exsplosiveScoringTableEntity { get { return GetGroup(ConfigMatcher.ExsplosiveScoringTable).GetSingleEntity(); } }
-    public ExsplosiveScoringTableComponent exsplosiveScoringTable { get { return exsplosiveScoringTableEntity.exsplosiveScoringTable; } }
+    public ExplosiveScoringTableComponent ExplosiveScoringTable { get { return exsplosiveScoringTableEntity.ExplosiveScoringTable; } }
     public bool hasExsplosiveScoringTable { get { return exsplosiveScoringTableEntity != null; } }
 
     public ConfigEntity SetExsplosiveScoringTable(System.Collections.Generic.List<int> newValue) {
         if (hasExsplosiveScoringTable) {
-            throw new Entitas.EntitasException("Could not set ExsplosiveScoringTable!\n" + this + " already has an entity with ExsplosiveScoringTableComponent!",
+            throw new Entitas.EntitasException("Could not set ExsplosiveScoringTable!\n" + this + " already has an entity with ExplosiveScoringTableComponent!",
                 "You should check if the context already has a exsplosiveScoringTableEntity before setting it or use context.ReplaceExsplosiveScoringTable().");
         }
         var entity = CreateEntity();
@@ -46,19 +46,19 @@ public partial class ConfigContext {
 //------------------------------------------------------------------------------
 public partial class ConfigEntity {
 
-    public ExsplosiveScoringTableComponent exsplosiveScoringTable { get { return (ExsplosiveScoringTableComponent)GetComponent(ConfigComponentsLookup.ExsplosiveScoringTable); } }
+    public ExplosiveScoringTableComponent ExplosiveScoringTable { get { return (ExplosiveScoringTableComponent)GetComponent(ConfigComponentsLookup.ExsplosiveScoringTable); } }
     public bool hasExsplosiveScoringTable { get { return HasComponent(ConfigComponentsLookup.ExsplosiveScoringTable); } }
 
     public void AddExsplosiveScoringTable(System.Collections.Generic.List<int> newValue) {
         var index = ConfigComponentsLookup.ExsplosiveScoringTable;
-        var component = CreateComponent<ExsplosiveScoringTableComponent>(index);
+        var component = CreateComponent<ExplosiveScoringTableComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceExsplosiveScoringTable(System.Collections.Generic.List<int> newValue) {
         var index = ConfigComponentsLookup.ExsplosiveScoringTable;
-        var component = CreateComponent<ExsplosiveScoringTableComponent>(index);
+        var component = CreateComponent<ExplosiveScoringTableComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -10,7 +10,7 @@ namespace EntitasGenerics
         {
             public LoggingContextDefinition()
             {
-                DebugMessage = Register<DebugMessageComponent>();
+                DebugMessage = Add<DebugMessageComponent>();
             }
 
             public IComponentDefinition<DebugMessageComponent> DebugMessage { get; }

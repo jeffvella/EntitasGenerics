@@ -33,8 +33,6 @@ public partial class Contexts : Entitas.IContexts {
     public GameStateContext gameState { get; set; }
     public InputContext input { get; set; }
 
-    //public GenericContexts Generic { get; set; }
-
     public Entitas.IContext[] allContexts { get { return new Entitas.IContext [] { config, game, gameState, input }; } }
 
     public Contexts() {
@@ -42,8 +40,7 @@ public partial class Contexts : Entitas.IContexts {
         game = new GameContext();
         gameState = new GameStateContext();
         input = new InputContext();
-        //Generic = new GenericContexts();        
-
+  
         var postConstructors = System.Linq.Enumerable.Where(
             GetType().GetMethods(),
             method => System.Attribute.IsDefined(method, typeof(Entitas.CodeGeneration.Attributes.PostConstructorAttribute))

@@ -1,8 +1,10 @@
-﻿public class InputSystems : Feature
+﻿using EntitasGenerics;
+
+public class InputSystems : Feature
 {
-    public InputSystems(Contexts contexts, Services services)
+    public InputSystems(Contexts contexts, GenericContexts genericContexts, Services services)
     {
-        Add(new UpdateTimeSystem(contexts, services));
-        Add(new UpdateInputSystem(contexts, services));
+        Add(new UpdateTimeSystem(contexts, genericContexts, services));
+        Add(new UpdateInputSystem(contexts, genericContexts, services));
     }
 }

@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using EntitasGenerics;
 
 public sealed class ExsplosiveRewardEmitterSystem : ReactiveSystem<GameEntity>
 {
 
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public ExsplosiveRewardEmitterSystem(Contexts contexts) : base(contexts.game)
+    public ExsplosiveRewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -23,7 +26,9 @@ public sealed class ExsplosiveRewardEmitterSystem : ReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var table = _contexts.config.exsplosiveScoringTable.value;
+        //var table = _contexts.config.ExplosiveScoringTable.value;
+        var table = _genericContexts.Config.Get<ExplosiveScoringTableComponent>().value;
+
         var scoreId = entities.Count;
         scoreId--;
 

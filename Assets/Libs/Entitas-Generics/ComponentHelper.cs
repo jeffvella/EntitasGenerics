@@ -25,7 +25,7 @@ namespace EntitasGenerics
         {
             if (!ContextHelper<TContext>.IsInitialized)
             {
-                throw new InvalidOperationException("ContextHelper<TContext> must be initialized before use");
+                throw new InvalidOperationException($"{nameof(ContextHelper<TContext>)} must be initialized before {nameof(ComponentHelper<TContext, TComponent>)} use");
             }
 
             var contextType = typeof(TContext).Name;

@@ -32,7 +32,7 @@ public static class ConfigComponentsLookup {
 
     public static readonly System.Type[] componentTypes = {
         typeof(ComboDefinitionsComponent),
-        typeof(ExsplosiveScoringTableComponent),
+        typeof(ExplosiveScoringTableComponent),
         typeof(MapSizeComponent),
         typeof(MaxActionCountComponent),
         typeof(MaxActionCountListenerComponent),

@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour
         {
             value = new List<int> { 0, 10, 30, 90, 200, 500, 1200, 2500 }
         }); 
-        contexts.Config.Set(new ExsplosiveScoringTableComponent
+        contexts.Config.Set(new ExplosiveScoringTableComponent
         {
             value = new List<int> { 300, 900, 1200, 2000 }
         }); 

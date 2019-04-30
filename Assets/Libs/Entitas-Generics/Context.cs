@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using Entitas;
 using Entitas.VisualDebugging.Unity;
@@ -13,9 +14,6 @@ namespace EntitasGenerics
     /// </summary>
     public class Context<TContext, TEntity> : Context<TEntity> where TEntity : class, IEntity, new() where TContext : IContext
     {   
-        private bool _isUnique;
-        private int _typeIndex;
-
         public Context(IContextDefinition contextDefinition) : base(contextDefinition.ComponentCount, 0, contextDefinition.GetContextInfo(), AercFactory, EntityFactory)
         {
             ContextHelper<TContext>.Initialize(contextInfo);
@@ -56,7 +54,7 @@ namespace EntitasGenerics
             return entity.HasComponent(ComponentHelper<TContext, T>.ComponentIndex);
         }
 
-        public bool HasComponent<T>() where T : IComponent
+        public bool HasComponent<T>() where T : IComponent, new()
         {
             return GetEntityWith<T>().HasComponent(ComponentHelper<TContext, T>.ComponentIndex);
         }
@@ -66,9 +64,20 @@ namespace EntitasGenerics
             return (TComponent)entity.GetComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
         }
 
-        public TComponent Get<TComponent>() where TComponent : IComponent
+        public TComponent Get<TComponent>() where TComponent : IComponent, new()
         {
-            return GetFirstEntityComponent<TComponent>();
+            if (TryGetEntityWith<TComponent>(out var entity))
+            {
+                var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+                return (TComponent)entity.GetComponent(index);
+            }
+            if (ComponentHelper<TContext, TComponent>.IsUnique)
+            {
+                var component = new TComponent();
+                CreateEntityWith(component);
+                return component;
+            }
+            return default;
         }
 
         public bool TryGetComponent<T>(TEntity entity, out T component) where T : IComponent
@@ -96,11 +105,46 @@ namespace EntitasGenerics
             }            
         }
 
+        public void Set<TComponent>(TEntity entity, bool state) where TComponent : IComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            if (state)
+            {
+                entity.CreateComponent<TComponent>(index);
+            }
+            else
+            {
+                entity.RemoveComponent(index);
+            }
+        }
+
+        public void Set<TComponent>(bool tagState) where TComponent : IComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            var entity = GetFirstEntity();
+
+            if (tagState)
+            {
+                entity.CreateComponent<TComponent>(index);
+            }
+            else if (entity.HasComponent(index))
+            {
+                entity.RemoveComponent(index);
+            }
+        }
+
         public void Set<TComponent>(TComponent component) where TComponent : IComponent, new()
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
             var entity = GetFirstEntity();
             entity.ReplaceComponent(index, component);
+        }
+
+        public void Set<TComponent>() where TComponent : IComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            var entity = GetFirstEntity();
+            entity.CreateComponent<TComponent>(index);
         }
 
         //public void Set<TComponent>(Action<TComponent> setter) where TComponent : IComponent, new()
@@ -120,20 +164,24 @@ namespace EntitasGenerics
             entity.ReplaceComponent(index, component);
         }
 
-        public void ReplaceComponent<T>(T component) where T : IComponent
+        public void ReplaceComponent<TComponent>(TComponent component) where TComponent : IComponent, new()
         {
-            var index = ComponentHelper<TContext, T>.ComponentIndex;
-            GetEntityWith<T>().ReplaceComponent(index, component);
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            GetEntityWith<TComponent>().ReplaceComponent(index, component);
         }
 
-        public void RemoveComponent<T>(TEntity entity) where T : IComponent
+        public void Remove<T>(TEntity entity) where T : IComponent
         {
             var index = ComponentHelper<TContext, T>.ComponentIndex;
             entity.RemoveComponent(index);
         }
-        public void RemoveComponent<T>() where T : IComponent
+
+        public void Remove<TComponent>() where TComponent : IComponent, new()
         {
-            GetEntityWith<T>().RemoveComponent(ComponentHelper<TContext, T>.ComponentIndex);
+            if (TryGetEntityWith<TComponent>(out var entity))
+            {
+                entity.RemoveComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
+            }
         }
 
         public IGroup<TEntity> GetGroup<T>() where T : IComponent
@@ -151,17 +199,53 @@ namespace EntitasGenerics
             return Get<TComponent>(GetGroup<TComponent>().GetSingleEntity());
         }
 
+        public TEntity GetOrCreateEntityWith<TComponent>() where TComponent : IComponent, new()
+        {
+            return count == 0 || !HasComponent<TComponent>()
+                ? CreateEntityWith<TComponent>()
+                : GetEntityWith<TComponent>();
+
+            //return GetGroup<TComponent>().GetSingleEntity();
+        }
+
+        //public bool EntityExistsWithComponent<T>() where T : IComponent
+        //{
+        //    return GetEntityWith<T>() != null;
+        //}
+
         public TEntity GetEntityWith<TComponent>() where TComponent : IComponent
         {
             return GetGroup<TComponent>().GetSingleEntity();
         }
 
-        public bool EntityExistsWithComponent<T>() where T : IComponent
+        public bool TryGetEntityWith<TComponent>(out TEntity entity) where TComponent : IComponent
         {
-            return GetEntityWith<T>() != null;
+            if (count == 0)
+            {
+                entity = default;
+                return false;
+            }
+            var group = GetGroup<TComponent>();
+            if(group.count > 0)
+            {
+                entity = group.GetSingleEntity();
+                return true;
+            }
+            entity = default;
+            return false;
         }
 
-        public TEntity CreateEntityWithComponent<T>(T component = default) where T : IComponent, new()
+        //public bool TryGetGroupWith<TComponent>(out IGroup<TEntity> group) where TComponent : IComponent
+        //{
+        //    group = GetGroup<TComponent>();
+        //    if (group.count > 0)
+        //    {           
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+        public TEntity CreateEntityWith<T>(T component = default) where T : IComponent, new()
         {
             //if (EntityExistsWithComponent<T>())
             //    throw new Exception($"Entity already has component of type: '{typeof(T)}'");
@@ -170,5 +254,6 @@ namespace EntitasGenerics
             Set(entity, component);
             return entity;
         }
+
     }
 }

@@ -16,26 +16,26 @@ namespace Assets.Sources.Config
         {
             public ConfigContextDefinition()
             {
-                ComboDefinitions = Register<ComboDefinitionsComponent>();
-                ExsplosiveScoringTable = Register<ExsplosiveScoringTableComponent>();
-                MaxActionCount = Register<MaxActionCountComponent>();
-                MinMatchCount = Register<MinMatchCountComponent>();
-                ScoringTable = Register<ScoringTableComponent>();
-                TypeCount = Register<TypeCountComponent>();
-                MapSize = Register<MapSizeComponent>();
+                ComboDefinitions = Add<ComboDefinitionsComponent>();
+                ExsplosiveScoringTable = Add<ExplosiveScoringTableComponent>();
+                MaxActionCount = Add<MaxActionCountComponent>();
+                MinMatchCount = Add<MinMatchCountComponent>();
+                ScoringTable = Add<ScoringTableComponent>();
+                TypeCount = Add<TypeCountComponent>();
+                MapSize = Add<MapSizeComponent>();
             }
 
-            public IComponentDefinition<MapSizeComponent> MapSize { get; set; }
+            public IComponentDefinition<MapSizeComponent> MapSize { get; }
 
-            public IComponentDefinition<TypeCountComponent> TypeCount { get; set; }
+            public IComponentDefinition<TypeCountComponent> TypeCount { get; }
 
-            public IComponentDefinition<ScoringTableComponent> ScoringTable { get; set; }
+            public IComponentDefinition<ScoringTableComponent> ScoringTable { get; }
 
-            public IComponentDefinition<MinMatchCountComponent> MinMatchCount { get; set; }
+            public IComponentDefinition<MinMatchCountComponent> MinMatchCount { get; }
 
-            public IComponentDefinition<MaxActionCountComponent> MaxActionCount { get; set; }
+            public IComponentDefinition<MaxActionCountComponent> MaxActionCount { get; }
 
-            public IComponentDefinition<ExsplosiveScoringTableComponent> ExsplosiveScoringTable { get; set; }
+            public IComponentDefinition<ExplosiveScoringTableComponent> ExsplosiveScoringTable { get; }
 
             public IComponentDefinition<ComboDefinitionsComponent> ComboDefinitions { get; }
         }        

@@ -6,9 +6,12 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
+using EntitasGenerics;
+
 public sealed class GameStateEventSystems : Feature {
 
-    public GameStateEventSystems(Contexts contexts) {
+    public GameStateEventSystems(Contexts contexts, GenericContexts genericContexts) {
         Add(new ActionCountEventSystem(contexts)); // priority: 0
         Add(new GameOverRemovedEventSystem(contexts)); // priority: 0
         Add(new GameOverEventSystem(contexts)); // priority: 0

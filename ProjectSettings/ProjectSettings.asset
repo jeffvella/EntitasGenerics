@@ -541,7 +541,16 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: ENTITAS_FAST_AND_UNSAFE
+    7: ENTITAS_FAST_AND_UNSAFE
+    13: ENTITAS_FAST_AND_UNSAFE
+    19: ENTITAS_FAST_AND_UNSAFE
+    21: ENTITAS_FAST_AND_UNSAFE
+    25: ENTITAS_FAST_AND_UNSAFE
+    26: ENTITAS_FAST_AND_UNSAFE
+    27: ENTITAS_FAST_AND_UNSAFE
+    28: ENTITAS_FAST_AND_UNSAFE
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
@@ -552,7 +561,8 @@ PlayerSettings:
   scriptingRuntimeVersion: 1
   gcIncremental: 0
   gcWBarrierValidation: 0
-  apiCompatibilityLevelPerPlatform: {}
+  apiCompatibilityLevelPerPlatform:
+    Standalone: 3
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Template_3D

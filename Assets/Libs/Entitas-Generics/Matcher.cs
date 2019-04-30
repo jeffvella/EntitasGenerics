@@ -2,9 +2,9 @@
 
 namespace EntitasGenerics
 {
-    public class Matcher<TEntityGroup, TEntity, TComponent>
+    public class Matcher<TContext, TEntity, TComponent>
         where TEntity : class, IEntity, new() 
-        where TEntityGroup : IContext
+        where TContext : IContext
         where TComponent : IComponent
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
@@ -13,19 +13,19 @@ namespace EntitasGenerics
 
         static Matcher()
         {
-            _c1Index = ComponentHelper<TEntityGroup, TComponent>.ComponentIndex;
+            _c1Index = ComponentHelper<TContext, TComponent>.ComponentIndex;
         }
 
         public static IMatcher<TEntity> AnyOf
-            => _anyOf ?? (_anyOf = Entitas.Matcher<TEntity>.AnyOf(_c1Index));
+            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(_c1Index));
 
         public static IMatcher<TEntity> AllOf
-            => _allOf ?? (_anyOf = Entitas.Matcher<TEntity>.AllOf(_c1Index));
+            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(_c1Index));
     }
 
-    public class Matcher<TEntityGroup, TEntity, TComponent1, TComponent2> 
+    public class Matcher<TContext, TEntity, TComponent1, TComponent2> 
         where TEntity : class, IEntity, new() 
-        where TEntityGroup : IContext
+        where TContext : IContext
         where TComponent1 : IComponent 
         where TComponent2 : IComponent
     {
@@ -37,14 +37,39 @@ namespace EntitasGenerics
 
         static Matcher()
         {
-            _c1Index = ComponentHelper<TEntityGroup, TComponent1>.ComponentIndex;
-            _c2Index = ComponentHelper<TEntityGroup, TComponent2>.ComponentIndex;
+            _c1Index = ComponentHelper<TContext, TComponent1>.ComponentIndex;
+            _c2Index = ComponentHelper<TContext, TComponent2>.ComponentIndex;
         }
 
         public static IMatcher<TEntity> AnyOf
-            => _anyOf ?? (_anyOf = Entitas.Matcher<TEntity>.AnyOf(_c1Index, _c2Index));
+            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(_c1Index, _c2Index));
+
 
         public static IMatcher<TEntity> AllOf
-            => _allOf ?? (_anyOf = Entitas.Matcher<TEntity>.AllOf(_c1Index, _c2Index));
+            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext,TEntity>(_c1Index, _c2Index));
+
     }
+
+    public class MatcherFactory
+    {
+        public static IAnyOfMatcher<TEntity> CreateAnyOfMatcher<TContext, TEntity>(params int[] indices) 
+            where TEntity : class, IEntity, new()
+            where TContext : IContext
+        {
+            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
+            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+            return matcher;
+        }
+
+        public static IAllOfMatcher<TEntity> CreateAllOfMatcher<TContext, TEntity>(params int[] indices)
+            where TEntity : class, IEntity, new()
+            where TContext : IContext
+        {
+            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
+            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+            return matcher;
+        }
+
+    }
+
 }
