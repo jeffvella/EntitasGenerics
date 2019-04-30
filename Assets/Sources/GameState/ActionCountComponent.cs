@@ -3,7 +3,7 @@ using Entitas.CodeGeneration.Attributes;
 
 [GameState]
 [Unique]
-[Event(false)]
+[Event(EventTarget.Any)]
 public sealed class ActionCountComponent : IComponent
 {
     public int value;

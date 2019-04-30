@@ -3,7 +3,7 @@ using Entitas.CodeGeneration.Attributes;
 
 [Game]
 [Input]
-[Event(true)]
+[Event(EventTarget.Any)]
 public sealed class DestroyedComponent : IComponent
 {
 }

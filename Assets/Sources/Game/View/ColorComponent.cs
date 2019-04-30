@@ -3,7 +3,7 @@ using Entitas.CodeGeneration.Attributes;
 using UnityEngine;
 
 [Game]
-[Event(true)]
+[Event(EventTarget.Any)]
 public sealed class ColorComponent : IComponent
 {
     public Color value;

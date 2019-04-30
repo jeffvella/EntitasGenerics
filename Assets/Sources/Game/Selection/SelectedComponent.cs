@@ -2,8 +2,8 @@
 using Entitas.CodeGeneration.Attributes;
 
 [Game]
-[Event(true, EventType.Added)]
-[Event(true, EventType.Removed)]
+[Event(EventTarget.Any, EventType.Added)]
+[Event(EventTarget.Any, EventType.Removed)]
 public sealed class SelectedComponent : IComponent
 {
 }

@@ -25,6 +25,7 @@ public sealed partial class GameStateContext : Entitas.Context<GameStateEntity> 
                 new Entitas.SafeAERC(entity)
 #endif
 
-        ) {
+            , () => new GameStateEntity())
+    {
     }
 }

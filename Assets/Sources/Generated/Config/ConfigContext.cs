@@ -25,6 +25,7 @@ public sealed partial class ConfigContext : Entitas.Context<ConfigEntity> {
                 new Entitas.SafeAERC(entity)
 #endif
 
-        ) {
+            , () => new ConfigEntity())
+    {
     }
 }

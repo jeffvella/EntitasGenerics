@@ -5,20 +5,30 @@ using Entitas.VisualDebugging.Unity;
 
 namespace EntitasGeneric
 {
-    public interface IContext<TEntity> : IContext where TEntity : class, IEntity
+    /// <summary>
+    /// This wrapper for context is aware of its own type which lets it be used to
+    /// effectively hard-code efficient data access specific to this context
+    /// </summary>
+    public class Context<TContext, TEntity> : Context<TEntity> where TEntity : class, IEntity, new() where TContext : IContext
     {
-        IMatcher<TEntity> CreateMatcher<T>() where T : IComponent;
-    }
 
-    public class Context<TContext, TEntity> : Context<TEntity>, IContext<TEntity> where TEntity : class, IEntity, new() where TContext : IContext
-    {
         private int _typeIndex;
 
-        public Context(IContextDefinition contextDefinition) : base(contextDefinition.ComponentCount, 0, contextDefinition.GetContextInfo(), AercFactory)
+        public Context(IContextDefinition contextDefinition) : base(contextDefinition.ComponentCount, 0, contextDefinition.GetContextInfo(), AercFactory, EntityFactory)
         {
             ContextHelper<TContext>.Initialize(contextInfo);
             SetupVisualDebugging();
             Definition = contextDefinition;
+        }
+
+        private static TEntity EntityFactory()
+        {
+            return new TEntity();
+        }
+
+        private static IAERC AercFactory(IEntity arg1)
+        {
+            return new UnsafeAERC();
         }
 
         [Conditional("UNITY_EDITOR")]
@@ -33,11 +43,6 @@ namespace EntitasGeneric
         }
 
         public IContextDefinition Definition { get; }
-
-        private static IAERC AercFactory(IEntity arg1)
-        {
-            return new Entitas.UnsafeAERC();
-        }
 
         public IMatcher<TEntity> CreateMatcher<T>() where T : IComponent
         {

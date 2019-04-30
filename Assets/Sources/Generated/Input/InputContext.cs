@@ -25,6 +25,7 @@ public sealed partial class InputContext : Entitas.Context<InputEntity> {
                 new Entitas.SafeAERC(entity)
 #endif
 
-        ) {
+            , () => new InputEntity())
+    {
     }
 }
