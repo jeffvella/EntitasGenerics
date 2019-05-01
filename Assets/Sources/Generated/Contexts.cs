@@ -9,7 +9,7 @@
 
 using System;
 using System.ComponentModel;
-using EntitasGenerics;
+using Entitas.Generics;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -32,6 +32,8 @@ public partial class Contexts : Entitas.IContexts {
     public GameContext game { get; set; }
     public GameStateContext gameState { get; set; }
     public InputContext input { get; set; }
+
+    public GenericContexts GenericTemp { get; set; }
 
     public Entitas.IContext[] allContexts { get { return new Entitas.IContext [] { config, game, gameState, input }; } }
 

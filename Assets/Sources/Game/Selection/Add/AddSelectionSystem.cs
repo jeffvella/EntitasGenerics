@@ -1,34 +1,45 @@
 ﻿using System.Collections.Generic;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
-public sealed class AddSelectionSystem : ReactiveSystem<InputEntity>
+public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 {
     private readonly Contexts _contexts;
     private readonly GenericContexts _genericContexts;
 
-    public AddSelectionSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.input)
+    public AddSelectionSystem(Contexts contexts, GenericContexts genericContexts) 
+        : base(genericContexts.Input, TriggerProducer)
     {
         _contexts = contexts;
         _genericContexts = genericContexts;
     }
 
-    protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+    private static ICollector<InputEntity> TriggerProducer(IGenericContext<InputEntity> context)
     {
-        return context.CreateCollector(InputMatcher.PointerHoldingPosition);
+        return context.GetCollector<PointerHoldingPositionComponent>();
     }
 
-    protected override bool Filter(InputEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+    //{
+    //    return context.CreateCollector(InputMatcher.PointerHoldingPosition);
+    //}
+
+    //protected override bool Filter(InputEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<InputEntity> entities)
     {
-        if (!_contexts.input.isPointerHolding)
+        //if (!_contexts.input.isPointerHolding)
+        //    return;
+
+        if (!_genericContexts.Input.IsTagged<PointerHoldingComponent>())
             return;
 
-        var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
+        //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
+
+        var position = _genericContexts.Input.Get<PointerHoldingPositionComponent>().value.ToGridPosition();
         var mapSize = _genericContexts.Config.Get<MapSizeComponent>().value;
 
         var horizontalBounded = position.x >= 0 && position.x < mapSize.x;

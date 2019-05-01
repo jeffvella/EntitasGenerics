@@ -1,4 +1,4 @@
-﻿using EntitasGenerics;
+﻿using Entitas.Generics;
 using UnityEngine;
 
 public sealed class ElementService : Service

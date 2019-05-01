@@ -1,8 +1,8 @@
 ﻿using Entitas;
 
-namespace EntitasGenerics
+namespace Entitas.Generics
 {
-    public class LoggingContext : Context<LoggingContext, Entity>
+    public class LoggingContext : GenericContext<LoggingContext, Entity>
     {
         public LoggingContext() : base(new LoggingContextDefinition())  { }
 
@@ -10,10 +10,8 @@ namespace EntitasGenerics
         {
             public LoggingContextDefinition()
             {
-                DebugMessage = Add<DebugMessageComponent>();
+                Add<DebugMessageComponent>();
             }
-
-            public IComponentDefinition<DebugMessageComponent> DebugMessage { get; }
         }
     }
 }

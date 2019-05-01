@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class GameStateEventSystems : Feature {
 

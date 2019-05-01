@@ -1,11 +1,11 @@
 ﻿using Entitas;
 
-namespace EntitasGenerics
+namespace Entitas.Generics
 {
     public class Matcher<TContext, TEntity, TComponent>
-        where TEntity : class, IEntity, new() 
         where TContext : IContext
-        where TComponent : IComponent
+        where TEntity : class, IEntity, new()
+        where TComponent : IComponent, new()
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
         private static IAnyOfMatcher<TEntity> _allOf;
@@ -23,11 +23,11 @@ namespace EntitasGenerics
             => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(_c1Index));
     }
 
-    public class Matcher<TContext, TEntity, TComponent1, TComponent2> 
-        where TEntity : class, IEntity, new() 
+    public class Matcher<TContext, TEntity, TComponent1, TComponent2>
         where TContext : IContext
-        where TComponent1 : IComponent 
-        where TComponent2 : IComponent
+        where TEntity : class, IEntity, new() 
+        where TComponent1 : IComponent, new()
+        where TComponent2 : IComponent, new()
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
         private static IAnyOfMatcher<TEntity> _allOf;
@@ -47,7 +47,6 @@ namespace EntitasGenerics
 
         public static IMatcher<TEntity> AllOf
             => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext,TEntity>(_c1Index, _c2Index));
-
     }
 
     public class MatcherFactory

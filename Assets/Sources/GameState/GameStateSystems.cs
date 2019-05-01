@@ -1,4 +1,4 @@
-﻿using EntitasGenerics;
+﻿using Entitas.Generics;
 
 public class GameStateSystems : Feature
 {

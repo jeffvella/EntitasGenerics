@@ -4,29 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 namespace Assets.Sources.Config
 {
-    public class InputContext : Context<InputContext, Entity>
+    public class InputContext : GenericContext<InputContext, InputEntity>
     {
         public InputContext() : base(new InputContextDefinition()){ }
+    }
 
-        public class InputContextDefinition : ContextDefinition<InputContext, Entity>
+    public class InputContextDefinition : ContextDefinition<InputContext, InputEntity>
+    {
+        public InputContextDefinition()
         {
-            public InputContextDefinition()
-            {
-                Add<PointerHoldingComponent>();
-                Add<PointerHoldingPositionComponent>();
-                Add<PointerHoldingTimeComponent>();
-                Add<PointerReleasedComponent>();
-                Add<PointerStartedHoldingComponent>();
-                Add<RestartComponent>();
-                Add<DeltaTimeComponent>();
-                Add<RealtimeSinceStartupComponent>();
-            }
+            Add<PointerHoldingComponent>();
+            Add<PointerHoldingPositionComponent>();
+            Add<PointerHoldingTimeComponent>();
+            Add<PointerReleasedComponent>();
+            Add<PointerStartedHoldingComponent>();
+            Add<RestartComponent>();
+            Add<DeltaTimeComponent>();
+            Add<RealtimeSinceStartupComponent>();
+            Add<DestroyedComponent>();
         }
     }
+
 
     //public class InputContext : Context<InputContext, Entity>
     //{

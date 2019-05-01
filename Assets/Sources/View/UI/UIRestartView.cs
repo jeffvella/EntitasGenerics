@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Entitas.Generics;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedListener
@@ -34,8 +35,14 @@ public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedL
 
     public void OnPressed()
     {
-        var e = Contexts.sharedInstance.input.CreateEntity();
-        e.isRestart = true;
-        e.isDestroyed = true;
+        var context = GenericContexts.Instance.Input;
+        var e = GenericContexts.Instance.Input.CreateEntity();
+        context.Set<RestartComponent>(e, true);
+        context.Set<DestroyedComponent>(e, true);
+
+        Debug.Log($"UIRestartView OnPressed");
+        //var e = Contexts.sharedInstance.input.CreateEntity();
+        //e.isRestart = true;
+        //e.isDestroyed = true;
     }
 }

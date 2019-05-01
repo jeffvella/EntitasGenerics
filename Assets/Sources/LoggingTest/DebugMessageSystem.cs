@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace EntitasGenerics
+namespace Entitas.Generics
 {
     public class DebugMessageSystem : IReactiveSystem
     {
@@ -15,7 +15,7 @@ namespace EntitasGenerics
         public DebugMessageSystem(GenericContexts contexts, Services services)
         {
             _context = contexts.Logging;
-            _matcher = _context.CreateMatcher<DebugMessageComponent>();
+            _matcher = _context.GetMatcher<DebugMessageComponent>();
             _trigger = new TriggerOnEvent<Entity>(_matcher, GroupEvent.AddedOrRemoved);
             _collector = _context.CreateCollector(_trigger);  
         } 

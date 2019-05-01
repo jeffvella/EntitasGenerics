@@ -1,29 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
-public sealed class UnselectionSystem : ReactiveSystem<InputEntity>
+public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
 {
     private readonly Contexts _contexts;
-    
-    public UnselectionSystem(Contexts contexts) : base(contexts.input)
+    private readonly GenericContexts _genericContexts;
+
+    public UnselectionSystem(Contexts contexts, GenericContexts genericContexts) 
+        : base(genericContexts.Input, Trigger)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
-    protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+
+    private static ICollector<InputEntity> Trigger(IGenericContext<InputEntity> context)
     {
-        return context.CreateCollector(InputMatcher.PointerHoldingPosition);
+        return context.GetCollector<PointerHoldingPositionComponent>();
     }
 
-    protected override bool Filter(InputEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+    //{
+    //    return context.CreateCollector(InputMatcher.PointerHoldingPosition);
+    //}
+
+    //protected override bool Filter(InputEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<InputEntity> entities)
     {
-        if (!_contexts.input.isPointerHolding)
+        //if (!_contexts.input.isPointerHolding)
+        //    return;
+
+        if (!_genericContexts.Input.IsTagged<PointerHoldingComponent>())
             return;
 
         var targetSelectionId = _contexts.gameState.maxSelectedElement.value - 1;
@@ -32,7 +45,9 @@ public sealed class UnselectionSystem : ReactiveSystem<InputEntity>
             return;
 
         var targetEntity = _contexts.game.GetEntityWithSelectionId(targetSelectionId);
-        var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
+
+        //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
+        var position = _genericContexts.Input.Get<PointerHoldingPositionComponent>().value.ToGridPosition();
 
         if (position.Equals(targetEntity.position.value))
         {

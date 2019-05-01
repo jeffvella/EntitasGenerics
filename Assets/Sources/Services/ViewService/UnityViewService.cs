@@ -1,6 +1,6 @@
 ﻿using System;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 using UnityEngine;
 
 public sealed class UnityViewService : Service, IViewService
@@ -11,7 +11,7 @@ public sealed class UnityViewService : Service, IViewService
     {
     }
 
-    public void LoadAsset(Contexts contexts, IEntity entity, string asset)
+    public void LoadAsset(Contexts contexts, GenericContexts genericContexts, IEntity entity, string asset)
     {
         if (_root == null)
         {

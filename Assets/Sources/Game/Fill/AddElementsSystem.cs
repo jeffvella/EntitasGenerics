@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class AddElementsSystem : ReactiveSystem<GameEntity>
 {
@@ -28,7 +28,8 @@ public sealed class AddElementsSystem : ReactiveSystem<GameEntity>
     protected override void Execute(List<GameEntity> entities)
     {
         //var size = _contexts.config.mapSize.value;
-        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+        //GridSize size = _genericContexts.Config.Get<MapSizeComponent,GridSize>();
+        GridSize size = _genericContexts.Config.Get<MapSizeComponent>().value;
 
         for (int x = 0; x < size.x; x++)
         {

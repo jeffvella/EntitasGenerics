@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
 public sealed class ViewSystem : ReactiveSystem<GameEntity>
 {
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
     private readonly IViewService _viewService;
 
-    public ViewSystem(Contexts contexts, Services services) : base(contexts.game)
+    public ViewSystem(Contexts contexts, GenericContexts genericContexts, Services services) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
         _viewService = services.ViewService;
     }
 
@@ -26,7 +29,7 @@ public sealed class ViewSystem : ReactiveSystem<GameEntity>
     {
         foreach (var entity in entities)
         {
-            _viewService.LoadAsset(_contexts, entity, entity.asset.value);
+            _viewService.LoadAsset(_contexts, _genericContexts, entity, entity.asset.value);
             entity.isAssetLoaded = true;
         }
     }

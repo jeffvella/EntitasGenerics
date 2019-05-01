@@ -1,7 +1,7 @@
 ﻿using System;
 using Entitas;
 
-namespace EntitasGenerics {
+namespace Entitas.Generics {
     public static class ContextHelper<TContext> where TContext : IContext
     {
         public static Type ContextType { get; } = typeof(TContext);

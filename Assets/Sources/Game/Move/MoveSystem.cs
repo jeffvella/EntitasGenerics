@@ -1,5 +1,5 @@
 ﻿using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class MoveSystem : IExecuteSystem
 {

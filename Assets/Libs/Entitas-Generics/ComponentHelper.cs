@@ -8,10 +8,10 @@ using Entitas.CodeGeneration.Plugins;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace EntitasGenerics
+namespace Entitas.Generics
 {
     public static class ComponentHelper<TContext, TComponent> 
-        where TContext : IContext
+        where TContext : IContext where TComponent : new()
     {
         public static bool IsInitialized { get; }
 
@@ -20,6 +20,8 @@ namespace EntitasGenerics
         public static Type ComponentType { get; }
 
         public static bool IsUnique { get; }
+
+        public static TComponent Default { get; }
 
         static ComponentHelper()
         {
@@ -36,10 +38,15 @@ namespace EntitasGenerics
 
             if (ComponentIndex < 0)
             {
-                throw new IndexOutOfRangeException($"Component index for '{ComponentType.Name}' wasn't found for context '{contextType}'. Make sure it was registered in the ContextDefinition");
+                // This is the only Type related issue that will not be breaking at compile time.
+                // Users must ensure that the components that need to be in a context are in fact defined in that context.
+                // todo: see if there's a way to get rid of this without changing the way entitas internally builds contexts.
+
+                throw new ComponentNotInContextException($"Component index for '{ComponentType.Name}' wasn't found for context '{contextType}'. Make sure it was registered in the ContextDefinition");
             }
             
             IsUnique = HasAttribute<UniqueAttribute>(ComponentType);
+            Default = new TComponent();
             IsInitialized = true;
         }
 
@@ -59,5 +66,10 @@ namespace EntitasGenerics
             customAttribute = (T)attributes;
             return true;
         }
+    }
+
+    public class ComponentNotInContextException : Exception
+    {
+        public ComponentNotInContextException(string msg) : base(msg) {}
     }
 }

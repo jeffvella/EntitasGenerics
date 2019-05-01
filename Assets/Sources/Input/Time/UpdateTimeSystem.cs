@@ -1,5 +1,5 @@
 ﻿using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
 {
@@ -22,7 +22,19 @@ public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
 
     public void Execute()
     {
-        _contexts.input.ReplaceDeltaTime(_timeService.DeltaTime());
-        _contexts.input.ReplaceRealtimeSinceStartup(_timeService.RealtimeSinceStartup());
+        //_contexts.input.ReplaceDeltaTime(_timeService.DeltaTime());
+        //_contexts.input.ReplaceRealtimeSinceStartup(_timeService.RealtimeSinceStartup());
+
+        var deltaTime = _timeService.DeltaTime();
+        _genericContexts.Input.Set(new DeltaTimeComponent
+        {
+            value = deltaTime
+        });
+
+        var timeSinceStartup = _timeService.RealtimeSinceStartup();
+        _genericContexts.Input.Set(new RealtimeSinceStartupComponent
+        {
+            value = timeSinceStartup
+        });
     }
 }

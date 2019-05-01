@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class ApplyRewardSystem : ReactiveSystem<GameEntity>
 {

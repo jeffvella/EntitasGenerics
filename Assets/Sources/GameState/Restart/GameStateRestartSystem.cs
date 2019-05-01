@@ -1,27 +1,40 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
-public sealed class GameStateRestartSystem : ReactiveSystem<InputEntity>
+public sealed class GameStateRestartSystem : GenericReactiveSystem<InputEntity>
 {
     private readonly Contexts _contexts;
 
-    public GameStateRestartSystem(Contexts contexts) : base(contexts.input)
+    public GameStateRestartSystem(Contexts contexts) : base(contexts.GenericTemp.Input, Trigger)
     {
         _contexts = contexts;
     }
 
-    protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+    private static ICollector<InputEntity> Trigger(IGenericContext<InputEntity> context)
     {
-        return context.CreateCollector(InputMatcher.Restart.Added());
+        return context.GetTriggerCollector<RestartComponent>();
     }
 
-    protected override bool Filter(InputEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
+    //{
+    //    return context.CreateCollector(InputMatcher.Restart.Added());
+    //}
+
+    //protected override bool Filter(InputEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<InputEntity> entities)
     {
-        _contexts.gameState.ResetState();
+        //_contexts.gameState.ResetState();
+
+        _contexts.gameState.ReplaceLastSelected(-1);
+        _contexts.gameState.ReplaceActionCount(0);
+        _contexts.gameState.ReplaceScore(0);
+        _contexts.gameState.ReplaceMaxSelectedElement(0);
+        _contexts.gameState.isGameOver = false;
     }
+
 }

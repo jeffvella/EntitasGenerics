@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
 public sealed class ActionCounterSystem : ReactiveSystem<GameEntity>
 {
     private readonly Contexts _contexts;
+    private readonly GenericContexts _genericContexts;
 
-    public ActionCounterSystem(Contexts contexts) : base(contexts.game)
+    public ActionCounterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
+        _genericContexts = genericContexts;
     }
 
     protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)

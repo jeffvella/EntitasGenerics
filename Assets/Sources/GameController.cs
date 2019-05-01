@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using EntitasGenerics;
+using Entitas.Generics;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    private Contexts _oldcontexts;
+    public static Contexts Contexts { get; private set; }
+
     private RootSystems _rootSystems;
     private Services _services;
 
@@ -15,22 +16,22 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        _oldcontexts = Contexts.sharedInstance;
-
-        _contexts = new GenericContexts();
+        Contexts = Contexts.sharedInstance;
+        _contexts = GenericContexts.Instance;
+        Contexts.GenericTemp = _contexts;
 
         Configure(_contexts);
         
         //How to live without DI? 
         _services = new Services
         {
-            ViewService = new UnityViewService(_oldcontexts, _contexts),
-            InputService = new UnityInputService(_oldcontexts, _contexts, Camera.main),
-            TimeService = new UnityTimeService(_oldcontexts, _contexts),
-            ElementService = new ElementService(_oldcontexts, _contexts),
+            ViewService = new UnityViewService(Contexts, _contexts),
+            InputService = new UnityInputService(Contexts, _contexts, Camera.main),
+            TimeService = new UnityTimeService(Contexts, _contexts),
+            ElementService = new ElementService(Contexts, _contexts),
         };
 
-        _rootSystems = new RootSystems(_oldcontexts, _contexts, _services);
+        _rootSystems = new RootSystems(Contexts, _contexts, _services);
         _rootSystems.Initialize();
     }
 

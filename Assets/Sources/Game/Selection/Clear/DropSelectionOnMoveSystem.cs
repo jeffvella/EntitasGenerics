@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Entitas;
+using Entitas.Generics;
 
 public sealed class DropSelectionOnMoveSystem : ReactiveSystem<GameEntity>
 {
@@ -8,7 +9,7 @@ public sealed class DropSelectionOnMoveSystem : ReactiveSystem<GameEntity>
     private readonly IGroup<GameEntity> _group;
     private readonly List<GameEntity> _buffer;
     
-    public DropSelectionOnMoveSystem(Contexts contexts) : base(contexts.game)
+    public DropSelectionOnMoveSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _contexts = contexts;
         _group = _contexts.game.GetGroup(GameMatcher.Selected);

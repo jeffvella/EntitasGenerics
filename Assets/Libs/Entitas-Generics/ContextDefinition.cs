@@ -5,15 +5,16 @@ using System.Linq;
 using System.Reflection;
 using Entitas;
 
-namespace EntitasGenerics
+namespace Entitas.Generics
 {
     public interface IContextDefinition
     {
         ContextInfo GetContextInfo();
 
         int ComponentCount { get; }
-    }
 
+        List<IComponentDefinition> Components { get; }
+    }
 
     /// <summary>
     /// The <see cref="ContextDefinition{TContext,TEntity}"/> defines the component types that will be in the context,
@@ -22,13 +23,25 @@ namespace EntitasGenerics
     /// </summary>
     public class ContextDefinition<TContext, TEntity> : IEnumerable<IComponentDefinition>, IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
     {
+        public ContextDefinition()
+        {
+            AddDefaultComponents();
+        }
+
+        public void AddDefaultComponents()
+        {
+            Add<UniqueTagHolderComponent>();
+        }
+
         public List<IComponentDefinition> Components { get; } = new List<IComponentDefinition>();
 
         public List<string> ComponentNames { get; } = new List<string>();
 
         public List<Type> ComponentTypes { get; } = new List<Type>();
 
-        public IComponentDefinition<T> Add<T>() where T : class, IComponent
+        public int ComponentCount { get; private set; }
+
+        public IComponentDefinition<T> Add<T>() where T : class, IComponent, new()
         {
             var def = new ComponentDefinition<TContext, TEntity, T>();
             Components.Add(def);
@@ -37,8 +50,6 @@ namespace EntitasGenerics
             ComponentCount++;
             return def;
         }
-
-        public int ComponentCount { get; private set; }
 
         public ContextInfo GetContextInfo()
         {

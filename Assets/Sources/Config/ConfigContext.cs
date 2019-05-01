@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 namespace Assets.Sources.Config
 {
-    public class ConfigContext : Context<ConfigContext, Entity>
+    public class ConfigContext : GenericContext<ConfigContext, Entity>
     {
         public ConfigContext() : base(new ConfigContextDefinition()) { }
 

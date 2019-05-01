@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
 public sealed class ExplosionSystem : ReactiveSystem<GameEntity>
 {
@@ -7,7 +8,7 @@ public sealed class ExplosionSystem : ReactiveSystem<GameEntity>
     private readonly List<GameEntity> _buffer;
     private readonly List<GridPosition> _positionBuffer;
 
-    public ExplosionSystem(Contexts contexts) : base(contexts.game)
+    public ExplosionSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
         _exsplosives = contexts.game.GetGroup(GameMatcher.Exsplosive);
         _buffer = new List<GameEntity>();

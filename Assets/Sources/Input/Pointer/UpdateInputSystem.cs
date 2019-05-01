@@ -1,5 +1,5 @@
 ﻿using Entitas;
-using EntitasGenerics;
+using Entitas.Generics;
 
 public sealed class UpdateInputSystem : IExecuteSystem
 {
@@ -18,9 +18,9 @@ public sealed class UpdateInputSystem : IExecuteSystem
     {
         if (_contexts.gameState.isGameOver)
         {
-            _genericContexts.Input.Remove<PointerHoldingComponent>();
-            _genericContexts.Input.Remove<PointerStartedHoldingComponent>();
-            _genericContexts.Input.Set<PointerReleasedComponent>();
+            _genericContexts.Input.SetTag<PointerHoldingComponent>(false);
+            _genericContexts.Input.SetTag<PointerStartedHoldingComponent>(false);
+            _genericContexts.Input.SetTag<PointerReleasedComponent>(true);
 
             //_contexts.input.isPointerHolding = false;
             //_contexts.input.isPointerStartedHolding = false;
@@ -31,9 +31,14 @@ public sealed class UpdateInputSystem : IExecuteSystem
             var deltaTime = _genericContexts.Input.Get<DeltaTimeComponent>().value;
             _inputService.Update(deltaTime);
 
-            _genericContexts.Input.Set<PointerHoldingComponent>(_inputService.IsHolding());
-            _genericContexts.Input.Set<PointerStartedHoldingComponent>(_inputService.IsStartedHolding());
-            _genericContexts.Input.Set<PointerReleasedComponent>(_inputService.IsReleased());
+            var isHolding = _inputService.IsHolding();
+            _genericContexts.Input.SetTag<PointerHoldingComponent>(isHolding);
+
+            var isStartedHolding = _inputService.IsStartedHolding();
+            _genericContexts.Input.SetTag<PointerStartedHoldingComponent>(isStartedHolding);
+
+            var isReleased = _inputService.IsReleased();
+            _genericContexts.Input.SetTag<PointerReleasedComponent>(isReleased);
 
             _genericContexts.Input.Set(new PointerHoldingPositionComponent
             {

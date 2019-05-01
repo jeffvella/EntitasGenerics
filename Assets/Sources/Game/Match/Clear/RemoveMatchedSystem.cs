@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Entitas;
+using Entitas.Generics;
 
 public sealed class RemoveMatchedSystem : ReactiveSystem<GameEntity>
 {
-    public RemoveMatchedSystem(Contexts contexts) : base(contexts.game)
+    public RemoveMatchedSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
     {
     }
 
