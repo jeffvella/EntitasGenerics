@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Entitas;
+using Entitas.CodeGeneration.Attributes;
 
 namespace Entitas.Generics
 {
     public interface IContextDefinition
     {
-        ContextInfo GetContextInfo();
+        ContextInfo ContextInfo { get; }
 
         int ComponentCount { get; }
 
-        List<IComponentDefinition> Components { get; }
+        //List<IComponentDefinition> Components { get; }
+
+        //List<IListenerComponent> Listeners { get; }
     }
 
     /// <summary>
@@ -21,43 +24,108 @@ namespace Entitas.Generics
     /// and produces a contextInfo object for the Context base constructor.
     /// todo: evaluate if this should be replaced by a simple collection initializer of types  
     /// </summary>
-    public class ContextDefinition<TContext, TEntity> : IEnumerable<IComponentDefinition>, IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
+    public class ContextDefinition<TContext, TEntity> : IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
     {
+        private ContextInfo _contextInfo;
+
+        //private List<IListenerComponent> _listeners { get; } = new List<IListenerComponent>();
+
+        //public List<IComponentDefinition> Components { get; } = new List<IComponentDefinition>();
+
         public ContextDefinition()
         {
             AddDefaultComponents();
         }
 
         public void AddDefaultComponents()
-        {
-            Add<UniqueTagHolderComponent>();
+        {            
+            Add<TagHolderComponent>();
         }
 
-        public List<IComponentDefinition> Components { get; } = new List<IComponentDefinition>();
+        private List<string> _componentNames { get; } = new List<string>();
 
-        public List<string> ComponentNames { get; } = new List<string>();
+        private List<Type> _componentTypes { get; } = new List<Type>();
 
-        public List<Type> ComponentTypes { get; } = new List<Type>();
-
-        public int ComponentCount { get; private set; }
-
-        public IComponentDefinition<T> Add<T>() where T : class, IComponent, new()
+        public ContextInfo ContextInfo
         {
-            var def = new ComponentDefinition<TContext, TEntity, T>();
-            Components.Add(def);
-            ComponentNames.Add(typeof(T).Name);
-            ComponentTypes.Add(typeof(T));
-            ComponentCount++;
-            return def;
+            get
+            {
+                if (!IsInitialized)
+                {
+                    Initialize();
+                }
+                return _contextInfo;
+            }
         }
 
-        public ContextInfo GetContextInfo()
+        public int ComponentCount
         {
-            return new ContextInfo(typeof(TContext).Name, ComponentNames.ToArray(), ComponentTypes.ToArray());
+            get
+            {
+                if (!IsInitialized)
+                {
+                    Initialize();
+                }
+                return _contextInfo.componentTypes.Length;
+            }
         }
 
-        public IEnumerator<IComponentDefinition> GetEnumerator() => Components.GetEnumerator();
+        public void Add<T>() where T : class, IComponent, new()
+        {
+            // Note: Methods on component definition that rely on ContextHelper
+            // can't be used until ContextDefinition.Initialize();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            //var def = new ComponentDefinition<TContext, TEntity, T>();
+
+            // todo: switch from attributes to implementing an interface eg. IEventComponent
+            // fits better with the established approach for systems, IReactiveSystem, IExecuteSystem etc?
+
+            if (AttributeHelper.HasAttribute<EventAttribute>(typeof(T)))
+            {
+                // cache it for doing something with later?
+                //var listenerComponent = new ListenerHolderComponent<TEntity, T>(); 
+                AddComponentType(typeof(ListenerHolderComponent<TEntity, T>));
+            }
+
+            // Is it useful to be able to access these IComponentDefinitions later via the context?
+            //Components.Add(def);
+            AddComponentType(typeof(T));
+            //return def;
+        }
+
+        //private void AddComponentTypeInfo(IListenerComponent component)
+        //{
+        //    var t = component.GetType();
+        //    _componentNames.Add(t.Name);
+        //    _componentTypes.Add(t);        
+        //}
+
+        private void AddComponentType(Type type)
+        {       
+            _componentNames.Add(type.Name);
+            _componentTypes.Add(type);
+        }
+
+        public bool IsInitialized { get; private set; }
+
+        private void Initialize()
+        {
+            // ContextHelper needs to be created after the final list of components is established.
+            // which happens after the derived constructor, so Initialize is called when ContextInfo
+            // is first requested, which will happen on the Entitas base Context constructor.
+
+            //foreach (var component in _listeners)
+            //{
+            //    AddListener(component);
+            //}
+
+            _contextInfo = new ContextInfo(typeof(TContext).Name,
+                _componentNames.ToArray(),
+                _componentTypes.ToArray());
+
+            // It is important that ContextHelper holds the ContextInfo as soon as possible.            
+            ContextHelper<TContext>.Initialize(_contextInfo);
+            IsInitialized = true;
+        }
     }
 }

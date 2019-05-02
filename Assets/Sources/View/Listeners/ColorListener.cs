@@ -7,7 +7,7 @@ public class ColorListener : MonoBehaviour, IEventListener, IColorListener
 
     private GameEntity _entity;
 
-    public void RegisterListeners(IEntity entity)
+    public void RegisterListeners(Contexts contexts, IEntity entity)
     {
         _entity = (GameEntity) entity;
         _entity.AddColorListener(this);

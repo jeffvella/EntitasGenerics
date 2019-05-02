@@ -14,7 +14,9 @@ namespace Entitas
         string _toStringCache;
         readonly ICollector<TEntity> _collector;
         readonly List<TEntity> _buffer;
-        private Func<TEntity, bool> _filter;
+        private Func<IGenericContext<TEntity>, TEntity, bool> _filter;
+
+        protected readonly IGenericContext<TEntity> Context;
 
         protected GenericReactiveSystem(IGenericContext<TEntity> context, 
             Func<IGenericContext<TEntity>, ICollector<TEntity>> triggerProducer)
@@ -25,8 +27,9 @@ namespace Entitas
 
         protected GenericReactiveSystem(IGenericContext<TEntity> context,
             Func<IGenericContext<TEntity>, ICollector<TEntity>> triggerProducer,
-            Func<TEntity, bool> filter)
+            Func<IGenericContext<TEntity>, TEntity, bool> filter)
         {
+            Context = context;
             _filter = filter;
             _collector = triggerProducer(context);
             _buffer = new List<TEntity>();
@@ -73,7 +76,7 @@ namespace Entitas
                 {
                     foreach (var e in _collector.collectedEntities)  
                     {
-                        if (_filter(e))
+                        if (_filter(Context, e))
                         {
                             e.Retain(this);
                             _buffer.Add(e);

@@ -21,6 +21,8 @@ namespace Entitas.Generics
 
         public static bool IsUnique { get; }
 
+        public static bool IsEvent { get; }
+
         public static TComponent Default { get; }
 
         static ComponentHelper()
@@ -45,11 +47,20 @@ namespace Entitas.Generics
                 throw new ComponentNotInContextException($"Component index for '{ComponentType.Name}' wasn't found for context '{contextType}'. Make sure it was registered in the ContextDefinition");
             }
             
-            IsUnique = HasAttribute<UniqueAttribute>(ComponentType);
+            IsUnique = AttributeHelper.HasAttribute<UniqueAttribute>(ComponentType);
+            IsEvent = AttributeHelper.HasAttribute<EventAttribute>(ComponentType);
             Default = new TComponent();
             IsInitialized = true;
         }
+    }
 
+    public class ComponentNotInContextException : Exception
+    {
+        public ComponentNotInContextException(string msg) : base(msg) {}
+    }
+
+    public static class AttributeHelper
+    {
         public static bool HasAttribute<T>(MemberInfo memberInfo) where T : Attribute
         {
             return memberInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault() != null;
@@ -66,10 +77,5 @@ namespace Entitas.Generics
             customAttribute = (T)attributes;
             return true;
         }
-    }
-
-    public class ComponentNotInContextException : Exception
-    {
-        public ComponentNotInContextException(string msg) : base(msg) {}
     }
 }

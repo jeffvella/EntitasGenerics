@@ -10,7 +10,7 @@ public class PositionListener : MonoBehaviour, IEventListener, IPositionListener
     private Vector3 _targetPosition;
     private Transform _transform;
     
-    public void RegisterListeners(IEntity entity)
+    public void RegisterListeners(Contexts contexts, IEntity entity)
     {
         _transform = transform;
         _entity = (GameEntity) entity;

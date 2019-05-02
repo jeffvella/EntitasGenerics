@@ -5,6 +5,5 @@ public class Services
     public IViewService ViewService;
     public IInputService InputService;
     public ITimeService TimeService;
-
     public ElementService ElementService;
 }

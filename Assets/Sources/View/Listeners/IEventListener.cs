@@ -2,5 +2,5 @@
 
 public interface IEventListener
 {
-    void RegisterListeners(IEntity entity);
+    void RegisterListeners(Contexts contexts, IEntity entity);
 }

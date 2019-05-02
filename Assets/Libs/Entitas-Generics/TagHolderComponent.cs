@@ -5,12 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Entitas;
 
-public interface ITagComponent : IComponent
-{
-
-}
-
-public class UniqueTagHolderComponent : IComponent
+public class TagHolderComponent : IComponent
 {
 
 }

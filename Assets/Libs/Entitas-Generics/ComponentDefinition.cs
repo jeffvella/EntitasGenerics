@@ -9,6 +9,8 @@ namespace Entitas.Generics
     {
         bool IsUnique { get; }
 
+        bool IsEvent { get; }
+
         IMatcher<IEntity> Matcher { get; }
     }
 
@@ -24,8 +26,11 @@ namespace Entitas.Generics
     {
         public bool IsUnique => ComponentHelper<TContext, TComponent>.IsUnique;
 
+        public bool IsEvent => ComponentHelper<TContext, TComponent>.IsEvent;
+
         public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)Matcher<TContext, TEntity, TComponent>.AllOf;
 
         public int ComponentIndex => ComponentHelper<TContext, TComponent>.ComponentIndex;
+
     }
 }

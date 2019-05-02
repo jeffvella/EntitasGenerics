@@ -16,28 +16,14 @@ namespace Assets.Sources.Config
         {
             public ConfigContextDefinition()
             {
-                ComboDefinitions = Add<ComboDefinitionsComponent>();
-                ExsplosiveScoringTable = Add<ExplosiveScoringTableComponent>();
-                MaxActionCount = Add<MaxActionCountComponent>();
-                MinMatchCount = Add<MinMatchCountComponent>();
-                ScoringTable = Add<ScoringTableComponent>();
-                TypeCount = Add<TypeCountComponent>();
-                MapSize = Add<MapSizeComponent>();
+                Add<ComboDefinitionsComponent>();
+                Add<ExplosiveScoringTableComponent>();
+                Add<MaxActionCountComponent>();
+                Add<MinMatchCountComponent>();
+                Add<ScoringTableComponent>();
+                Add<TypeCountComponent>();
+                Add<MapSizeComponent>();
             }
-
-            public IComponentDefinition<MapSizeComponent> MapSize { get; }
-
-            public IComponentDefinition<TypeCountComponent> TypeCount { get; }
-
-            public IComponentDefinition<ScoringTableComponent> ScoringTable { get; }
-
-            public IComponentDefinition<MinMatchCountComponent> MinMatchCount { get; }
-
-            public IComponentDefinition<MaxActionCountComponent> MaxActionCount { get; }
-
-            public IComponentDefinition<ExplosiveScoringTableComponent> ExsplosiveScoringTable { get; }
-
-            public IComponentDefinition<ComboDefinitionsComponent> ComboDefinitions { get; }
         }        
     }
 }
