@@ -29,7 +29,7 @@ public sealed class AddElementsSystem : ReactiveSystem<GameEntity>
     {
         //var size = _contexts.config.mapSize.value;
         //GridSize size = _genericContexts.Config.Get<MapSizeComponent,GridSize>();
-        GridSize size = _genericContexts.Config.Get<MapSizeComponent>().value;
+        GridSize size = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
 
         for (int x = 0; x < size.x; x++)
         {

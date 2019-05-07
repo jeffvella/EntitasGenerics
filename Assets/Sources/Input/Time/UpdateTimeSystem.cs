@@ -26,13 +26,13 @@ public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
         //_contexts.input.ReplaceRealtimeSinceStartup(_timeService.RealtimeSinceStartup());
 
         var deltaTime = _timeService.DeltaTime();
-        _genericContexts.Input.Set(new DeltaTimeComponent
+        _genericContexts.Input.SetUnique(new DeltaTimeComponent
         {
             value = deltaTime
         });
 
         var timeSinceStartup = _timeService.RealtimeSinceStartup();
-        _genericContexts.Input.Set(new RealtimeSinceStartupComponent
+        _genericContexts.Input.SetUnique(new RealtimeSinceStartupComponent
         {
             value = timeSinceStartup
         });

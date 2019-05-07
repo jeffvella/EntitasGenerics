@@ -84,7 +84,7 @@ namespace Entitas.Generics
             {
                 // cache it for doing something with later?
                 //var listenerComponent = new ListenerHolderComponent<TEntity, T>(); 
-                AddComponentType(typeof(ListenerHolderComponent<TEntity, T>));
+                AddComponentType(typeof(ListenerStorageComponent<TEntity, T>));
             }
 
             // Is it useful to be able to access these IComponentDefinitions later via the context?

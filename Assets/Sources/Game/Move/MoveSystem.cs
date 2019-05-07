@@ -17,7 +17,7 @@ public sealed class MoveSystem : IExecuteSystem
         int moveCount = 0;
 
         //var size = _contexts.config.mapSize.value;
-        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+        var size = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
 
         for (int x = 0; x < size.x; x++)
         {

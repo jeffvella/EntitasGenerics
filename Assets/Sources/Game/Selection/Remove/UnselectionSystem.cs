@@ -47,7 +47,7 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
         var targetEntity = _contexts.game.GetEntityWithSelectionId(targetSelectionId);
 
         //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
-        var position = _genericContexts.Input.Get<PointerHoldingPositionComponent>().value.ToGridPosition();
+        var position = _genericContexts.Input.GetUnique<PointerHoldingPositionComponent>().value.ToGridPosition();
 
         if (position.Equals(targetEntity.position.value))
         {

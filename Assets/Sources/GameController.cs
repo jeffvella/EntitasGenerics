@@ -50,31 +50,31 @@ public class GameController : MonoBehaviour
 
     private void Configure(GenericContexts contexts)
     {
-        contexts.Config.Set(new MapSizeComponent
+        contexts.Config.SetUnique(new MapSizeComponent
         {
             value = new GridSize(6, 6)
         });
-        contexts.Config.Set(new TypeCountComponent
+        contexts.Config.SetUnique(new TypeCountComponent
         {
             Value = 4
         }); 
-        contexts.Config.Set(new MaxActionCountComponent
+        contexts.Config.SetUnique(new MaxActionCountComponent
         {
             value = 20
         });
-        contexts.Config.Set(new MinMatchCountComponent
+        contexts.Config.SetUnique(new MinMatchCountComponent
         {
             value = 3
         }); 
-        contexts.Config.Set(new ScoringTableComponent
+        contexts.Config.SetUnique(new ScoringTableComponent
         {
             value = new List<int> { 0, 10, 30, 90, 200, 500, 1200, 2500 }
         }); 
-        contexts.Config.Set(new ExplosiveScoringTableComponent
+        contexts.Config.SetUnique(new ExplosiveScoringTableComponent
         {
             value = new List<int> { 300, 900, 1200, 2000 }
         }); 
-        contexts.Config.Set(new ComboDefinitionsComponent
+        contexts.Config.SetUnique(new ComboDefinitionsComponent
         {
             value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text)
         });

@@ -14,7 +14,7 @@ public sealed class ElementService : Service
     {
         //var maxType = Mathf.Clamp(_contexts.config.typeCount.Value - 1, 1, 100);
 
-        var typeCount = _genericContexts.Config.Get<TypeCountComponent>().Value;
+        var typeCount = _genericContexts.Config.GetUnique<TypeCountComponent>().Value;
 
         var maxType = Mathf.Clamp(typeCount - 1, 1, 100);
 

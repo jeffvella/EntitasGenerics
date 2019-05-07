@@ -39,8 +39,8 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 
         //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-        var position = _genericContexts.Input.Get<PointerHoldingPositionComponent>().value.ToGridPosition();
-        var mapSize = _genericContexts.Config.Get<MapSizeComponent>().value;
+        var position = _genericContexts.Input.GetUnique<PointerHoldingPositionComponent>().value.ToGridPosition();
+        var mapSize = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
 
         var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
         var verticalBounded = position.y >= 0 && position.y < mapSize.y;

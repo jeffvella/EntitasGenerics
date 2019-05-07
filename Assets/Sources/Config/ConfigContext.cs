@@ -8,11 +8,11 @@ using Entitas.Generics;
 
 namespace Assets.Sources.Config
 {
-    public class ConfigContext : GenericContext<ConfigContext, Entity>
+    public class ConfigContext : GenericContext<ConfigContext, ConfigEntity>
     {
         public ConfigContext() : base(new ConfigContextDefinition()) { }
 
-        public class ConfigContextDefinition : ContextDefinition<ConfigContext, Entity>
+        public class ConfigContextDefinition : ContextDefinition<ConfigContext, ConfigEntity>
         {
             public ConfigContextDefinition()
             {

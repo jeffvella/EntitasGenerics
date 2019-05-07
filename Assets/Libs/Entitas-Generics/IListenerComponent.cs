@@ -35,51 +35,43 @@ public interface IListenerComponent<T> : IListenerComponent
     void Deregister(IEventObserver<T> observer);
 
     void Raise(T arg);
+
+    //void Raise(IEntity entity, T arg);
 }
+
+public interface IListenerComponent<in TEntity, T> : IListenerComponent where TEntity : IEntity
+{
+    void Register(Action<T> action);
+
+    void Register(IEventObserver<T> observer);
+
+    void Deregister(IEventObserver<T> observer);
+
+    void Raise(TEntity entity, T arg);
+}
+
 
 //public class DestroyedEventListener : ListenerHolderComponent<IPositionListener>
 //{
 
 //}
 
-public class ListenerHolderComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>//, IListenerComponent<TEvent> where TEvent : IEventObserver<TEntity>
+//public class EntityComponentEvent<TEntity, TComponent> : GameEventBase<TEntity, TComponent> where TEntity : IEntity
+//{
+
+//}
+
+
+public class ListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
 {
-    //private HashSet<IEventObserver<TEntity>> _listeners = new HashSet<IEventObserver<TEntity>>();
-
-    //public void Register(TEvent listener)
-    //{
-    //    if (!_listeners.Contains(listener))
-    //    {
-    //        _listeners.Add(listener);
-    //    }
-    //}
-
-    //public void Deregister(TEvent listener)
-    //{
-    //    if(_listeners.Contains(listener))
-    //    {
-    //        _listeners.Remove(listener);
-    //    }
-    //}
-
-    //public void Invoke(IEntity entity)
-    //{
-    //    //// add EventListener component of generic type IPositionListener onto entity if it doesnt exist
-    //    //// otherwise adds to listener collection.
-    //    //Events.Events.TestEvent.Register<IPositionListener>(this); 
-
-    //    foreach (var listener in _listeners)
-    //    {
-    //        listener.
-    //        //listener.DynamicInvoke();
-    //    }
-    //}
-    //public void Invoke(IEntity entity)
-    //{        
-    //    base.Raise((entity, ));
-    //}
 
 }
+
+//public class ListenerHolderComponent<TComponent> : GameEventBase<TComponent>
+//{
+
+//}
+
 
 
 ///*

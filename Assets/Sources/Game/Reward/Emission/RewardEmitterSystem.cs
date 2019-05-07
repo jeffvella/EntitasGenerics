@@ -26,7 +26,7 @@ public sealed class RewardEmitterSystem : ReactiveSystem<GameEntity>
     protected override void Execute(List<GameEntity> entities)
     {
         //var table = _contexts.config.scoringTable.value;
-        var table = _genericContexts.Config.Get<ScoringTableComponent>().value;
+        var table = _genericContexts.Config.GetUnique<ScoringTableComponent>().value;
 
         var scoreId = entities.Count;
         scoreId--;

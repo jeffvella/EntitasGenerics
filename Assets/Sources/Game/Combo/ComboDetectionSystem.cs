@@ -33,8 +33,8 @@ public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
         //var definitions = _contexts.config.comboDefinitions.value;
         //var size = _contexts.config.mapSize.value;
 
-        var definitions = _genericContexts.Config.Get<ComboDefinitionsComponent>().value;
-        var size = _genericContexts.Config.Get<MapSizeComponent>().value;
+        var definitions = _genericContexts.Config.GetUnique<ComboDefinitionsComponent>().value;
+        var size = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
         
 
         var elementCount = entities.Count;

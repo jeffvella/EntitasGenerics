@@ -2,8 +2,9 @@
 using Events;
 using UnityEngine;
 
-public class SelectedListener : MonoBehaviour, IEventListener, ISelectedListener
-    , ISelectedRemovedListener, IEventObserver<(GameEntity Entity, PositionComponent Component)>
+public class SelectedListener : MonoBehaviour, IEventListener, 
+    ISelectedListener, ISelectedRemovedListener, 
+    IEventObserver<GameEntity, PositionComponent>
 {
     [SerializeField] private GameObject _selectedEffect;
 
@@ -39,7 +40,7 @@ public class SelectedListener : MonoBehaviour, IEventListener, ISelectedListener
         _selectedEffect.SetActive(value);
     }
 
-    public void OnRaised((GameEntity Entity, PositionComponent Component) value)
+    public void OnEvent((GameEntity Entity, PositionComponent Component) value)
     {
         Debug.Log("Event Raised");
     }

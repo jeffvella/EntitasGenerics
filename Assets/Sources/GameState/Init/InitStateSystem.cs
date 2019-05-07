@@ -11,6 +11,8 @@ public sealed class InitStateSystem : IInitializeSystem
 
     public void Initialize()
     {
+        _contexts.GenericTemp.GameState.ResetState();
+
         _contexts.gameState.ResetState();
     }
 }

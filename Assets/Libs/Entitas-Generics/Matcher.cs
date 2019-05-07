@@ -2,6 +2,24 @@
 
 namespace Entitas.Generics
 {
+    //public class EventSystems<TContext, TEntity, TComponent, TListenerComponent>
+    //    where TContext : IContext
+    //    where TEntity : class, IEntity, new()
+    //    where TComponent : IComponent, new()
+    //    where TListenerComponent : IListenerComponent<(TEntity Entity, TComponent Component)>, new()
+    //{
+    //    private static GenericEventSystem<TEntity, TComponent, TListenerComponent> _system;
+
+    //    public static IGenericEventSystem<TComponent> GetOrCreateInstance(IGenericContext<TEntity> context)
+    //    {
+    //        if (_system == null)
+    //        {
+    //            _system = new GenericEventSystem<TEntity, TComponent, TListenerComponent>(context);
+    //        }
+    //        return _system;
+    //    }
+    //}
+
     public class Matcher<TContext, TEntity, TComponent>
         where TContext : IContext
         where TEntity : class, IEntity, new()

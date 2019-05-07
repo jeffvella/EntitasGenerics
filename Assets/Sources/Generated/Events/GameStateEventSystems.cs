@@ -8,13 +8,30 @@
 //------------------------------------------------------------------------------
 
 using Entitas.Generics;
+using UnityEngine.SocialPlatforms.Impl;
+
+//public class GenericFeature : Feature
+//{
+//    public void GenerateEventSystems()
+//    {
+//        foreach
+//    }
+//}
 
 public sealed class GameStateEventSystems : Feature {
 
-    public GameStateEventSystems(Contexts contexts, GenericContexts genericContexts) {
+    public GameStateEventSystems(Contexts contexts, GenericContexts genericContexts)
+    {
         Add(new ActionCountEventSystem(contexts)); // priority: 0
         Add(new GameOverRemovedEventSystem(contexts)); // priority: 0
         Add(new GameOverEventSystem(contexts)); // priority: 0
         Add(new ScoreEventSystem(contexts)); // priority: 0
+
+        Add(EventSystemFactory.Create<GameStateEntity, ScoreComponent>(contexts.GenericTemp.GameState));
+        Add(EventSystemFactory.Create<GameStateEntity, GameOverComponent>(contexts.GenericTemp.GameState));
+        Add(EventSystemFactory.Create<GameStateEntity, ActionCountComponent>(contexts.GenericTemp.GameState));
+
+        //Add(new GenericEventSystem<GameStateEntity, ScoreComponent, 
+        //    ListenerHolderComponent<GameStateEntity, ScoreComponent>>(contexts.GenericTemp.GameState));
     }
 }

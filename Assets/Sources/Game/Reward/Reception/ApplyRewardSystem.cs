@@ -36,5 +36,11 @@ public sealed class ApplyRewardSystem : ReactiveSystem<GameEntity>
         }
         
         _contexts.gameState.ReplaceScore(score + totalReward);
+
+
+        _genericContexts.GameState.SetUnique<ScoreComponent>(new ScoreComponent
+        {
+            value = score + totalReward
+        });
     }
 }

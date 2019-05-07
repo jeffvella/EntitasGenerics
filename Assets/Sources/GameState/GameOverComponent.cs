@@ -5,6 +5,6 @@ using Entitas.CodeGeneration.Attributes;
 [Unique]
 [Event(EventTarget.Any, EventType.Added)]
 [Event(EventTarget.Any, EventType.Removed)]
-public sealed class GameOverComponent : IComponent
+public sealed class GameOverComponent : ITagComponent
 {
 }

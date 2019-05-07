@@ -28,7 +28,7 @@ public sealed class UpdateInputSystem : IExecuteSystem
         }
         else
         {
-            var deltaTime = _genericContexts.Input.Get<DeltaTimeComponent>().value;
+            var deltaTime = _genericContexts.Input.GetUnique<DeltaTimeComponent>().value;
             _inputService.Update(deltaTime);
 
             var isHolding = _inputService.IsHolding();
@@ -40,12 +40,12 @@ public sealed class UpdateInputSystem : IExecuteSystem
             var isReleased = _inputService.IsReleased();
             _genericContexts.Input.SetTag<PointerReleasedComponent>(isReleased);
 
-            _genericContexts.Input.Set(new PointerHoldingPositionComponent
+            _genericContexts.Input.SetUnique(new PointerHoldingPositionComponent
             {
                 value = _inputService.HoldingPosition()
             });
 
-            _genericContexts.Input.Set(new PointerHoldingTimeComponent
+            _genericContexts.Input.SetUnique(new PointerHoldingTimeComponent
             {
                 value = _inputService.HoldingTime()
             });

@@ -27,7 +27,7 @@ public sealed class ExsplosiveRewardEmitterSystem : ReactiveSystem<GameEntity>
     protected override void Execute(List<GameEntity> entities)
     {
         //var table = _contexts.config.ExplosiveScoringTable.value;
-        var table = _genericContexts.Config.Get<ExplosiveScoringTableComponent>().value;
+        var table = _genericContexts.Config.GetUnique<ExplosiveScoringTableComponent>().value;
 
         var scoreId = entities.Count;
         scoreId--;

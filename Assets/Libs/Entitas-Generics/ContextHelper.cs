@@ -10,6 +10,7 @@ namespace Entitas.Generics {
 
         public static ContextInfo ContextInfo { get; private set; }
 
+
         public static void Initialize(ContextInfo contextInfo)
         {
             ContextInfo = contextInfo;

@@ -43,7 +43,7 @@ public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitial
     {
         //var size = _contexts.config.mapSize.value;
 
-        var size = _contexts.Config.Get<MapSizeComponent>().value;
+        var size = _contexts.Config.GetUnique<MapSizeComponent>().value;
 
         for (int row = 0; row < size.y; row++)
         {

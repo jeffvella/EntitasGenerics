@@ -2,26 +2,31 @@
 using Entitas;
 using Entitas.Generics;
 
-public sealed class GameOverSystem : ReactiveSystem<GameStateEntity>
+public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
 {
     private readonly Contexts _contexts;
     private readonly GenericContexts _genericContexts;
 
-    public GameOverSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.gameState)
+    public GameOverSystem(Contexts contexts, GenericContexts genericContexts) : base(genericContexts.GameState, Trigger)
     {
         _contexts = contexts;
         _genericContexts = genericContexts;
     }
 
-    protected override ICollector<GameStateEntity> GetTrigger(IContext<GameStateEntity> context)
+    private static ICollector<GameStateEntity> Trigger(IGenericContext<GameStateEntity> context)
     {
-        return context.CreateCollector(GameStateMatcher.ActionCount);
+        return context.GetTriggerCollector<ActionCountComponent>();
     }
 
-    protected override bool Filter(GameStateEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<GameStateEntity> GetTrigger(IContext<GameStateEntity> context)
+    //{
+    //    return context.CreateCollector(GameStateMatcher.ActionCount);
+    //}
+
+    //protected override bool Filter(GameStateEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<GameStateEntity> entities)
     {
@@ -30,12 +35,19 @@ public sealed class GameOverSystem : ReactiveSystem<GameStateEntity>
         //    _contexts.gameState.isGameOver = true;
         //}
 
-        var maxActions = _genericContexts.Config.Get<MaxActionCountComponent>().value;
+        var maxActions = _genericContexts.Config.GetUnique<MaxActionCountComponent>().value;
 
-        if (_contexts.gameState.actionCount.value >= maxActions)
+        var actionCount = _genericContexts.GameState.GetUnique<ActionCountComponent>().value;
+
+        if (actionCount >= maxActions)
         {
-            _contexts.gameState.isGameOver = true;
+            _genericContexts.GameState.SetTag<GameOverComponent>(true);
         }
+
+        //if (_contexts.gameState.actionCount.value >= maxActions)
+        //{
+        //    _contexts.gameState.isGameOver = true;
+        //}
 
     }
 }

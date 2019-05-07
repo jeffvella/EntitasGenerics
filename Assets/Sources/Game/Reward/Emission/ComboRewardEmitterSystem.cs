@@ -28,7 +28,7 @@ public sealed class ComboRewardEmitterSystem : ReactiveSystem<GameEntity>
     protected override void Execute(List<GameEntity> entities)
     {
         //var definitions = _contexts.config.comboDefinitions.value;
-        var definitions = _genericContexts.Config.Get<ComboDefinitionsComponent>().value;
+        var definitions = _genericContexts.Config.GetUnique<ComboDefinitionsComponent>().value;
 
         foreach (var entity in entities)
         {

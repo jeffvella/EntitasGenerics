@@ -28,13 +28,10 @@ public sealed class GameStateRestartSystem : GenericReactiveSystem<InputEntity>
 
     protected override void Execute(List<InputEntity> entities)
     {
-        //_contexts.gameState.ResetState();
+        _contexts.gameState.ResetState();
 
-        _contexts.gameState.ReplaceLastSelected(-1);
-        _contexts.gameState.ReplaceActionCount(0);
-        _contexts.gameState.ReplaceScore(0);
-        _contexts.gameState.ReplaceMaxSelectedElement(0);
-        _contexts.gameState.isGameOver = false;
+        _contexts.GenericTemp.GameState.ResetState();
+
     }
 
 }
