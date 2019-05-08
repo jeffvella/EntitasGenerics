@@ -30,7 +30,9 @@ public class UIActionCountView : MonoBehaviour
         _triggerHash = Animator.StringToHash(_triggerName);
 
         //Contexts.sharedInstance.config.maxActionCountEntity;
+
         var pair = GenericContexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
+
         OnMaxActionCountChanged(pair);
     }
 

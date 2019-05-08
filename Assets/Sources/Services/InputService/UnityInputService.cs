@@ -40,7 +40,7 @@ public sealed class UnityInputService : Service, IInputService
 
     #endregion
 
-    public UnityInputService(Contexts contexts, GenericContexts genericContexts, Camera camera) : base(contexts, genericContexts)
+    public UnityInputService(GenericContexts contexts, Camera camera) : base(contexts)
     {
         _camera = camera;
     }

@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
 [Game]
-public sealed class AssetLoadedComponent : IComponent
+public sealed class AssetLoadedComponent : ITagComponent
 {
 }

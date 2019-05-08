@@ -2,31 +2,41 @@
 using Entitas;
 using Entitas.Generics;
 
-public sealed class RewardEmitterSystem : ReactiveSystem<GameEntity>
+public sealed class RewardEmitterSystem : GenericReactiveSystem<GameEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
 
-    public RewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    public RewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _config = contexts.Config;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Matched.Added());
+        return context.GetTriggerCollector<MatchedComponent>(GroupEvent.Added);
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.isMatched;
+        return context.IsTagged<MatchedComponent>(entity);
     }
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Matched.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.isMatched;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         //var table = _contexts.config.scoringTable.value;
-        var table = _genericContexts.Config.GetUnique<ScoringTableComponent>().value;
+        var table = _config.GetUnique<ScoringTableComponent>().value;
 
         var scoreId = entities.Count;
         scoreId--;
@@ -36,7 +46,8 @@ public sealed class RewardEmitterSystem : ReactiveSystem<GameEntity>
 
         var reward = table[scoreId];
 
-        var e = _contexts.game.CreateEntity();
-        e.AddReward(reward);
+        var e = _game.CreateEntity();
+        //e.AddReward(reward);
+        _game.Set(e, new RewardComponent { value = reward });
     }
 }

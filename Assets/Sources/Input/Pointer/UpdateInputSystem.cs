@@ -3,24 +3,22 @@ using Entitas.Generics;
 
 public sealed class UpdateInputSystem : IExecuteSystem
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly GenericContexts _contexts;
     private readonly IInputService _inputService;
 
-    public UpdateInputSystem(Contexts contexts, GenericContexts genericContexts, Services services)
+    public UpdateInputSystem(GenericContexts contexts, Services services)
     {
         _contexts = contexts;
-        _genericContexts = genericContexts;
         _inputService = services.InputService;
     }
 
     public void Execute()
     {
-        if (_contexts.gameState.isGameOver)
+        if (_contexts.GameState.IsTagged<GameOverComponent>())
         {
-            _genericContexts.Input.SetTag<PointerHoldingComponent>(false);
-            _genericContexts.Input.SetTag<PointerStartedHoldingComponent>(false);
-            _genericContexts.Input.SetTag<PointerReleasedComponent>(true);
+            _contexts.Input.SetTag<PointerHoldingComponent>(false);
+            _contexts.Input.SetTag<PointerStartedHoldingComponent>(false);
+            _contexts.Input.SetTag<PointerReleasedComponent>(true);
 
             //_contexts.input.isPointerHolding = false;
             //_contexts.input.isPointerStartedHolding = false;
@@ -28,24 +26,24 @@ public sealed class UpdateInputSystem : IExecuteSystem
         }
         else
         {
-            var deltaTime = _genericContexts.Input.GetUnique<DeltaTimeComponent>().value;
+            var deltaTime = _contexts.Input.GetUnique<DeltaTimeComponent>().value;
             _inputService.Update(deltaTime);
 
             var isHolding = _inputService.IsHolding();
-            _genericContexts.Input.SetTag<PointerHoldingComponent>(isHolding);
+            _contexts.Input.SetTag<PointerHoldingComponent>(isHolding);
 
             var isStartedHolding = _inputService.IsStartedHolding();
-            _genericContexts.Input.SetTag<PointerStartedHoldingComponent>(isStartedHolding);
+            _contexts.Input.SetTag<PointerStartedHoldingComponent>(isStartedHolding);
 
             var isReleased = _inputService.IsReleased();
-            _genericContexts.Input.SetTag<PointerReleasedComponent>(isReleased);
+            _contexts.Input.SetTag<PointerReleasedComponent>(isReleased);
 
-            _genericContexts.Input.SetUnique(new PointerHoldingPositionComponent
+            _contexts.Input.SetUnique(new PointerHoldingPositionComponent
             {
                 value = _inputService.HoldingPosition()
             });
 
-            _genericContexts.Input.SetUnique(new PointerHoldingTimeComponent
+            _contexts.Input.SetUnique(new PointerHoldingTimeComponent
             {
                 value = _inputService.HoldingTime()
             });

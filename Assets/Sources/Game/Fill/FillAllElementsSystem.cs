@@ -2,27 +2,35 @@
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
+using ConfigContext = Assets.Sources.Config.ConfigContext;
 
-public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitializeSystem
+public sealed class FillAllElementsSystem : GenericReactiveSystem<GameEntity>, IInitializeSystem
 {
-    private readonly GenericContexts _contexts;
     private readonly ElementService _elementService;
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
 
-    public FillAllElementsSystem(Contexts contexts, GenericContexts genericContexts, Services services) : base(contexts.game)
+    public FillAllElementsSystem(GenericContexts contexts, Services services) : base(contexts.Game, Trigger)
     {
-        _contexts = genericContexts;
+        _game = contexts.Game;
+        _config = contexts.Config;
         _elementService = services.ElementService;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.RestartHappened.Added());
+        return context.GetTriggerCollector<RestartHappenedComponent>();
     }
 
-    protected override bool Filter(GameEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.RestartHappened.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
@@ -30,7 +38,8 @@ public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitial
 
         foreach (var entity in entities)
         {
-            entity.isDestroyed = true;
+            _game.SetTag<DestroyedComponent>(entity, true);
+            //entity.isDestroyed = true;
         }
     }
 
@@ -43,7 +52,7 @@ public sealed class FillAllElementsSystem : ReactiveSystem<GameEntity>, IInitial
     {
         //var size = _contexts.config.mapSize.value;
 
-        var size = _contexts.Config.GetUnique<MapSizeComponent>().value;
+        var size = _config.GetUnique<MapSizeComponent>().value;
 
         for (int row = 0; row < size.y; row++)
         {

@@ -3,14 +3,12 @@ using Entitas.Generics;
 
 public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly GenericContexts _contexts;
     private readonly ITimeService _timeService;
 
-    public UpdateTimeSystem(Contexts contexts, GenericContexts genericContexts, Services services)
+    public UpdateTimeSystem(GenericContexts contexts, Services services)
     {
         _contexts = contexts;
-        _genericContexts = genericContexts;
         _timeService = services.TimeService;
     }
 
@@ -26,13 +24,13 @@ public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
         //_contexts.input.ReplaceRealtimeSinceStartup(_timeService.RealtimeSinceStartup());
 
         var deltaTime = _timeService.DeltaTime();
-        _genericContexts.Input.SetUnique(new DeltaTimeComponent
+        _contexts.Input.SetUnique(new DeltaTimeComponent
         {
             value = deltaTime
         });
 
         var timeSinceStartup = _timeService.RealtimeSinceStartup();
-        _genericContexts.Input.SetUnique(new RealtimeSinceStartupComponent
+        _contexts.Input.SetUnique(new RealtimeSinceStartupComponent
         {
             value = timeSinceStartup
         });

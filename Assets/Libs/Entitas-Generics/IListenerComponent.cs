@@ -21,10 +21,10 @@ using Debug = UnityEngine.Debug;
 
 public interface IListenerComponent : IComponent
 {
+    void ClearListeners();
 
+    string[] GetListenersNames();
 }
-
-//public interface  
 
 public interface IListenerComponent<T> : IListenerComponent
 {
@@ -62,10 +62,16 @@ public interface IListenerComponent<in TEntity, T> : IListenerComponent where TE
 //}
 
 
-public class ListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
+public class AddedListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
 {
 
 }
+
+public class RemovedListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
+{
+
+}
+
 
 //public class ListenerHolderComponent<TComponent> : GameEventBase<TComponent>
 //{

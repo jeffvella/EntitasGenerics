@@ -2,36 +2,35 @@
 
 public class GameSystems : Feature
 {
-    public GameSystems(Contexts contexts, GenericContexts genericContexts, Services services)
+    public GameSystems(GenericContexts contexts, Services services)
     {
-        Add(new FillAllElementsSystem(contexts, genericContexts,  services));
+        Add(new FillAllElementsSystem(contexts,  services));
 
-        Add(new AddElementsSystem(contexts, genericContexts, services));
+        Add(new AddElementsSystem(contexts, services));
 
-        Add(new ViewSystem(contexts, genericContexts, services));
+        Add(new ViewSystem(contexts, services));
 
-        Add(new AddSelectionSystem(contexts, genericContexts));
-        Add(new UnselectionSystem(contexts, genericContexts));
+        Add(new AddSelectionSystem(contexts));
+        Add(new UnselectionSystem(contexts));
 
-        Add(new MarkMatchedSystem(contexts, genericContexts));
-        //Add(new MarkMatchedSystem2(contexts, genericContexts));
+        Add(new MarkMatchedSystem(contexts));
 
-        Add(new ExplosionSystem(contexts, genericContexts));
+        Add(new ExplosionSystem(contexts));
 
-        Add(new ComboDetectionSystem(contexts, genericContexts));
-        Add(new RewardSystems(contexts, genericContexts, services));
+        Add(new ComboDetectionSystem(contexts));
+        Add(new RewardSystems(contexts, services));
 
-        Add(new ActionCounterSystem(contexts, genericContexts));
-        Add(new GameOverSystem(contexts, genericContexts));
+        Add(new ActionCounterSystem(contexts));
+        Add(new GameOverSystem(contexts));
 
-        Add(new RemoveMatchedSystem(contexts, genericContexts));
-        Add(new DropSelectionSystem(contexts, genericContexts));
+        Add(new RemoveMatchedSystem(contexts));
+        Add(new DropSelectionSystem(contexts));
 
-        Add(new MoveSystem(contexts, genericContexts));
-        Add(new DropSelectionOnMoveSystem(contexts, genericContexts));
+        Add(new MoveSystem(contexts));
+        Add(new DropSelectionOnMoveSystem(contexts));
 
-        Add(new GameRestartSystem(contexts, genericContexts));
+        Add(new GameRestartSystem(contexts));
         
-        Add(new DestroyEntitySystem(contexts, genericContexts));
+        Add(new DestroyEntitySystem(contexts));
     }
 }

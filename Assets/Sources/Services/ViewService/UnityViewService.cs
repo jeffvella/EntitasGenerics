@@ -2,32 +2,34 @@
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public sealed class UnityViewService : Service, IViewService
 {
     private Transform _root;
 
-    public UnityViewService(Contexts contexts, GenericContexts genericContexts) : base(contexts, genericContexts)
+    public UnityViewService(GenericContexts contexts) : base(contexts)
     {
     }
 
-    public void LoadAsset(Contexts contexts, GenericContexts genericContexts, IEntity entity, string asset)
+    public void LoadAsset(GenericContexts contexts, IEntity entity, string asset)
     {
         if (_root == null)
         {
             _root = new GameObject("ViewRoot").transform;
         }
 
-        var viewObject = GameObject.Instantiate(Resources.Load<GameObject>(string.Format("Prefabs/{0}", asset)), _root);
+        var resource = Resources.Load<GameObject>(string.Format("Prefabs/{0}", asset));
+        var viewObject = Object.Instantiate(resource, _root);
         if (viewObject == null)
             throw new NullReferenceException(string.Format("Prefabs/{0} not found!", asset));
 
         var view = viewObject.GetComponent<IView>();
-        if (view != null)
-            view.InitializeView(contexts, entity);
+        view.InitializeView(contexts, entity);
 
         var eventListeners = viewObject.GetComponents<IEventListener>();
         foreach (var listener in eventListeners)
             listener.RegisterListeners(contexts, entity);
     }
 }
+

@@ -1,26 +1,42 @@
 ﻿using Entitas;
+using Entitas.Generics;
 using Entitas.Unity;
 using UnityEngine;
 
-public class UnityView : MonoBehaviour, IView, IGameDestroyedListener
+public class UnityView : MonoBehaviour, IView // , IGameDestroyedListener
 {
     private GameEntity _entity;
 
-    public void InitializeView(Contexts contexts, IEntity entity)
+    public void InitializeView(GenericContexts contexts, IEntity entity)
     {
         _entity = (GameEntity) entity;
-        _entity.AddGameDestroyedListener(this);
+
+        contexts.Game.AddEventListener<DestroyedComponent>(_entity, OnEntityDestroyed);
+
+
+
+        //_entity.AddGameDestroyedListener(this);
 
 #if UNITY_EDITOR
         //gameObject.Link(entity, contexts.game);
 #endif
     }
 
-    public void OnDestroyed(GameEntity entity)
+    private void OnEntityDestroyed((GameEntity Entity, DestroyedComponent Component) obj)
     {
 #if UNITY_EDITOR
         //gameObject.Unlink();
 #endif
         Destroy(gameObject);
+
+        Debug.Log($"Entity was destroyed {obj.Entity}");
     }
+
+    //    public void OnDestroyed(GameEntity entity)
+    //    {
+    //#if UNITY_EDITOR
+    //        //gameObject.Unlink();
+    //#endif
+    //        Destroy(gameObject);
+    //    }
 }

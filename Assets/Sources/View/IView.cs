@@ -1,8 +1,9 @@
 ﻿using Entitas;
+using Entitas.Generics;
 
 public interface IView
 {
-    void InitializeView(Contexts contexts, IEntity entity);
+    void InitializeView(GenericContexts contexts, IEntity entity);
 }
 // CONGRATULATIONS! YOU FOUND THE CAT!
 //               )\._.,--....,'``.       

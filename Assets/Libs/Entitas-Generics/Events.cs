@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Entitas;
 using Entitas.Generics;
@@ -65,8 +66,15 @@ namespace Events
         }
     }
 
-    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventObserver
+    public interface IEventDelegator
     {
+        string DebugTargetName { get; }
+    }
+
+    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventObserver, IEventDelegator
+    {
+        private int _invocations;
+
         public ActionEventDelegator(Action<TArg> action)
         {
             _action = action;
@@ -76,8 +84,11 @@ namespace Events
 
         public void OnEvent(TArg value)
         {
+            _invocations++;
             _action.Invoke(value);
         }
+
+        public string DebugTargetName => $"{_action.Target} (Component={typeof(TArg).GetGenericArguments()[1].Name}, InvokeCount={_invocations})";
 
         //public void OnEvent(IEntity entity, TArg value)
         //{
@@ -95,6 +106,12 @@ namespace Events
     public class GameEventBase<TEntity, TArgs> : IListenerComponent<TEntity, TArgs> where TEntity : IEntity
         // : GameEventBaseScriptableObject where TInfo : struct where TArgs : struct
     {
+        public void ClearListeners()
+        {
+            Observers.Clear();
+        }
+        public string[] GetListenersNames() => Observers.Select(l => l.GetType().Name).ToArray();
+
         private TEntity _entity;
 
         public void SetEntity(TEntity entity)
@@ -102,7 +119,7 @@ namespace Events
             _entity = entity;
         }
 
-        private readonly List<IEventObserver<TEntity, TArgs>> _observers = new List<IEventObserver<TEntity, TArgs>>();
+        public readonly List<IEventObserver<TEntity, TArgs>> Observers = new List<IEventObserver<TEntity, TArgs>>();
 
         public void Register(Action<TEntity, TArgs> action)
         {
@@ -111,17 +128,17 @@ namespace Events
 
         public void Register(IEventObserver<TEntity, TArgs> observer)
         {
-            if (!_observers.Contains(observer))
+            if (!Observers.Contains(observer))
             {
-                _observers.Add(observer);
+                Observers.Add(observer);
             }
         }
 
         public void Deregister(IEventObserver<TEntity, TArgs> observer)
         {
-            if (_observers.Contains(observer))
+            if (Observers.Contains(observer))
             {
-                _observers.Remove(observer);
+                Observers.Remove(observer);
             }
         }
 
@@ -165,10 +182,10 @@ namespace Events
         {
             //OnBeforeRaised(EventInfo, args);
 
-            for (int i = _observers.Count - 1; i >= 0; i--)
+            for (int i = Observers.Count - 1; i >= 0; i--)
             {
                 // todo automatically remove null/destroyed observers
-                _observers[i]?.OnEvent((_entity, args));
+                Observers[i]?.OnEvent((_entity, args));
             }
 
             //OnAfterRaised(EventInfo, args);
@@ -192,7 +209,23 @@ namespace Events
     /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
     public class GameEventBase<TArgs> : IListenerComponent<TArgs> //: GameEventBaseScriptableObject //where TArgs : struct
     {
-        private readonly List<IEventObserver<TArgs>> _observers = new List<IEventObserver<TArgs>>();
+        public void ClearListeners()
+        {
+            Observers.Clear();
+        }
+
+        public string[] GetListenersNames() => Observers.Select(observer =>
+        {
+            if(observer is IEventDelegator delegator)
+            {
+                return delegator.DebugTargetName;
+            }
+            return observer.GetType().Name;
+
+        }).ToArray();
+
+        // Must be public in order for debug drawer display within Entitas
+        public List<IEventObserver<TArgs>> Observers = new List<IEventObserver<TArgs>>();
 
         public void Register(Action<TArgs> action)
         {
@@ -201,28 +234,29 @@ namespace Events
 
         public void Register(IEventObserver<TArgs> observer)
         {
-            if (!_observers.Contains(observer))
+            if (!Observers.Contains(observer))
             {
-                _observers.Add(observer);
+                Observers.Add(observer);
             }
         }
 
         public void Deregister(IEventObserver<TArgs> observer)
         {
-            if (_observers.Contains(observer))
+            if (Observers.Contains(observer))
             {
-                _observers.Remove(observer);
+                Observers.Remove(observer);
             }
         }
 
         public void Raise(TArgs arg)
         {
             //OnBeforeRaised(arg);
+            //Debug.Log($"Firing event on {_observers.Count} observers");
 
-            for (int i = _observers.Count - 1; i >= 0; i--)
+            for (int i = Observers.Count - 1; i >= 0; i--)
             {
                 // todo automatically remove null/destroyed observers
-                _observers[i]?.OnEvent(arg);
+                Observers[i]?.OnEvent(arg);
             }
 
             //OnAfterRaised(arg);

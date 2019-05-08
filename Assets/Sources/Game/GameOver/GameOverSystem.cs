@@ -4,13 +4,13 @@ using Entitas.Generics;
 
 public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private IGenericContext<ConfigEntity> _config;
+    private IGenericContext<GameStateEntity> _gameState;
 
-    public GameOverSystem(Contexts contexts, GenericContexts genericContexts) : base(genericContexts.GameState, Trigger)
+    public GameOverSystem(GenericContexts contexts) : base(contexts.GameState, Trigger)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _config = contexts.Config;
+        _gameState = contexts.GameState;
     }
 
     private static ICollector<GameStateEntity> Trigger(IGenericContext<GameStateEntity> context)
@@ -35,13 +35,12 @@ public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
         //    _contexts.gameState.isGameOver = true;
         //}
 
-        var maxActions = _genericContexts.Config.GetUnique<MaxActionCountComponent>().value;
-
-        var actionCount = _genericContexts.GameState.GetUnique<ActionCountComponent>().value;
+        var maxActions = _config.GetUnique<MaxActionCountComponent>().value;
+        var actionCount = _gameState.GetUnique<ActionCountComponent>().value;
 
         if (actionCount >= maxActions)
         {
-            _genericContexts.GameState.SetTag<GameOverComponent>(true);
+            _gameState.SetTag<GameOverComponent>();
         }
 
         //if (_contexts.gameState.actionCount.value >= maxActions)

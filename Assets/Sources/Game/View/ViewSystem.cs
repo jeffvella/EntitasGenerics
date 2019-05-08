@@ -1,36 +1,52 @@
 ﻿using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
+using UnityEditor.VersionControl;
 
-public sealed class ViewSystem : ReactiveSystem<GameEntity>
+public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly GenericContexts _contexts;
     private readonly IViewService _viewService;
 
-    public ViewSystem(Contexts contexts, GenericContexts genericContexts, Services services) : base(contexts.game)
+    public ViewSystem(GenericContexts contexts, Services services) : base(contexts.Game, Trigger, Filter)
     {
         _contexts = contexts;
-        _genericContexts = genericContexts;
         _viewService = services.ViewService;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Asset.Added());
+        return context.GetTriggerCollector<AssetComponent>();
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.hasAsset && !entity.isAssetLoaded;
+        return context.HasComponent<AssetComponent>(entity) && !context.IsTagged<AssetLoadedComponent>();
     }
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Asset.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.hasAsset && !entity.isAssetLoaded;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         foreach (var entity in entities)
         {
-            _viewService.LoadAsset(_contexts, _genericContexts, entity, entity.asset.value);
-            entity.isAssetLoaded = true;
+            //_viewService.LoadAsset(_contexts, _genericContexts, entity, entity.asset.value);
+
+            var assetName = _contexts.Game.Get<AssetComponent>(entity).value;
+
+            _viewService.LoadAsset(_contexts, entity, assetName);
+
+            _contexts.Game.SetTag<AssetLoadedComponent>(entity, true);
+
+            //entity.isAssetLoaded = true;
         }
     }
 }

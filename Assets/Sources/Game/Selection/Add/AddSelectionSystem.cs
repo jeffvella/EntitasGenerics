@@ -1,20 +1,25 @@
 ﻿using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
+using UnityEngine;
 
 public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private IGenericContext<GameEntity> _game;
+    private IGenericContext<GameStateEntity> _gameState;
+    private IGenericContext<InputEntity> _input;
+    private IGenericContext<ConfigEntity> _config;
 
-    public AddSelectionSystem(Contexts contexts, GenericContexts genericContexts) 
-        : base(genericContexts.Input, TriggerProducer)
+    public AddSelectionSystem(GenericContexts contexts) 
+        : base(contexts.Input, Trigger)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _gameState = contexts.GameState;
+        _input = contexts.Input;
+        _config = contexts.Config;
     }
 
-    private static ICollector<InputEntity> TriggerProducer(IGenericContext<InputEntity> context)
+    private static ICollector<InputEntity> Trigger(IGenericContext<InputEntity> context)
     {
         return context.GetCollector<PointerHoldingPositionComponent>();
     }
@@ -34,57 +39,102 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
         //if (!_contexts.input.isPointerHolding)
         //    return;
 
-        if (!_genericContexts.Input.IsTagged<PointerHoldingComponent>())
+        if (!_input.IsTagged<PointerHoldingComponent>())
             return;
 
         //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-        var position = _genericContexts.Input.GetUnique<PointerHoldingPositionComponent>().value.ToGridPosition();
-        var mapSize = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
+        var position = _input.GetUnique<PointerHoldingPositionComponent>().value.ToGridPosition();
+        var mapSize = _config.GetUnique<MapSizeComponent>().value;
 
         var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
         var verticalBounded = position.y >= 0 && position.y < mapSize.y;
 
         if (horizontalBounded && verticalBounded)
         {
-            var entityUnderPointer = _contexts.game.GetEntityWithPosition(position);
-
+            var entityUnderPointer = _game.FindEntity<PositionComponent, GridPosition>(position);
             if (entityUnderPointer == null)
                 return;
 
-            if (entityUnderPointer.isBlock)
+            if (_game.IsTagged<BlockComponent>(entityUnderPointer))
                 return;
 
-            if (entityUnderPointer.isSelected)
+            if (_game.IsTagged<SelectedComponent>(entityUnderPointer))
                 return;
 
-            var lastSelectedId = _contexts.gameState.lastSelected.value;
+            //var entityUnderPointer = _contexts.game.GetEntityWithPosition(position);
+
+            //if (entityUnderPointer.isBlock)
+            //    return;
+
+            //if (entityUnderPointer.isSelected)
+            //    return;
+
+            //var lastSelectedId = _contexts.gameState.lastSelected.value;
+
+            var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).value;
+            var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
             if (lastSelectedId == -1)
             {
-                entityUnderPointer.isSelected = true;
-                entityUnderPointer.ReplaceSelectionId(0);
+                _game.SetTag<SelectedComponent>(entityUnderPointer, true);
+                _game.Set(entityUnderPointer, new SelectionIdComponent { value = 0 });
 
-                _contexts.gameState.ReplaceLastSelected(entityUnderPointer.id.value);
-                _contexts.gameState.ReplaceMaxSelectedElement(0);
+                _gameState.SetUnique(new LastSelectedComponent { value = entityUnderPointerId });
+                _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+
+                Debug.Log($"Started Selection with Entity Id: {entityUnderPointerId}");
+
+                //entityUnderPointer.isSelected = true;
+                //entityUnderPointer.ReplaceSelectionId(0);
+
+                //_contexts.gameState.ReplaceLastSelected(entityUnderPointer.id.value);
+                //_contexts.gameState.ReplaceMaxSelectedElement(0);
             }
             else
             {
-                var lastSelected = _contexts.game.GetEntityWithId(lastSelectedId);
-                if (lastSelected.hasElementType && entityUnderPointer.hasElementType)
+                //var lastSelected = _contexts.game.GetEntityWithId(lastSelectedId);
+
+
+
+                var lastSelected = _game.FindEntity<IdComponent, int>(lastSelectedId);
+                var isLastElementType = _game.IsTagged<ElementComponent>(lastSelected);
+                var isCurrentElementType = _game.IsTagged<ElementComponent>(entityUnderPointer);
+
+                //if (lastSelected.hasElementType && entityUnderPointer.hasElementType)
+                if (isLastElementType && isCurrentElementType)
                 {
-                    if (lastSelected.elementType.value == entityUnderPointer.elementType.value)
+
+                    var lastElementType = _game.Get<ElementTypeComponent>(lastSelected).value;
+                    var currentElementType = _game.Get<ElementTypeComponent>(entityUnderPointer).value;
+
+                    if (lastElementType == currentElementType)
                     {
-                        if (GridPosition.Distance(lastSelected.position.value, entityUnderPointer.position.value) <
-                            1.25f)
+                        Debug.Log($"Added Selection of same type Type={lastElementType} Id={entityUnderPointerId}");
+
+
+                        var lastPosition = _game.Get<PositionComponent>(lastSelected).value;
+                        var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).value;
+
+                        if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                         {
-                            var selectionId = _contexts.gameState.maxSelectedElement.value;
+                            //var selectionId = _contexts.gameState.maxSelectedElement.value;
+
+                            var selectionId = _gameState.GetUnique<MaxSelectedElementComponent>().value;
                             selectionId++;
 
-                            entityUnderPointer.isSelected = true;
-                            entityUnderPointer.ReplaceSelectionId(selectionId);
-                            
-                            _contexts.gameState.ReplaceLastSelected(entityUnderPointer.id.value);
-                            _contexts.gameState.ReplaceMaxSelectedElement(selectionId);
+                            _game.Set(entityUnderPointer, new SelectionIdComponent { value = selectionId });
+                            _game.SetTag<SelectedComponent>(entityUnderPointer, true);
+
+                            _gameState.SetUnique(new LastSelectedComponent { value = entityUnderPointerId });
+
+                            Debug.Log($"MaxSelectedElement set to {selectionId}");
+                            _gameState.SetUnique(new MaxSelectedElementComponent { value = selectionId });
+
+                            //entityUnderPointer.isSelected = true;
+                            //entityUnderPointer.ReplaceSelectionId(selectionId);
+
+                            //_contexts.gameState.ReplaceLastSelected(entityUnderPointer.id.value);
+                            //_contexts.gameState.ReplaceMaxSelectedElement(selectionId);
                         }
                     }
                 }

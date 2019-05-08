@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
 [Game]
-public sealed class MatchedComponent : IComponent
+public sealed class MatchedComponent : ITagComponent
 {
 }

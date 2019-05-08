@@ -7,7 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-public sealed partial class GameEntity : GenericEntity<GameEntity>
+using Entitas;
+
+public sealed partial class GameEntity : Entity //GenericEntity<GameEntity>
 {
 
 }

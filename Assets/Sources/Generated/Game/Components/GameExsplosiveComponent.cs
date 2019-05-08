@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly ExsplosiveComponent exsplosiveComponent = new ExsplosiveComponent();
+    static readonly ExplosiveComponent ExplosiveComponent = new ExplosiveComponent();
 
     public bool isExsplosive {
         get { return HasComponent(GameComponentsLookup.Exsplosive); }
@@ -19,7 +19,7 @@ public partial class GameEntity {
                     var componentPool = GetComponentPool(index);
                     var component = componentPool.Count > 0
                             ? componentPool.Pop()
-                            : exsplosiveComponent;
+                            : ExplosiveComponent;
 
                     AddComponent(index, component);
                 } else {

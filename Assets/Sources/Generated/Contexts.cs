@@ -33,7 +33,6 @@ public partial class Contexts : Entitas.IContexts {
     public GameStateContext gameState { get; set; }
     public InputContext input { get; set; }
 
-    public GenericContexts GenericTemp { get; set; }
 
     public Entitas.IContext[] allContexts { get { return new Entitas.IContext [] { config, game, gameState, input }; } }
 

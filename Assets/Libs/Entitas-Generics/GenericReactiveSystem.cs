@@ -25,6 +25,7 @@ namespace Entitas
             _buffer = new List<TEntity>();
         }
 
+
         protected GenericReactiveSystem(IGenericContext<TEntity> context,
             Func<IGenericContext<TEntity>, ICollector<TEntity>> triggerProducer,
             Func<IGenericContext<TEntity>, TEntity, bool> filter)

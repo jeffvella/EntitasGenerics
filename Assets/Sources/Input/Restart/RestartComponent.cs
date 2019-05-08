@@ -2,6 +2,6 @@
 using Entitas.CodeGeneration.Attributes;
 
 [Input]
-public sealed class RestartComponent : IComponent
+public sealed class RestartComponent : ITagComponent
 {
 }

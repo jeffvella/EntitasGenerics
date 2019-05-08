@@ -2,27 +2,43 @@
 using Entitas;
 using Entitas.Generics;
 
-public sealed class RemoveMatchedSystem : ReactiveSystem<GameEntity>
+public sealed class RemoveMatchedSystem : GenericReactiveSystem<GameEntity>
 {
-    public RemoveMatchedSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    private readonly IGenericContext<GameEntity> _game;
+
+    public RemoveMatchedSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
+        _game = contexts.Game;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Matched.Added());
+        return context.GetTriggerCollector<MatchedComponent>();
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return !entity.isDestroyed;
+        return !context.IsTagged<DestroyedComponent>(entity);
     }
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Matched.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return !entity.isDestroyed;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         foreach (var entity in entities)
         {
-            entity.isDestroyed = true;
+            _game.SetTag<DestroyedComponent>(entity);
+
+            //entity.SetTag<DestroyedComponent>(true);
+            //entity.isDestroyed = true;           
         }
     }
 }

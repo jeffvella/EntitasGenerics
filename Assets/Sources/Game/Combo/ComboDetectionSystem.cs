@@ -1,47 +1,56 @@
 ﻿using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
+using UnityEngine.UIElements;
 
-public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
+public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
 {
-
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
     private readonly Dictionary<int, GameEntity> _buffer;
     private readonly List<GameEntity> _currentBuffer;
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
 
-    public ComboDetectionSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    public ComboDetectionSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _config = contexts.Config;
+        _game = contexts.Game;
         _buffer = new Dictionary<int, GameEntity>(64);
         _currentBuffer = new List<GameEntity>(64);
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Matched.Added());
+        return context.GetTriggerCollector<MatchedComponent>();
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.isMatched && entity.hasPosition;
+        return context.IsTagged<MatchedComponent>() && context.HasComponent<PositionComponent>(entity);
     }
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Matched.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.isMatched && entity.hasPosition;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         //var definitions = _contexts.config.comboDefinitions.value;
         //var size = _contexts.config.mapSize.value;
 
-        var definitions = _genericContexts.Config.GetUnique<ComboDefinitionsComponent>().value;
-        var size = _genericContexts.Config.GetUnique<MapSizeComponent>().value;
-        
-
+        var definitions = _config.GetUnique<ComboDefinitionsComponent>().value;
+        var size = _config.GetUnique<MapSizeComponent>().value;       
         var elementCount = entities.Count;
         
         foreach (var entity in entities)
         {
-            var index = entity.position.value.ToIndex(size);
+            //var index = entity.position.value.ToIndex(size);
+            var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
             _buffer.Add(index, entity);
         }
 
@@ -61,14 +70,14 @@ public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
                     for (var y = 0; y < yMax; y++)
                     {
                         var success = DetectPattern(variation, x, y, size);
-
                         if (success)
                         {
                             foreach (var entity in _currentBuffer)
                             {
                                 entity.isInCombo = true;
-                                
-                                var index = entity.position.value.ToIndex(size);
+
+                                //var index = entity.position.value.ToIndex(size);
+                                var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
                                 _buffer.Remove(index);
                             }
 
@@ -85,7 +94,8 @@ public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
 
         foreach (var entity in entities)
         {
-            var index = entity.position.value.ToIndex(size);
+            //var index = entity.position.value.ToIndex(size);
+            var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
             _buffer.Remove(index);
         }
     }
@@ -123,8 +133,10 @@ public sealed class ComboDetectionSystem : ReactiveSystem<GameEntity>
 
     private void EmitCombo(int id)
     {
-        var e = _contexts.game.CreateEntity();
-        e.AddCombo(id);
-        e.isDestroyed = true;
+        var e = _game.CreateEntity();
+        //e.AddCombo(id);
+        //e.isDestroyed = true;
+        _game.Set(e, new ComboComponent { value =  id });
+        _game.SetTag<DestroyedComponent>(e);
     }
 }

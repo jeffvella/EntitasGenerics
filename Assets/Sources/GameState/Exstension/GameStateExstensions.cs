@@ -1,4 +1,6 @@
-﻿public static class GameStateExstensions
+﻿using Entitas.Generics;
+
+public static class GameStateExstensions
 {
     public static void ResetState(this GameStateContext context)
     {
@@ -9,7 +11,7 @@
         context.isGameOver = false;
     }
 
-    public static void ResetState(this Assets.Sources.GameState.GameStateContext context)
+    public static void ResetState(this IGenericContext<GameStateEntity> context)
     {
         context.SetUnique(new LastSelectedComponent { value = -1 });
         context.SetUnique(new ActionCountComponent { value = 0 });

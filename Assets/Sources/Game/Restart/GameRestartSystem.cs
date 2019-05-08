@@ -4,19 +4,19 @@ using Entitas.Generics;
 
 public sealed class GameRestartSystem : GenericReactiveSystem<InputEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly IGroup<GameEntity> _group;
+    private readonly IGroup<GameEntity> _elementGroup;
     private readonly List<GameEntity> _buffer;
+    private IGenericContext<GameEntity> _game;
 
-    public GameRestartSystem(Contexts contexts, GenericContexts genericContexts) 
-        : base(genericContexts.Input, TriggerProducer)
+    public GameRestartSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
     {
-        _contexts = contexts;
-        _group = contexts.game.GetGroup(GameMatcher.Element);
+        _elementGroup = contexts.Game.GetGroup<ElementComponent>();
+        _game = contexts.Game;
+        //_group = contexts.game.GetGroup(GameMatcher.Element);
         _buffer = new List<GameEntity>();
     }
 
-    private static ICollector<InputEntity> TriggerProducer(IGenericContext<InputEntity> context)
+    private static ICollector<InputEntity> Trigger(IGenericContext<InputEntity> context)
     {
         return context.GetTriggerCollector<RestartComponent>();
     }
@@ -33,12 +33,15 @@ public sealed class GameRestartSystem : GenericReactiveSystem<InputEntity>
 
     protected override void Execute(List<InputEntity> entities)
     {
-        foreach (var entity in _group.GetEntities(_buffer))
+        foreach (var entity in _elementGroup.GetEntities(_buffer))
         {
-            entity.isDestroyed = true;
+            _game.SetTag<DestroyedComponent>(entity, true);
+            //entity.isDestroyed = true;
         }
 
-        var e = _contexts.game.CreateEntity();
-        e.isRestartHappened = true;
+        var e = _game.CreateEntity();
+        _game.SetTag<RestartHappenedComponent>(e, true);
+
+        //e.isRestartHappened = true;
     }
 }

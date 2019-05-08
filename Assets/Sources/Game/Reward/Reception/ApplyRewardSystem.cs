@@ -1,44 +1,57 @@
 ﻿using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
+using UnityEngine.SocialPlatforms.Impl;
 
-public sealed class ApplyRewardSystem : ReactiveSystem<GameEntity>
+public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
 {
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
+    private IGenericContext<GameStateEntity> _gameState;
 
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
-
-    public ApplyRewardSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    public ApplyRewardSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _gameState = contexts.GameState;
+        _config = contexts.Config;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Reward);
+        return context.GetTriggerCollector<RewardComponent>(GroupEvent.Added);
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.hasReward;
+        return context.IsTagged<MatchedComponent>(entity);
     }
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Reward);
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.hasReward;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var score = _contexts.gameState.score.value;
+        //var score = _contexts.gameState.score.value;
+        var score = _gameState.GetUnique<ScoreComponent>().value;
         var totalReward = 0;
         
         foreach (var entity in entities)
         {
             totalReward += entity.reward.value;
-            entity.isDestroyed = true;
+            //entity.isDestroyed = true;
+            _game.SetTag<DestroyedComponent>(entity);
         }
         
-        _contexts.gameState.ReplaceScore(score + totalReward);
+        //_contexts.gameState.ReplaceScore(score + totalReward);
 
-
-        _genericContexts.GameState.SetUnique<ScoreComponent>(new ScoreComponent
+        _gameState.SetUnique(new ScoreComponent
         {
             value = score + totalReward
         });

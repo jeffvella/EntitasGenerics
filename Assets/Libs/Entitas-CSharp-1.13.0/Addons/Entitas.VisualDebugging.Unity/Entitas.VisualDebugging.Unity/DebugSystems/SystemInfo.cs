@@ -1,4 +1,10 @@
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Entitas.Generics;
 
 namespace Entitas.VisualDebugging.Unity {
 
@@ -10,6 +16,11 @@ namespace Entitas.VisualDebugging.Unity {
         ICleanupSystem    = 1 << 3,
         ITearDownSystem   = 1 << 4,
         IReactiveSystem   = 1 << 5
+    }
+
+    public interface ICustomDebugInfo
+    {
+        string DisplayName { get; }
     }
 
     public class SystemInfo {
@@ -61,11 +72,18 @@ namespace Entitas.VisualDebugging.Unity {
             _system = system;
             _interfaceFlags = getInterfaceFlags(system);
 
-            var debugSystem = system as DebugSystems;
-            _systemName = debugSystem != null
-                ? debugSystem.name
-                : system.GetType().Name.RemoveSystemSuffix();
-
+            if (system is DebugSystems debugSystem)
+            {
+                _systemName = debugSystem.name;
+            }
+            else if (system is ICustomDebugInfo customInfo)
+            {
+                _systemName = customInfo.DisplayName;
+            }
+            else
+            {
+                _systemName = system.GetType().Name.RemoveSystemSuffix();
+            }
             isActive = true;
         }
 

@@ -2,39 +2,60 @@
 using System.Linq;
 using Entitas;
 using Entitas.Generics;
+using GameContext = Assets.Sources.Game.GameContext;
+using GameStateContext = Assets.Sources.GameState.GameStateContext;
 
-public sealed class DropSelectionOnMoveSystem : ReactiveSystem<GameEntity>
+public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity>
 {
     private readonly Contexts _contexts;
-    private readonly IGroup<GameEntity> _group;
+    private readonly IGroup<GameEntity> _selectedGroup;
     private readonly List<GameEntity> _buffer;
-    
-    public DropSelectionOnMoveSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    private readonly IGenericContext<GameEntity> _game;
+    private readonly IGenericContext<GameStateEntity> _gameState;
+
+    public DropSelectionOnMoveSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
     {
-        _contexts = contexts;
-        _group = _contexts.game.GetGroup(GameMatcher.Selected);
+        // todo fix these systems that trigger off one group then do nothing with the data.
+
+        _game = contexts.Game;
+        _gameState = contexts.GameState;
+        
+        //_selectedGroup = _contexts.game.GetGroup(GameMatcher.Selected);
+        _selectedGroup = contexts.Game.GetGroup<SelectedComponent>();
+
         _buffer = new List<GameEntity>();
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.FieldMoved);
+        return context.GetCollector<FieldMovedComponent>();
     }
 
-    protected override bool Filter(GameEntity entity)
-    {
-        return true;
-    }
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.FieldMoved);
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return true;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
-        foreach (var entity in _group.GetEntities(_buffer))
+        foreach (var entity in _selectedGroup.GetEntities(_buffer))
         {
-            entity.isSelected = false;
-            entity.RemoveSelectionId();
+            _game.SetTag<SelectedComponent>(entity, false);
+            _game.Remove<SelectionIdComponent>(entity);
+            
+            //entity.isSelected = false;
+            //entity.RemoveSelectionId();
         }
 
-        _contexts.gameState.ReplaceLastSelected(-1);
-        _contexts.gameState.ReplaceMaxSelectedElement(0);
+        _gameState.SetUnique(new LastSelectedComponent { value = -1 });
+        _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+
+        //_contexts.gameState.ReplaceLastSelected(-1);
+        //_contexts.gameState.ReplaceMaxSelectedElement(0);
     }
 }

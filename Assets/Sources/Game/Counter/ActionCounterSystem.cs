@@ -4,13 +4,13 @@ using Entitas.Generics;
 
 public sealed class ActionCounterSystem : GenericReactiveSystem<GameEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly IGenericContext<GameEntity> _game;
+    private IGenericContext<GameStateEntity> _gameState;
 
-    public ActionCounterSystem(Contexts contexts, GenericContexts genericContexts) : base(genericContexts.Game, Trigger)
+    public ActionCounterSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _gameState = contexts.GameState;
     }
 
     private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
@@ -30,14 +30,12 @@ public sealed class ActionCounterSystem : GenericReactiveSystem<GameEntity>
 
     protected override void Execute(List<GameEntity> entities)
     {
-        var currentActionCount = Context.GetUnique<ActionCountComponent>();
+        var currentActionCount = _gameState.GetUnique<ActionCountComponent>();
 
-        Context.SetUnique(new ActionCountComponent
+        _gameState.SetUnique(new ActionCountComponent
         {
             value = currentActionCount.value + 1
         });
-
-        //Context.SetUnique3(currentActionCount, 5);
 
 
         //_contexts.gameState.ReplaceActionCount(_contexts.gameState.actionCount.value + 1);

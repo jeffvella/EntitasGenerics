@@ -14,6 +14,8 @@ namespace Entitas.Generics
 
         int ComponentCount { get; }
 
+        List<int> EventListenerIndices { get; }
+
         //List<IComponentDefinition> Components { get; }
 
         //List<IListenerComponent> Listeners { get; }
@@ -45,6 +47,8 @@ namespace Entitas.Generics
         private List<string> _componentNames { get; } = new List<string>();
 
         private List<Type> _componentTypes { get; } = new List<Type>();
+
+        public List<int> EventListenerIndices { get; } = new List<int>();
 
         public ContextInfo ContextInfo
         {
@@ -84,7 +88,13 @@ namespace Entitas.Generics
             {
                 // cache it for doing something with later?
                 //var listenerComponent = new ListenerHolderComponent<TEntity, T>(); 
-                AddComponentType(typeof(ListenerStorageComponent<TEntity, T>));
+
+                EventListenerIndices.Add(_componentTypes.Count);                
+                AddComponentType(typeof(AddedListenerStorageComponent<TEntity, T>));
+                EventListenerIndices.Add(_componentTypes.Count);
+                AddComponentType(typeof(RemovedListenerStorageComponent<TEntity, T>));
+
+                
             }
 
             // Is it useful to be able to access these IComponentDefinitions later via the context?
@@ -101,9 +111,9 @@ namespace Entitas.Generics
         //}
 
         private void AddComponentType(Type type)
-        {       
-            _componentNames.Add(type.Name);
-            _componentTypes.Add(type);
+        {                   
+            _componentNames.Add(type.PrettyPrintGenericTypeName());
+            _componentTypes.Add(type);            
         }
 
         public bool IsInitialized { get; private set; }

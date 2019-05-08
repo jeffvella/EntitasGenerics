@@ -4,9 +4,9 @@ using Entitas.Generics;
 
 public sealed class GameStateRestartSystem : GenericReactiveSystem<InputEntity>
 {
-    private readonly Contexts _contexts;
+    private readonly GenericContexts _contexts;
 
-    public GameStateRestartSystem(Contexts contexts) : base(contexts.GenericTemp.Input, Trigger)
+    public GameStateRestartSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
     {
         _contexts = contexts;
     }
@@ -28,10 +28,7 @@ public sealed class GameStateRestartSystem : GenericReactiveSystem<InputEntity>
 
     protected override void Execute(List<InputEntity> entities)
     {
-        _contexts.gameState.ResetState();
-
-        _contexts.GenericTemp.GameState.ResetState();
-
+        _contexts.GameState.ResetState();
     }
 
 }

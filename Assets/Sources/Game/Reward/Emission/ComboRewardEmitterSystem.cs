@@ -3,39 +3,53 @@ using Entitas;
 using Entitas.Generics;
 using UnityEngine;
 
-public sealed class ComboRewardEmitterSystem : ReactiveSystem<GameEntity>
+public sealed class ComboRewardEmitterSystem : GenericReactiveSystem<GameEntity>
 {
 
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
 
-    public ComboRewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    public ComboRewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _config = contexts.Config;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Combo);
+        return context.GetTriggerCollector<ComboComponent>(GroupEvent.Added);
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.hasCombo;
+        return context.HasComponent<ComboComponent>(entity);
     }
+
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Combo);
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.hasCombo;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         //var definitions = _contexts.config.comboDefinitions.value;
-        var definitions = _genericContexts.Config.GetUnique<ComboDefinitionsComponent>().value;
+        var definitions = _config.GetUnique<ComboDefinitionsComponent>().value;
 
         foreach (var entity in entities)
         {
-            var defenition = definitions.Definitions[entity.combo.value];
+            var definition = definitions.Definitions[entity.combo.value];
             
-            var e = _contexts.game.CreateEntity();
-            e.AddReward(defenition.Reward);
+            //var e = _contexts.game.CreateEntity();
+            //e.AddReward(defenition.Reward);
+
+            var e = _game.CreateEntity();        
+            _game.Set(e, new RewardComponent { value = definition.Reward });
         }
     }
 }

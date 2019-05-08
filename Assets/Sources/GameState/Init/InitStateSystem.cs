@@ -1,18 +1,17 @@
 ﻿using Entitas;
+using Entitas.Generics;
 
 public sealed class InitStateSystem : IInitializeSystem
 {
-    private readonly Contexts _contexts;
+    private readonly GenericContexts _contexts;
 
-    public InitStateSystem(Contexts contexts)
+    public InitStateSystem(GenericContexts contexts)
     {
         _contexts = contexts;
     }
 
     public void Initialize()
     {
-        _contexts.GenericTemp.GameState.ResetState();
-
-        _contexts.gameState.ResetState();
+        _contexts.GameState.ResetState();
     }
 }

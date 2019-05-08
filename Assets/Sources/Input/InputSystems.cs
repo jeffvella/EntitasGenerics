@@ -2,9 +2,9 @@
 
 public class InputSystems : Feature
 {
-    public InputSystems(Contexts contexts, GenericContexts genericContexts, Services services)
+    public InputSystems(GenericContexts contexts, Services services)
     {
-        Add(new UpdateTimeSystem(contexts, genericContexts, services));
-        Add(new UpdateInputSystem(contexts, genericContexts, services));
+        Add(new UpdateTimeSystem(contexts, services));
+        Add(new UpdateInputSystem(contexts, services));
     }
 }

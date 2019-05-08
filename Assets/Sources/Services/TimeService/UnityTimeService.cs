@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class UnityTimeService : Service, ITimeService
 {
-    public UnityTimeService(Contexts contexts, GenericContexts genericContexts) : base(contexts, genericContexts)
+    public UnityTimeService(GenericContexts contexts) : base(contexts)
     {
     }
 

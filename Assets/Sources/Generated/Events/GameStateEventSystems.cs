@@ -7,6 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Entitas;
 using Entitas.Generics;
 using UnityEngine.SocialPlatforms.Impl;
 
@@ -20,18 +21,20 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public sealed class GameStateEventSystems : Feature {
 
-    public GameStateEventSystems(Contexts contexts, GenericContexts genericContexts)
+    public GameStateEventSystems(GenericContexts contexts)
     {
-        Add(new ActionCountEventSystem(contexts)); // priority: 0
-        Add(new GameOverRemovedEventSystem(contexts)); // priority: 0
-        Add(new GameOverEventSystem(contexts)); // priority: 0
-        Add(new ScoreEventSystem(contexts)); // priority: 0
+        //Add(new ActionCountEventSystem(contexts)); // priority: 0
+        //Add(new GameOverRemovedEventSystem(contexts)); // priority: 0
+        //Add(new GameOverEventSystem(contexts)); // priority: 0
+        //Add(new ScoreEventSystem(contexts)); // priority: 0
 
-        Add(EventSystemFactory.Create<GameStateEntity, ScoreComponent>(contexts.GenericTemp.GameState));
-        Add(EventSystemFactory.Create<GameStateEntity, GameOverComponent>(contexts.GenericTemp.GameState));
-        Add(EventSystemFactory.Create<GameStateEntity, ActionCountComponent>(contexts.GenericTemp.GameState));
+        Add(EventSystemFactory.Create<GameStateEntity, ScoreComponent>(contexts.GameState));
+        Add(EventSystemFactory.Create<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Added));
+        Add(EventSystemFactory.Create<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Removed));
+        Add(EventSystemFactory.Create<GameStateEntity, ActionCountComponent>(contexts.GameState));
 
         //Add(new GenericEventSystem<GameStateEntity, ScoreComponent, 
         //    ListenerHolderComponent<GameStateEntity, ScoreComponent>>(contexts.GenericTemp.GameState));
     }
 }
+

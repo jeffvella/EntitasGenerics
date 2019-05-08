@@ -7,15 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Entitas;
 using Entitas.Generics;
 
 public sealed class GameEventSystems : Feature {
 
-    public GameEventSystems(Contexts contexts, GenericContexts genericContexts) {
-        Add(new ColorEventSystem(contexts)); // priority: 0
-        Add(new GameDestroyedEventSystem(contexts)); // priority: 0
-        Add(new PositionEventSystem(contexts)); // priority: 0
-        Add(new SelectedRemovedEventSystem(contexts)); // priority: 0
-        Add(new SelectedEventSystem(contexts)); // priority: 0
+    public GameEventSystems(GenericContexts contexts) {
+        //Add(new ColorEventSystem(contexts)); // priority: 0
+        //Add(new GameDestroyedEventSystem(contexts)); // priority: 0
+        //Add(new PositionEventSystem(contexts)); // priority: 0
+        //Add(new SelectedRemovedEventSystem(contexts)); // priority: 0
+        //Add(new SelectedEventSystem(contexts)); // priority: 0
+
+        Add(EventSystemFactory.Create<GameEntity, ColorComponent>(contexts.Game));
+        Add(EventSystemFactory.Create<GameEntity, DestroyedComponent>(contexts.Game));
+        Add(EventSystemFactory.Create<GameEntity, PositionComponent>(contexts.Game));
+        Add(EventSystemFactory.Create<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.Added));
+        Add(EventSystemFactory.Create<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.Removed));
     }
 }

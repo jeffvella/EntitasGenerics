@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public static Contexts Contexts { get; private set; }
+    public static GenericContexts Contexts { get; private set; }
 
     private RootSystems _rootSystems;
     private Services _services;
@@ -12,26 +12,26 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private TextAsset ComboDefinitions;
 
-    private GenericContexts _contexts;
+    //private GenericContexts _contexts;
 
     private void Awake()
     {
-        Contexts = Contexts.sharedInstance;
-        _contexts = GenericContexts.Instance;
-        Contexts.GenericTemp = _contexts;
+        //Contexts = Contexts.sharedInstance;
+        Contexts = GenericContexts.Instance;
+        //Contexts.GenericTemp = _contexts;
 
-        Configure(_contexts);
+        Configure(Contexts);
         
         //How to live without DI? 
         _services = new Services
         {
-            ViewService = new UnityViewService(Contexts, _contexts),
-            InputService = new UnityInputService(Contexts, _contexts, Camera.main),
-            TimeService = new UnityTimeService(Contexts, _contexts),
-            ElementService = new ElementService(Contexts, _contexts),
+            ViewService = new UnityViewService(Contexts),
+            InputService = new UnityInputService(Contexts, Camera.main),
+            TimeService = new UnityTimeService(Contexts),
+            ElementService = new ElementService(Contexts),
         };
 
-        _rootSystems = new RootSystems(Contexts, _contexts, _services);
+        _rootSystems = new RootSystems(Contexts, _services);
         _rootSystems.Initialize();
     }
 

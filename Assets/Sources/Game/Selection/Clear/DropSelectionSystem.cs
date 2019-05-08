@@ -4,21 +4,23 @@ using Entitas.Generics;
 
 public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
 {
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
-    private readonly IGroup<GameEntity> _group;
+    private readonly IGroup<GameEntity> _selectedGroup;
     private readonly List<GameEntity> _buffer;
+    private readonly IGenericContext<GameEntity> _game;
+    private readonly IGenericContext<GameStateEntity> _gameState;
+    private readonly IGenericContext<InputEntity> _input;
 
-    public DropSelectionSystem(Contexts contexts, GenericContexts genericContexts) 
-        : base(genericContexts.Input, TriggerProducer)
+    public DropSelectionSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
-        _group = _contexts.game.GetGroup(GameMatcher.Selected);
+        //_group = _contexts.game.GetGroup(GameMatcher.Selected);
+        _selectedGroup = contexts.Game.GetGroup<SelectedComponent>();
+        _game = contexts.Game;
+        _input = contexts.Input;
+        _gameState = contexts.GameState;
         _buffer = new List<GameEntity>();
     }
 
-    private static ICollector<InputEntity> TriggerProducer(IGenericContext<InputEntity> context)
+    private static ICollector<InputEntity> Trigger(IGenericContext<InputEntity> context)
     {
         return context.GetCollector<PointerReleasedComponent>();
     }
@@ -38,16 +40,22 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
         //if (_contexts.input.isPointerHolding)
         //    return;
 
-        if (_genericContexts.Input.IsTagged<PointerHoldingComponent>())
+        if (_input.IsTagged<PointerHoldingComponent>())
             return;
 
-        foreach (var entity in _group.GetEntities(_buffer))
+        foreach (var entity in _selectedGroup.GetEntities(_buffer))
         {
-            entity.isSelected = false;
-            entity.RemoveSelectionId();
+            _game.SetTag<SelectedComponent>(entity, false);
+            _game.Remove<SelectionIdComponent>(entity);
+
+            //entity.isSelected = false;
+            //entity.RemoveSelectionId();
         }
 
-        _contexts.gameState.ReplaceLastSelected(-1);
-        _contexts.gameState.ReplaceMaxSelectedElement(0);
+        _gameState.SetUnique(new LastSelectedComponent {value = -1});
+        _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+
+        //_contexts.gameState.ReplaceLastSelected(-1);
+        //_contexts.gameState.ReplaceMaxSelectedElement(0);
     }
 }

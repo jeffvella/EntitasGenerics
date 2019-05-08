@@ -72,7 +72,7 @@ public static class GameComponentsLookup {
         typeof(DestroyedComponent),
         typeof(ElementComponent),
         typeof(ElementTypeComponent),
-        typeof(ExsplosiveComponent),
+        typeof(ExplosiveComponent),
         typeof(FieldMovedComponent),
         typeof(GameDestroyedListenerComponent),
         typeof(IdComponent),

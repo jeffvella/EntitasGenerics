@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
 [Game]
-public sealed class FieldMovedComponent : IComponent
+public sealed class FieldMovedComponent : ITagComponent
 {
 }

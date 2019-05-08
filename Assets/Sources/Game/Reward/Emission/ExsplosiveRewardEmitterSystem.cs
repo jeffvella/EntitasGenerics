@@ -2,32 +2,42 @@
 using Entitas;
 using Entitas.Generics;
 
-public sealed class ExsplosiveRewardEmitterSystem : ReactiveSystem<GameEntity>
+public sealed class ExsplosiveRewardEmitterSystem : GenericReactiveSystem<GameEntity>
 {
+    private readonly IGenericContext<ConfigEntity> _config;
+    private readonly IGenericContext<GameEntity> _game;
 
-    private readonly Contexts _contexts;
-    private readonly GenericContexts _genericContexts;
-
-    public ExsplosiveRewardEmitterSystem(Contexts contexts, GenericContexts genericContexts) : base(contexts.game)
+    public ExsplosiveRewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
     {
-        _contexts = contexts;
-        _genericContexts = genericContexts;
+        _game = contexts.Game;
+        _config = contexts.Config;
     }
 
-    protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
     {
-        return context.CreateCollector(GameMatcher.Matched.Added());
+        return context.GetTriggerCollector<MatchedComponent>(GroupEvent.Added);
     }
 
-    protected override bool Filter(GameEntity entity)
+    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return entity.isMatched && entity.isExsplosive;
+        return context.IsTagged<MatchedComponent>(entity) && context.IsTagged<ExplosiveComponent>();
     }
+
+
+    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
+    //{
+    //    return context.CreateCollector(GameMatcher.Matched.Added());
+    //}
+
+    //protected override bool Filter(GameEntity entity)
+    //{
+    //    return entity.isMatched && entity.isExsplosive;
+    //}
 
     protected override void Execute(List<GameEntity> entities)
     {
         //var table = _contexts.config.ExplosiveScoringTable.value;
-        var table = _genericContexts.Config.GetUnique<ExplosiveScoringTableComponent>().value;
+        var table = _config.GetUnique<ExplosiveScoringTableComponent>().value;
 
         var scoreId = entities.Count;
         scoreId--;
@@ -37,7 +47,8 @@ public sealed class ExsplosiveRewardEmitterSystem : ReactiveSystem<GameEntity>
 
         var reward = table[scoreId];
 
-        var e = _contexts.game.CreateEntity();
-        e.AddReward(reward);
+        var e = _game.CreateEntity();
+        //e.AddReward(reward);
+        _game.Set(e, new RewardComponent { value = reward });
     }
 }

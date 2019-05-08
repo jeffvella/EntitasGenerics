@@ -37,8 +37,8 @@ public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedL
     {
         var context = GenericContexts.Instance.Input;
         var e = GenericContexts.Instance.Input.CreateEntity();
-        context.Set<RestartComponent>(e, true);
-        context.Set<DestroyedComponent>(e, true);
+        context.SetTag<RestartComponent>(e, true);
+        context.SetTag<DestroyedComponent>(e, true);
 
         Debug.Log($"UIRestartView OnPressed");
         //var e = Contexts.sharedInstance.input.CreateEntity();

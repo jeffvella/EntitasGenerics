@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -12,6 +13,12 @@ using Events;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using EventType = Entitas.CodeGeneration.Attributes.EventType;
+using System;
+using Entitas.VisualDebugging.Unity.Editor;
+using UnityEditor;
+using UnityEditorInternal;
+using SystemInfo = Entitas.VisualDebugging.Unity.SystemInfo;
+
 
 namespace Entitas.Generics
 {
@@ -21,6 +28,8 @@ namespace Entitas.Generics
     /// </summary>
     public interface IGenericContext<TEntity> : IContext<TEntity> where TEntity : class, IEntity
     {
+        //new TEntity CreateEntity();
+
         IContextDefinition Definition { get; }
 
         IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new();
@@ -28,6 +37,12 @@ namespace Entitas.Generics
         ICollector<TEntity> GetCollector<T>() where T : IComponent, new();
 
         IGroup<TEntity> GetGroup<T>() where T : IComponent, new();
+
+        TEntity GetEntityWith<TComponent>() where TComponent : IComponent, new();
+
+        TEntity FindEntity<TComponent, TValue>(TValue searchValue) where TComponent : IComponent, IEquatable<TValue>, new();
+
+        bool TryFindEntity<TComponent, TValue>(TValue searchValue, out TEntity entity) where TComponent : IComponent, IEquatable<TValue>, new();
 
         TComponent Get<TComponent>(TEntity entity) where TComponent : IComponent, new();
 
@@ -37,7 +52,13 @@ namespace Entitas.Generics
 
         ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : IComponent, new();
 
+        void SetTag<TComponent>(TEntity entity, bool toggle = true) where TComponent : ITagComponent, new();
+
+        void SetTag<TComponent>(bool toggle = true) where TComponent : ITagComponent, new();
+
         bool IsTagged<TComponent>() where TComponent : ITagComponent, new();
+
+        bool IsTagged<TComponent>(TEntity entity) where TComponent : ITagComponent, new();
 
         bool HasComponent<TComponent>(TEntity entity) where TComponent : IComponent, new();
 
@@ -50,6 +71,21 @@ namespace Entitas.Generics
         //void SetUnique3<TComponent, TValue>(TComponent component, TValue value) where TComponent : IComponent, IValueComponent<TValue>, new();
 
         //void AddEventListener<TEvent>(TEntity entity, IEventListener listener);
+        void Remove<TComponent>(TEntity entity) where TComponent : IComponent, new();
+
+        void AddEventListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void AddEventListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void RegisterComponentRemovedListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void RegisterComponentRemovedListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void AddEventListener<TComponent>(TEntity entity, IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent;
+        void AddEventListener<TComponent>(IEventObserver<TComponent> listener) where TComponent : IComponent, new();
+        void AddEventListener<TComponent>(TEntity entity, IEventObserver<TEntity, TComponent> listener) where TComponent : IComponent;
+        void AddEventListener<TComponent>(IEventObserver<TEntity, TComponent> listener) where TComponent : IComponent, new();
+
+
+        (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IComponent, new();
+
+        bool TryGetComponent<T>(TEntity entity, out T component) where T : IComponent, new();
     }
 
     public interface IGenericEventSystem : ISystem
@@ -69,11 +105,61 @@ namespace Entitas.Generics
             where TComponent : IComponent, new()
         {
             return new GenericEventSystem<TEntity, TComponent, 
-                ListenerStorageComponent<TEntity, TComponent>>(context, type);
+                AddedListenerStorageComponent<TEntity, TComponent>>(context, type);
         }
     }
 
-    public sealed class GenericEventSystem<TEntity, TComponent, TListenerComponent> : GenericReactiveSystem<TEntity>, IGenericEventSystem<TComponent>
+
+    public class EventSystemListenerComponentDrawer : IComponentDrawer
+    { 
+        public bool HandlesType(Type type)
+        {
+            return typeof(IListenerComponent).IsAssignableFrom(type);
+        }
+
+        public IComponent DrawComponent(IComponent component)
+        {
+            var listenerComponent = (IListenerComponent)component;
+            var listenerNames = listenerComponent.GetListenersNames();
+
+            if(listenerNames.Length == 0)
+            {
+                EditorGUILayout.LabelField($"No Subscribers");
+            }
+            else
+            {
+                EditorGUILayout.LabelField($"{listenerNames.Length} Subscribers");
+
+                for (int i = 0; i < listenerNames.Length; i++)
+                {
+                    EditorGUILayout.LabelField($"- {listenerNames[i]}");
+                }
+            }
+
+            //person.name = EditorGUILayout.TextField("Name", person.name);
+            //var gender = (PersonGender)Enum.Parse(typeof(PersonGender), person.gender);
+            //gender = (PersonGender)EditorGUILayout.EnumPopup("Gender", gender);
+            //person.gender = gender.ToString();
+          
+            return listenerComponent;
+        }
+    }
+
+    public static class TypeExtensions
+    {
+        public static string PrettyPrintGenericTypeName(this Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var simpleName = type.Name.Substring(0, type.Name.IndexOf('`'));
+                var genericTypeParams = type.GenericTypeArguments.Select(PrettyPrintGenericTypeName).ToList();
+                return string.Format("{0}<{1}>", simpleName, string.Join(", ", genericTypeParams));
+            }
+            return type.Name;
+        }
+    }
+
+    public sealed class GenericEventSystem<TEntity, TComponent, TListenerComponent> : GenericReactiveSystem<TEntity>, IGenericEventSystem<TComponent>, ICustomDebugInfo
         where TEntity : class, IEntity
         where TComponent : IComponent, new()
         where TListenerComponent : IListenerComponent<(TEntity Entity, TComponent Component)>, new()
@@ -94,7 +180,7 @@ namespace Entitas.Generics
         }
 
         private static bool Filter(IGenericContext<TEntity> context, TEntity entity)
-        {
+        {            
             return context.HasComponent<TComponent>(entity) && context.HasComponent<TListenerComponent>(entity);
         }
 
@@ -102,6 +188,7 @@ namespace Entitas.Generics
         {
             foreach (var entity in entities)
             {
+
                 var component = _context.Get<TComponent>(entity);
                 var listenerComponent = _context.Get<TListenerComponent>(entity);  
                 
@@ -109,6 +196,8 @@ namespace Entitas.Generics
                 //listenerComponent.Raise(_context, entity, component));
             }
         }
+
+        public string DisplayName => $"{typeof(TComponent).Name} {_type}";
     }
 
     //public sealed class GenericEventSystemBase<TEntity, TComponent, TListenerComponent> : GenericReactiveSystem<TEntity>, IGenericEventSystem<TComponent>
@@ -155,15 +244,31 @@ namespace Entitas.Generics
     public class GenericContext<TContext, TEntity> : Context<TEntity>, IGenericContext<TEntity> where TContext : IGenericContext<TEntity> where TEntity : class, IEntity, new()
     {
         public IContextDefinition Definition { get; }
-
-        //public List<IGenericEventSystem> EventSystems { get; } 
-
+ 
         public GenericContext(IContextDefinition contextDefinition) 
             : base(contextDefinition.ComponentCount, 0, contextDefinition.ContextInfo, AercFactory, EntityFactory)
         {
-            SetupVisualDebugging();    
+            SetupVisualDebugging();
 
-            //EventSystems = new List<IGenericEventSystem>(count);
+            Definition = contextDefinition;
+
+            if (contextDefinition.EventListenerIndices.Count > 0)
+            {
+                OnEntityWillBeDestroyed += ClearEventListenersOnDestroyed;
+            }
+        }
+
+        private void ClearEventListenersOnDestroyed(IContext context, IEntity entity)
+        {
+            for (int i = 0; i < Definition.EventListenerIndices.Count; i++)
+            {
+                var index = Definition.EventListenerIndices[i];
+                if (entity.HasComponent(index))
+                {
+                    var component = (IListenerComponent)entity.GetComponent(index);
+                    component.ClearListeners();
+                }
+            }  
         }
 
         private static TEntity EntityFactory()
@@ -178,35 +283,38 @@ namespace Entitas.Generics
 
         public void AddEventListener<TComponent>(IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent, new()
         {
-            Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
-
-            //var entitiesWithComponent = GetGroup<TComponent>();
-            //if (entitiesWithComponent.count == 0)
-            //{
-
-            //}
-
-            //var system = EventSystems<TContext, TEntity, TComponent, ListenerHolderComponent<TEntity, TComponent>>.GetOrCreateInstance(this);            
-
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(listener);
         }
 
         public void AddEventListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
         {
-            Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
-
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            AddEventListener(entity, action);
+        }
+
+        public void AddEventListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        {
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
+            component.Register(action);
+        }
+
+        public void RegisterComponentRemovedListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        {
+            var entity = GetOrCreateEntityWith<TComponent>();
+            RegisterComponentRemovedListener(entity, action);
+        }
+
+        public void RegisterComponentRemovedListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        {
+            var component = GetOrCreateComponent<RemovedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(action);
         }
 
         public void AddEventListener<TComponent>(TEntity entity, IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent
         {
-            Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
-            
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(listener);
         }
 
@@ -215,7 +323,7 @@ namespace Entitas.Generics
             Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent(t.Component));
         }
 
@@ -223,7 +331,7 @@ namespace Entitas.Generics
         {
             Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((t.Entity, t.Component)));
         }
 
@@ -232,7 +340,7 @@ namespace Entitas.Generics
             Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((t.Entity, t.Component)));
         }
 
@@ -249,7 +357,7 @@ namespace Entitas.Generics
             Debug.Log($"AddEventListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ListenerStorageComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenerStorageComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((this, t.Entity, t.Component)));
         }
 
@@ -313,12 +421,12 @@ namespace Entitas.Generics
 
         public IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new()
         {
-            return Matcher<TContext, TEntity, T>.AnyOf;
+            return Matcher<TContext, TEntity, T>.AllOf;
         }
 
         public ICollector<TEntity> GetCollector<T>() where T : IComponent, new()
         {
-            return this.CreateCollector(Matcher<TContext, TEntity, T>.AnyOf);
+            return this.CreateCollector(Matcher<TContext, TEntity, T>.AllOf);
         }
 
         private ICollector<TEntity> GetCollector<T>(TriggerOnEvent<TEntity> triggerOnEvent) where T : IComponent, new()
@@ -355,7 +463,35 @@ namespace Entitas.Generics
         public bool HasComponent<T>() where T : IComponent, new()
         {
             var index = ComponentHelper<TContext, T>.ComponentIndex;
-            return GetEntityWith<T>().HasComponent(index);
+            return GetEntityWith<T>()?.HasComponent(index) ?? false;
+        }
+
+        public TEntity FindEntity<TComponent, TValue>(TValue searchValue) where TComponent : IComponent, IEquatable<TValue>, new()
+        {
+            // todo review index builders
+            foreach(var entity in GetGroup<TComponent>().GetEntities())
+            {
+                var component = Get<TComponent>(entity);
+                if (component.Equals(searchValue))
+                    return entity;
+            }
+            throw new InvalidOperationException($"Search for an '{typeof(TEntity).Name}' entity with the specific ''{typeof(TComponent).Name}'' value of type '{searchValue}' found no matches");
+        }
+
+        public bool TryFindEntity<TComponent, TValue>(TValue searchValue, out TEntity entity) where TComponent : IComponent, IEquatable<TValue>, new()
+        {
+            // todo review index builders
+            foreach (var e in GetGroup<TComponent>().GetEntities())
+            {
+                var component = Get<TComponent>(e);
+                if (component.Equals(searchValue))
+                {
+                    entity = e;
+                    return true;
+                }
+            }
+            entity = default;
+            return false;
         }
 
         public TComponent Get<TComponent>(TEntity entity) where TComponent : IComponent, new()
@@ -404,6 +540,10 @@ namespace Entitas.Generics
         public static TComponent CreateAndAddComponent<TComponent>(TEntity entity, int index) where TComponent : IComponent, new()
         {
             var newComponent = entity.CreateComponent<TComponent>(index);
+            //if (newComponent is IListenerComponent listenerComponent)
+            //{
+            //    listenerComponent.ClearListeners();
+            //}
             entity.AddComponent(index, newComponent);
             return newComponent;
         }
@@ -505,7 +645,6 @@ namespace Entitas.Generics
         }
 
 
-
         #region Tags
 
         // Todo: Thoughts, Currently going back and forth on how best to implement tag components
@@ -523,35 +662,43 @@ namespace Entitas.Generics
         // user marks non-empty components as tags? is there value to be being able to have
         // tag-style boolean assignment for any component?
 
-        public TEntity TagEntity => _tagEntity ?? (_tagEntity = CreateEntityWith(new TagHolderComponent()));
+        public TEntity UniqueTagEntity => _tagEntity ?? (_tagEntity = CreateEntityWith(new TagHolderComponent()));
         private TEntity _tagEntity;
 
-        public void SetTag<TComponent>(bool toggle) where TComponent : ITagComponent, new()
+        public void SetTag<TComponent>(TEntity entity, bool toggle = true) where TComponent : ITagComponent, new()
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
-            var hasComponent = TagEntity.HasComponent(index);
+            var hasComponent = entity.HasComponent(index);
 
             if (toggle && !hasComponent)
             {
                 //Debug.Log($"Added Tag {typeof(TContext).Name}.{typeof(TComponent).Name}");
                 if (ComponentHelper<TContext, TComponent>.IsUnique)
                 {
-                    TagEntity.AddComponent(index, ComponentHelper<TContext, TComponent>.Default);
+                    entity.AddComponent(index, ComponentHelper<TContext, TComponent>.Default);
                 }
                 else
                 {
-                    TagEntity.AddComponent(index, TagEntity.CreateComponent<TComponent>(index));
+                    entity.AddComponent(index, entity.CreateComponent<TComponent>(index));
                 }
             }
             else if (!toggle && hasComponent)
             {
                 //Debug.Log($"Removed Tag {typeof(TContext).Name}.{typeof(TComponent).Name}");
-                TagEntity.RemoveComponent(index);
+                entity.RemoveComponent(index);
             }
         }
 
+        public void SetTag<TComponent>(bool toggle = true) where TComponent : ITagComponent, new()
+        {
+            SetTag<TComponent>(UniqueTagEntity, toggle);
+        }
+
         public bool IsTagged<TComponent>() where TComponent : ITagComponent, new() 
-            => TagEntity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
+            => UniqueTagEntity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
+
+        public bool IsTagged<TComponent>(TEntity entity) where TComponent : ITagComponent, new()
+            => entity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
 
         #endregion
 
@@ -590,9 +737,27 @@ namespace Entitas.Generics
             }
         }
 
-        public void Remove<T>(TEntity entity) where T : IComponent, new()
+        //public new EntityAccessor CreateEntity()
+        //{
+        //    Debug.Log("Entity created through custom Context");
+        //    return new EntityAccessor(this, base.CreateEntity());
+        //}
+
+        //public class EntityAccessor
+        //{
+        //    public TEntity Entity;
+        //    public IGenericContext<TEntity> Context;
+
+        //    public EntityAccessor(IGenericContext<TEntity> context, TEntity entity)
+        //    {
+        //        Entity = entity;
+        //        Context = context;
+        //    }
+        //}
+
+        public void Remove<TComponent>(TEntity entity) where TComponent : IComponent, new()
         {
-            var index = ComponentHelper<TContext, T>.ComponentIndex;
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
             entity.RemoveComponent(index);
         }
 
@@ -625,6 +790,7 @@ namespace Entitas.Generics
             var group = GetGroup<TComponent>();
             if(group.count > 0)
             {
+                //  todo get first or throw?
                 entity = group.GetSingleEntity();
                 return true;
             }
@@ -658,6 +824,10 @@ namespace Entitas.Generics
             Set(entity, component);
             return entity;
         }
+        
 
     }
+
+
+
 }

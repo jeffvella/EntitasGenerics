@@ -25,7 +25,7 @@ namespace Assets.Sources.Game
             Add<DestroyedComponent>();
             Add<ElementComponent>();
             Add<ElementTypeComponent>();
-            Add<ExsplosiveComponent>();
+            Add<ExplosiveComponent>();
             Add<FieldMovedComponent>();
             Add<GameDestroyedListenerComponent>();
             Add<IdComponent>();

@@ -2,13 +2,11 @@
 
 public abstract class Service
 {
-    protected readonly Contexts _contexts;
-    protected GenericContexts _genericContexts;
+    protected readonly GenericContexts _contexts;
 
-    public Service(Contexts contexts, GenericContexts genericContexts)
+    public Service(GenericContexts contexts)
     {
         _contexts = contexts;
-        _genericContexts = genericContexts;
     }
 
     protected virtual void DropState()
