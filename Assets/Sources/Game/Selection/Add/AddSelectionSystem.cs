@@ -52,8 +52,7 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 
         if (horizontalBounded && verticalBounded)
         {
-            var entityUnderPointer = _game.FindEntity<PositionComponent, GridPosition>(position);
-            if (entityUnderPointer == null)
+            if(!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var entityUnderPointer))
                 return;
 
             if (_game.IsTagged<BlockComponent>(entityUnderPointer))

@@ -9,7 +9,7 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<GameEntity> _game;
     private IGenericContext<GameStateEntity> _gameState;
 
-    public ApplyRewardSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public ApplyRewardSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
     {
         _game = contexts.Game;
         _gameState = contexts.GameState;
@@ -21,10 +21,10 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
         return context.GetTriggerCollector<RewardComponent>(GroupEvent.Added);
     }
 
-    private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
-    {
-        return context.IsTagged<MatchedComponent>(entity);
-    }
+    //private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
+    //{
+    //    //return context.IsTagged<MatchedComponent>(entity);
+    //}
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
     //{
@@ -44,7 +44,7 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
         
         foreach (var entity in entities)
         {
-            totalReward += entity.reward.value;
+            totalReward += _game.Get<RewardComponent>(entity).value;
             //entity.isDestroyed = true;
             _game.SetTag<DestroyedComponent>(entity);
         }

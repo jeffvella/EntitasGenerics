@@ -175,7 +175,6 @@ namespace Entitas.Generics
         private readonly bool _isRemoveType;
         private readonly bool _isAddType;
 
-
         public GenericEventSystem(IGenericContext<TEntity> context, GroupEvent type = GroupEvent.Added)
         {         
             _context = context;

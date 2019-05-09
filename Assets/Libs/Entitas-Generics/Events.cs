@@ -88,7 +88,7 @@ namespace Events
             _action.Invoke(value);
         }
 
-        public string DebugTargetName => $"{_action.Target} (Component={typeof(TArg).GetGenericArguments()[1].Name}, InvokeCount={_invocations})";
+        public string DebugTargetName => $"{_action.Target} InvokeCount={_invocations})";
 
         //public void OnEvent(IEntity entity, TArg value)
         //{
