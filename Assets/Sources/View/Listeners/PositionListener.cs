@@ -17,7 +17,7 @@ public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver
         _entity = (GameEntity) entity;
         //_entity.AddPositionListener(this);
 
-        contexts.Game.AddEventListener<PositionComponent>(_entity, OnPositionChanged);
+        contexts.Game.RegisterAddedComponentListener<PositionComponent>(_entity, OnPositionChanged);
 
         var position = contexts.Game.Get<PositionComponent>(_entity);
 

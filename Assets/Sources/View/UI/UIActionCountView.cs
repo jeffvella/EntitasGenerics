@@ -21,11 +21,11 @@ public class UIActionCountView : MonoBehaviour
         //Contexts.sharedInstance.gameState.CreateEntity().AddActionCountListener(this);
         //Contexts.sharedInstance.config.CreateEntity().AddMaxActionCountListener(this);
 
-        GenericContexts.Instance.GameState.AddEventListener<ActionCountComponent>(OnActionCountChanged);
-        GenericContexts.Instance.Config.AddEventListener<MaxActionCountComponent>(OnMaxActionCountChanged);
+        GenericContexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
+        GenericContexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
 
-        //GenericContexts.Instance.GameState.AddEventListener<ActionCountComponent>(this);
-        //GenericContexts.Instance.Config.AddEventListener<MaxActionCountComponent>(this);
+        //GenericContexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(this);
+        //GenericContexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(this);
 
         _triggerHash = Animator.StringToHash(_triggerName);
 

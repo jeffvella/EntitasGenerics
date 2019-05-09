@@ -15,10 +15,10 @@ public class SelectedListener : MonoBehaviour, IEventListener
     {
         _entity = (GameEntity) entity;
 
-        contexts.Game.AddEventListener<SelectedComponent>(_entity, OnSelected);
-        contexts.Game.RegisterComponentRemovedListener<SelectedComponent>(_entity, OnDeselected);
+        contexts.Game.RegisterAddedComponentListener<SelectedComponent>(_entity, OnSelected);
+        contexts.Game.RegisterRemovedComponentListener<SelectedComponent>(_entity, OnDeselected);
 
-        //contexts.GenericTemp.Game.AddEventListener<SelectedComponent>(OnSelectedComponentRemoved);
+        //contexts.GenericTemp.Game.RegisterAddedComponentListener<SelectedComponent>(OnSelectedComponentRemoved);
 
         //_entity.AddSelectedListener(this);
         //_entity.AddSelectedRemovedListener(this);
@@ -27,7 +27,7 @@ public class SelectedListener : MonoBehaviour, IEventListener
         //// otherwise adds to listener collection.
         //Events.Events.TestEvent.Register<IPositionListener>(this);
 
-        //contexts.GenericTemp.Game.AddEventListener<PositionComponent>(_entity, this);
+        //contexts.GenericTemp.Game.RegisterAddedComponentListener<PositionComponent>(_entity, this);
 
         var isSelected = contexts.Game.IsTagged<SelectedComponent>(_entity);
         SetSelected(_entity, isSelected);

@@ -9,3 +9,9 @@ public class TagHolderComponent : IComponent
 {
 
 }
+
+public class UniqueHolderComponent : IComponent
+{
+
+}
+

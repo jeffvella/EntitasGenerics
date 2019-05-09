@@ -11,7 +11,7 @@ public class UnityView : MonoBehaviour, IView // , IGameDestroyedListener
     {
         _entity = (GameEntity) entity;
 
-        contexts.Game.AddEventListener<DestroyedComponent>(_entity, OnEntityDestroyed);
+        contexts.Game.RegisterAddedComponentListener<DestroyedComponent>(_entity, OnEntityDestroyed);
 
 
 
