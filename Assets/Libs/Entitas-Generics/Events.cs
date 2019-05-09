@@ -98,110 +98,111 @@ namespace Events
 
 
 
-    /// <summary>
-    /// A <see cref="ScriptableObject"/> based event that can notify event listeners, with an argument and fixed event info.
-    /// </summary>
-    /// <typeparam name="TEntity">Static info unique to the event instance; configured in the property inspector for the <see cref="ScriptableObject"/></typeparam>
-    /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
-    public class GameEventBase<TEntity, TArgs> : IListenerComponent<TEntity, TArgs> where TEntity : IEntity
-        // : GameEventBaseScriptableObject where TInfo : struct where TArgs : struct
-    {
-        public void ClearListeners()
-        {
-            Observers.Clear();
-        }
-        public string[] GetListenersNames() => Observers.Select(l => l.GetType().Name).ToArray();
+    ///// <summary>
+    ///// A <see cref="ScriptableObject"/> based event that can notify event listeners, with an argument and fixed event info.
+    ///// </summary>
+    ///// <typeparam name="TEntity">Static info unique to the event instance; configured in the property inspector for the <see cref="ScriptableObject"/></typeparam>
+    ///// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
+    //public class GameEventBase<TEntity, TArgs> : IListenerComponent<TEntity, TArgs> where TEntity : IEntity
+    //    // : GameEventBaseScriptableObject where TInfo : struct where TArgs : struct
+    //{
+    //    public void ClearListeners()
+    //    {
+    //        Observers.Clear();
+    //    }
+    //    public string[] GetListenersNames() => Observers.Select(l => l.GetType().Name).ToArray();
 
-        private TEntity _entity;
+    //    private TEntity _entity;
 
-        public void SetEntity(TEntity entity)
-        {
-            _entity = entity;
-        }
+    //    public void SetEntity(TEntity entity)
+    //    {
+    //        _entity = entity;
+    //    }
 
-        public readonly List<IEventObserver<TEntity, TArgs>> Observers = new List<IEventObserver<TEntity, TArgs>>();
+    //    public readonly List<IEventObserver<TEntity, TArgs>> Observers = new List<IEventObserver<TEntity, TArgs>>();
 
-        public void Register(Action<TEntity, TArgs> action)
-        {
-            Register(new ActionEventDelegator<TEntity, TArgs>(action));
-        }
+    //    public void Register(Action<TEntity, TArgs> action)
+    //    {
+    //        Register(new ActionEventDelegator<TEntity, TArgs>(action));
+    //    }
 
-        public void Register(IEventObserver<TEntity, TArgs> observer)
-        {
-            if (!Observers.Contains(observer))
-            {
-                Observers.Add(observer);
-            }
-        }
+    //    public void Register(IEventObserver<TEntity, TArgs> observer)
+    //    {
+    //        if (!Observers.Contains(observer))
+    //        {
+    //            Observers.Add(observer);
+    //        }
+    //    }
 
-        public void Deregister(IEventObserver<TEntity, TArgs> observer)
-        {
-            if (Observers.Contains(observer))
-            {
-                Observers.Remove(observer);
-            }
-        }
+    //    public void Deregister(IEventObserver<TEntity, TArgs> observer)
+    //    {
+    //        if (Observers.Contains(observer))
+    //        {
+    //            Observers.Remove(observer);
+    //        }
+    //    }
 
+    //    public int ListenerCount => Observers.Count;
 
-        public void Register(Action<TArgs> action)
-        {
-            throw new NotImplementedException();
-        }
+    //    //public void Register(Action<TArgs> action)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        public void Register(IEventObserver<TArgs> observer)
-        {
-            throw new NotImplementedException();
-        }
+    //    //public void Register(IEventObserver<TArgs> observer)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        public void Deregister(IEventObserver<TArgs> observer)
-        {
-            throw new NotImplementedException();
-        }
+    //    //public void Deregister(IEventObserver<TArgs> observer)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        public void Raise(TEntity entity, TArgs arg)
-        {
-            throw new NotImplementedException();
-        }
+    //    //public void Raise(TEntity entity, TArgs arg)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        //public void Register(Action<TArgs> action)
-        //{
-        //    Register((info, args) => );
-        //}
+    //    //public void Register(Action<TArgs> action)
+    //    //{
+    //    //    Register((info, args) => );
+    //    //}
 
-        //public void Register(IEventObserver<TArgs> observer)
-        //{
-        //    throw new NotImplementedException();
-        //}
+    //    //public void Register(IEventObserver<TArgs> observer)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        //public void Deregister(IEventObserver<TArgs> observer)
-        //{
-        //    throw new NotImplementedException();
-        //}
+    //    //public void Deregister(IEventObserver<TArgs> observer)
+    //    //{
+    //    //    throw new NotImplementedException();
+    //    //}
 
-        public void Raise(TArgs args)
-        {
-            //OnBeforeRaised(EventInfo, args);
+    //    public void Raise(TArgs args)
+    //    {
+    //        //OnBeforeRaised(EventInfo, args);
 
-            for (int i = Observers.Count - 1; i >= 0; i--)
-            {
-                // todo automatically remove null/destroyed observers
-                Observers[i]?.OnEvent((_entity, args));
-            }
+    //        for (int i = Observers.Count - 1; i >= 0; i--)
+    //        {
+    //            // todo automatically remove null/destroyed observers
+    //            Observers[i]?.OnEvent((_entity, args));
+    //        }
 
-            //OnAfterRaised(EventInfo, args);
-        }
+    //        //OnAfterRaised(EventInfo, args);
+    //    }
 
-        ///// <summary>
-        ///// Called before observers are notified of the event.
-        ///// </summary>
-        //public virtual void OnBeforeRaised(TInfo info, TArgs args) { }
+    //    ///// <summary>
+    //    ///// Called before observers are notified of the event.
+    //    ///// </summary>
+    //    //public virtual void OnBeforeRaised(TInfo info, TArgs args) { }
 
-        ///// <summary>
-        ///// Called after observers are notified of the event.
-        ///// </summary>
-        //public virtual void OnAfterRaised(TInfo info, TArgs args) { }
+    //    ///// <summary>
+    //    ///// Called after observers are notified of the event.
+    //    ///// </summary>
+    //    //public virtual void OnAfterRaised(TInfo info, TArgs args) { }
 
-    }
+    //}
 
     /// <summary>
     /// A <see cref="ScriptableObject"/> based event that can notify event listeners, with one argument.
@@ -223,6 +224,8 @@ namespace Events
             return observer.GetType().Name;
 
         }).ToArray();
+
+        public int ListenerCount => Observers.Count;
 
         // Must be public in order for debug drawer display within Entitas
         public List<IEventObserver<TArgs>> Observers = new List<IEventObserver<TArgs>>();

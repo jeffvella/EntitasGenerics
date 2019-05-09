@@ -90,11 +90,10 @@ namespace Entitas.Generics
                 //var listenerComponent = new ListenerHolderComponent<TEntity, T>(); 
 
                 EventListenerIndices.Add(_componentTypes.Count);                
-                AddComponentType(typeof(AddedListenerStorageComponent<TEntity, T>));
-                EventListenerIndices.Add(_componentTypes.Count);
-                AddComponentType(typeof(RemovedListenerStorageComponent<TEntity, T>));
+                AddComponentType(typeof(ComponentAddedListenersComponent<TEntity, T>));
 
-                
+                EventListenerIndices.Add(_componentTypes.Count);
+                AddComponentType(typeof(ComponentRemovedListenersComponent<TEntity, T>));
             }
 
             // Is it useful to be able to access these IComponentDefinitions later via the context?

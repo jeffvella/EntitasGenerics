@@ -33,10 +33,10 @@ public class SelectedListener : MonoBehaviour, IEventListener
         SetSelected(_entity, isSelected);
     }
 
-    private void OnDeselected((GameEntity Entity, SelectedComponent Component) obj)
+    private void OnDeselected(GameEntity entity)
     {
         Debug.Log("Entity Deselected");
-        SetSelected(obj.Entity, false);
+        SetSelected(entity, false);
     }
 
     private void OnSelected((GameEntity Entity, SelectedComponent Component) obj)

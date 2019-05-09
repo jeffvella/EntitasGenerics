@@ -2,6 +2,7 @@
 using System.Linq;
 using Entitas;
 using Entitas.Generics;
+using UnityEngine;
 using GameContext = Assets.Sources.Game.GameContext;
 using GameStateContext = Assets.Sources.GameState.GameStateContext;
 
@@ -45,6 +46,8 @@ public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity
     {
         foreach (var entity in _selectedGroup.GetEntities(_buffer))
         {
+            Debug.Log($"Drop Selection {_game.Get<SelectionIdComponent>(entity).value}");
+
             _game.SetTag<SelectedComponent>(entity, false);
             _game.Remove<SelectionIdComponent>(entity);
             

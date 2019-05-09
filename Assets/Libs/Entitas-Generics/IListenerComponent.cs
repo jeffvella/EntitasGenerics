@@ -24,31 +24,47 @@ public interface IListenerComponent : IComponent
     void ClearListeners();
 
     string[] GetListenersNames();
+
+    int ListenerCount { get; }
 }
 
 public interface IListenerComponent<T> : IListenerComponent
 {
     void Register(Action<T> action);
 
-    void Register(IEventObserver<T> observer);
+    void Register(IEventObserver<T> listener);
 
-    void Deregister(IEventObserver<T> observer);
+    void Deregister(IEventObserver<T> listener);
 
     void Raise(T arg);
 
     //void Raise(IEntity entity, T arg);
 }
 
-public interface IListenerComponent<in TEntity, T> : IListenerComponent where TEntity : IEntity
+
+public class ComponentAddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
 {
-    void Register(Action<T> action);
 
-    void Register(IEventObserver<T> observer);
-
-    void Deregister(IEventObserver<T> observer);
-
-    void Raise(TEntity entity, T arg);
 }
+
+public class ComponentRemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>
+{
+
+}
+
+
+//public interface IListenerComponent<in TEntity, T> : IListenerComponent where TEntity : IEntity
+//{
+//    void Register(Action<T> action);
+
+//    void Register(IEventListener<T> listener);
+
+//    void Deregister(IEventListener<T> listener);
+
+//    void Raise(TEntity entity, T arg);
+
+
+//}
 
 
 //public class DestroyedEventListener : ListenerHolderComponent<IPositionListener>
@@ -62,15 +78,6 @@ public interface IListenerComponent<in TEntity, T> : IListenerComponent where TE
 //}
 
 
-public class AddedListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
-{
-
-}
-
-public class RemovedListenerStorageComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
-{
-
-}
 
 
 //public class ListenerHolderComponent<TComponent> : GameEventBase<TComponent>

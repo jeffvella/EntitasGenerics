@@ -29,7 +29,7 @@ public class UnityView : MonoBehaviour, IView // , IGameDestroyedListener
 #endif
         Destroy(gameObject);
 
-        Debug.Log($"Entity was destroyed {obj.Entity}");
+        //Debug.Log($"Entity was destroyed {obj.Entity}");
     }
 
     //    public void OnDestroyed(GameEntity entity)

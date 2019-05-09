@@ -20,25 +20,25 @@ namespace Assets.Sources.Game
             Add<AssetLoadedComponent>();
             Add<BlockComponent>();
             Add<ColorComponent>();
-            Add<ColorListenerComponent>();
+            //Add<ColorListenerComponent>();
             Add<ComboComponent>();
             Add<DestroyedComponent>();
             Add<ElementComponent>();
             Add<ElementTypeComponent>();
             Add<ExplosiveComponent>();
             Add<FieldMovedComponent>();
-            Add<GameDestroyedListenerComponent>();
+            //Add<GameDestroyedListenerComponent>();
             Add<IdComponent>();
             Add<InComboComponent>();
             Add<MatchedComponent>();
             Add<MovableComponent>();
             Add<PositionComponent>();
-            Add<PositionListenerComponent>();
+            //Add<PositionListenerComponent>();
             Add<RestartHappenedComponent>();
             Add<RewardComponent>();
             Add<SelectedComponent>();
-            Add<SelectedListenerComponent>();
-            Add<SelectedRemovedListenerComponent>();
+            //Add<SelectedListenerComponent>();
+            //Add<SelectedRemovedListenerComponent>();
             Add<SelectionIdComponent>();
         }
     }
