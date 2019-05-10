@@ -625,38 +625,6 @@ namespace Entitas.Generics
             return (TComponent)entity.GetComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
         }
 
-        public TComponent GetUnique<TComponent>() where TComponent : IUniqueComponent, new()
-        {
-            if (TryGetEntityWith<TComponent>(out var entity))
-            {
-                return GetOrCreateComponent<TComponent>(entity);
-            }
-            if (ComponentHelper<TContext, TComponent>.IsUnique)
-            {
-                Debug.Log($"Creating new Entity for unique component {typeof(TContext).Name}.{typeof(TComponent).Name}");
-                var component = new TComponent();
-                CreateEntityWith(component);
-                return component;
-            }
-            return default;
-        }
-
-        public (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IUniqueComponent, new()
-        {
-            if (TryGetEntityWith<TComponent>(out var entity))
-            {
-                return (entity, GetOrCreateComponent<TComponent>(entity));
-            }
-            if (ComponentHelper<TContext, TComponent>.IsUnique)
-            {
-                Debug.Log($"Creating new Entity for unique component {typeof(TContext).Name}.{typeof(TComponent).Name}");
-                var component = new TComponent();
-                entity = CreateEntityWith(component);
-                return (entity, component);
-            }
-            return default;
-        }
-
         public static TComponent CreateAndAddComponent<TComponent>(TEntity entity) where TComponent : IComponent, new()
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
@@ -698,7 +666,6 @@ namespace Entitas.Generics
                 component = default;
                 return false;
             }
-
             var index = ComponentHelper<TContext, T>.ComponentIndex;
             component = (T)entity.GetComponent(index);
             return true;
@@ -766,25 +733,49 @@ namespace Entitas.Generics
 
         #region Unique
 
-        public TEntity UniqueEntity => _uniqueEntity ?? (_uniqueEntity = CreateEntityWith(new UniqueHolderComponent()));
+        public TEntity UniqueEntity => _uniqueEntity ?? (_uniqueEntity = CreateEntityWith(new UniqueComponents()));
         private TEntity _uniqueEntity;
+
 
         public void SetUnique<TComponent>(TComponent component) where TComponent : IUniqueComponent, new()
         {
-            if (TryGetEntityWith<TComponent>(out var entity))
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            if (!UniqueEntity.HasComponent(index))
             {
-                var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
-                entity.ReplaceComponent(index, component);
+                UniqueEntity.AddComponent(index, ComponentHelper<TContext, TComponent>.Default);
             }
-            else if (ComponentHelper<TContext, TComponent>.IsUnique)
-            {
-                CreateEntityWith(component);
-            }
+            UniqueEntity.ReplaceComponent(index, component);
         }
 
         public void SetUniqueFlag<TComponent>(bool toggle = true) where TComponent : IFlagComponent, IUniqueComponent, new()
         {
             SetFlag<TComponent>(UniqueFlagEntity, toggle);
+        }
+
+        public TComponent GetUnique<TComponent>() where TComponent : IUniqueComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            if (!UniqueEntity.HasComponent(index))
+            {
+                UniqueEntity.AddComponent(index, UniqueEntity.CreateComponent<TComponent>(index));
+            }
+            return (TComponent)UniqueEntity.GetComponent(index);
+        }
+
+        public (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IUniqueComponent, new()
+        {
+            if (TryGetEntityWith<TComponent>(out var entity))
+            {
+                return (entity, GetOrCreateComponent<TComponent>(entity));
+            }
+            if (ComponentHelper<TContext, TComponent>.IsUnique)
+            {
+                Debug.Log($"Creating new Entity for unique component {typeof(TContext).Name}.{typeof(TComponent).Name}");
+                var component = new TComponent();
+                entity = CreateEntityWith(component);
+                return (entity, component);
+            }
+            return default;
         }
 
         #endregion
@@ -806,8 +797,8 @@ namespace Entitas.Generics
         // user marks non-empty components as tags? is there value to be being able to have
         // tag-style boolean assignment for any component?
 
-        public TEntity UniqueFlagEntity => _tagEntity ?? (_tagEntity = CreateEntityWith(new UniqueFlagHolderComponent()));
-        private TEntity _tagEntity;
+        public TEntity UniqueFlagEntity => _flagEntity ?? (_flagEntity = CreateEntityWith(new UniqueFlags()));
+        private TEntity _flagEntity;
 
         public void SetFlag<TComponent>(TEntity entity, bool toggle = true) where TComponent : IFlagComponent, new()
         {
@@ -816,24 +807,13 @@ namespace Entitas.Generics
 
             if (toggle && !hasComponent)
             {
-                //Debug.Log($"Added Tag {typeof(TContext).Name}.{typeof(TComponent).Name}");
-                if (ComponentHelper<TContext, TComponent>.IsUnique)
-                {
-                    entity.AddComponent(index, ComponentHelper<TContext, TComponent>.Default);
-                }
-                else
-                {
-                    entity.AddComponent(index, entity.CreateComponent<TComponent>(index));
-                }
+                entity.AddComponent(index, entity.CreateComponent<TComponent>(index));                
             }
             else if (!toggle && hasComponent)
             {
-                //Debug.Log($"Removed Tag {typeof(TContext).Name}.{typeof(TComponent).Name}");
                 entity.RemoveComponent(index);
             }
         }
-
-
 
         public bool IsFlagged<TComponent>() where TComponent : IFlagComponent, new() 
             => UniqueFlagEntity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);

@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Entitas;
 
-public class UniqueFlagHolderComponent : IComponent
+public class UniqueFlags : IComponent
 {
 
 }
 
-public class UniqueHolderComponent : IComponent
+public class UniqueComponents : IComponent
 {
 
 }

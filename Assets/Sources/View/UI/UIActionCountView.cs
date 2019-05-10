@@ -33,10 +33,18 @@ public class UIActionCountView : MonoBehaviour
 
         //Contexts.sharedInstance.config.maxActionCountEntity;
 
-        var pair = GenericContexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
+        //var pair = GenericContexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
 
-        OnMaxActionCountChanged(pair);
+        _maxActionCount = GenericContexts.Instance.Config.GetUnique<MaxActionCountComponent>().value;            
+        Apply();
     }
+
+    private void OnActionCountChanged((GameStateEntity Entity, ActionCountComponent Component) obj)
+    {
+        _actionCount = obj.Component.value;
+        Apply();
+    }
+
 
     private void OnMaxActionCountChanged((ConfigEntity Entity, MaxActionCountComponent Component) obj)
     {
@@ -44,11 +52,7 @@ public class UIActionCountView : MonoBehaviour
         Apply();
     }
 
-    private void OnActionCountChanged((GameStateEntity Entity, ActionCountComponent Component) arg)
-    {
-        _actionCount = arg.Component.value;
-        Apply();
-    }
+ 
 
     //public void OnEvent(ActionCountComponent component)
     //{
