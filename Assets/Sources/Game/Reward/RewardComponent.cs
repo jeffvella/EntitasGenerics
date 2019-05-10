@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Game]
+//[Game]
 public sealed class RewardComponent : IComponent
 {
     public int value;

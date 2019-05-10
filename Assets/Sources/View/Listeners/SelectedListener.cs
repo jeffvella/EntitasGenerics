@@ -1,4 +1,5 @@
-﻿using Entitas;
+﻿using Assets.Sources.Game;
+using Entitas;
 using Entitas.Generics;
 using Events;
 using UnityEngine;
@@ -29,19 +30,19 @@ public class SelectedListener : MonoBehaviour, IEventListener
 
         //contexts.GenericTemp.Game.RegisterAddedComponentListener<PositionComponent>(_entity, this);
 
-        var isSelected = contexts.Game.IsTagged<SelectedComponent>(_entity);
+        var isSelected = contexts.Game.IsFlagged<SelectedComponent>(_entity);
         SetSelected(_entity, isSelected);
     }
 
     private void OnDeselected(GameEntity entity)
     {
-        Debug.Log("Entity Deselected");
+        //Debug.Log("Entity Deselected");
         SetSelected(entity, false);
     }
 
     private void OnSelected((GameEntity Entity, SelectedComponent Component) obj)
     {
-        Debug.Log("Entity Selected");
+        //Debug.Log("Entity Selected");
         SetSelected(obj.Entity, true);
     }
 

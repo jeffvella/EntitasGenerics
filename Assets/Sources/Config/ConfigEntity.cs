@@ -5,13 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Entitas;
 
-public class TagHolderComponent : IComponent
+namespace Assets.Sources.Config
 {
+    public sealed class ConfigEntity : Entity
+    {
 
+    }
 }
-
-public class UniqueHolderComponent : IComponent
-{
-
-}
-

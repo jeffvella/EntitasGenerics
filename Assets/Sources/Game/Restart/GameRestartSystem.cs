@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -35,12 +36,12 @@ public sealed class GameRestartSystem : GenericReactiveSystem<InputEntity>
     {
         foreach (var entity in _elementGroup.GetEntities(_buffer))
         {
-            _game.SetTag<DestroyedComponent>(entity, true);
+            _game.SetFlag<DestroyedComponent>(entity, true);
             //entity.isDestroyed = true;
         }
 
         var e = _game.CreateEntity();
-        _game.SetTag<RestartHappenedComponent>(e, true);
+        _game.SetFlag<RestartHappenedComponent>(e, true);
 
         //e.isRestartHappened = true;
     }

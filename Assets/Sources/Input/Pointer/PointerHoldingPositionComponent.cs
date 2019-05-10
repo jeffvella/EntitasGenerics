@@ -2,9 +2,9 @@
 using Entitas.CodeGeneration.Attributes;
 using UnityEngine;
 
-[Input]
+//[Input]
 [Unique]
-public sealed class PointerHoldingPositionComponent : IComponent
+public sealed class PointerHoldingPositionComponent : IUniqueComponent
 {
     public Vector3 value;
 }

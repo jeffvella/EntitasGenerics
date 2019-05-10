@@ -1,4 +1,5 @@
-﻿using Entitas.Generics;
+﻿using Assets.Sources.Game;
+using Entitas.Generics;
 using UnityEngine;
 using GameContext = Assets.Sources.Game.GameContext;
 
@@ -24,8 +25,8 @@ public sealed class ElementService : Service
         var normalizedType = Mathf.InverseLerp(0, maxType, randomType);
 
         var entity = _game.CreateEntity();
-        _game.SetTag<ElementComponent>(entity, true);
-        _game.SetTag<MovableComponent>(entity, true);
+        _game.SetFlag<ElementComponent>(entity, true);
+        _game.SetFlag<MovableComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });
         _game.Set(entity, new ElementTypeComponent { value = randomType });
         _game.Set(entity, new AssetComponent { value = "Element" });
@@ -55,9 +56,9 @@ public sealed class ElementService : Service
         //entity.isBlock = true;
 
         var entity = _game.CreateEntity();
-        _game.SetTag<ElementComponent>(entity, true);
-        _game.SetTag<MovableComponent>(entity, true);
-        _game.SetTag<BlockComponent>(entity, true);
+        _game.SetFlag<ElementComponent>(entity, true);
+        _game.SetFlag<MovableComponent>(entity, true);
+        _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });       
         _game.Set(entity, new AssetComponent { value = "Block" });
         _game.Set(entity, new PositionComponent { value = position });
@@ -75,8 +76,8 @@ public sealed class ElementService : Service
         //entity.isBlock = true;
 
         var entity = _game.CreateEntity();
-        _game.SetTag<ElementComponent>(entity, true);
-        _game.SetTag<BlockComponent>(entity, true);
+        _game.SetFlag<ElementComponent>(entity, true);
+        _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });
         _game.Set(entity, new AssetComponent { value = "NotMovableBlock" });
         _game.Set(entity, new PositionComponent { value = position });
@@ -95,9 +96,9 @@ public sealed class ElementService : Service
         //entity.isBlock = true;
 
         var entity = _game.CreateEntity();
-        _game.SetTag<ElementComponent>(entity, true);
-        _game.SetTag<ExplosiveComponent>(entity, true);
-        _game.SetTag<BlockComponent>(entity, true);
+        _game.SetFlag<ElementComponent>(entity, true);
+        _game.SetFlag<ExplosiveComponent>(entity, true);
+        _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });
         _game.Set(entity, new AssetComponent { value = "ExsplosiveBlock" });
         _game.Set(entity, new PositionComponent { value = position });

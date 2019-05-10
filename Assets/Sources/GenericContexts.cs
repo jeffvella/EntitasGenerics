@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Assets.Sources.GameState;
 using GameStateContext = Assets.Sources.GameState.GameStateContext;
 
@@ -13,13 +15,13 @@ namespace Entitas.Generics
 
         public LoggingContext Logging = new LoggingContext();
 
-        public IGenericContext<ConfigEntity> Config = new Assets.Sources.Config.ConfigContext();
+        public IGenericContext<ConfigEntity> Config = new ConfigContext();
 
-        public IGenericContext<InputEntity> Input = new Assets.Sources.Config.InputContext();
+        public IGenericContext<InputEntity> Input = new InputContext();
 
-        public IGenericContext<GameStateEntity> GameState = new Assets.Sources.GameState.GameStateContext();
+        public IGenericContext<GameStateEntity> GameState = new GameStateContext();
 
-        public IGenericContext<GameEntity> Game = new Assets.Sources.Game.GameContext();
+        public IGenericContext<GameEntity> Game = new GameContext();
 
     }
 }

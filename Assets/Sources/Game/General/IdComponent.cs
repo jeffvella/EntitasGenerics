@@ -2,7 +2,7 @@
 using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Game]
+//[Game]
 public sealed class IdComponent : IComponent, IEquatable<int>
 {
     [PrimaryEntityIndex] public int value;

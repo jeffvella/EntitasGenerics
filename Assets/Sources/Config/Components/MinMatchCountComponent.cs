@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Config]
+//[Config]
 [Unique]
-public sealed class MinMatchCountComponent : IComponent
+public sealed class MinMatchCountComponent : IUniqueComponent
 {
     public int value;
 }

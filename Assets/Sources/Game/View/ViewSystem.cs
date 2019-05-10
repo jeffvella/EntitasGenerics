@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 using UnityEditor.VersionControl;
@@ -21,7 +22,7 @@ public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.HasComponent<AssetComponent>(entity) && !context.IsTagged<AssetLoadedComponent>();
+        return context.HasComponent<AssetComponent>(entity) && !context.IsFlagged<AssetLoadedComponent>();
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -44,7 +45,7 @@ public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
 
             _viewService.LoadAsset(_contexts, entity, assetName);
 
-            _contexts.Game.SetTag<AssetLoadedComponent>(entity, true);
+            _contexts.Game.SetFlag<AssetLoadedComponent>(entity, true);
 
             //entity.isAssetLoaded = true;
         }

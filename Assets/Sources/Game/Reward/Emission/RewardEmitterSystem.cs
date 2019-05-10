@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -20,7 +22,7 @@ public sealed class RewardEmitterSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.IsTagged<MatchedComponent>(entity);
+        return context.IsFlagged<MatchedComponent>(entity);
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)

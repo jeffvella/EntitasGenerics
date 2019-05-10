@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[GameState]
+//[GameState]
 [Unique]
-public sealed class LastSelectedComponent : IComponent
+public sealed class LastSelectedComponent : IUniqueComponent
 {
     public int value;
 }

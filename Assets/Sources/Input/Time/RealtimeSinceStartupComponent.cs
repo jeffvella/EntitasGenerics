@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Input]
+//[Input]
 [Unique]
-public sealed class RealtimeSinceStartupComponent : IComponent
+public sealed class RealtimeSinceStartupComponent : IUniqueComponent
 {
     public float value;
 }

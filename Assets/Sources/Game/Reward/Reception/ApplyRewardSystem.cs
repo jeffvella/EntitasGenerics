@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine.SocialPlatforms.Impl;
@@ -46,7 +49,7 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
         {
             totalReward += _game.Get<RewardComponent>(entity).value;
             //entity.isDestroyed = true;
-            _game.SetTag<DestroyedComponent>(entity);
+            _game.SetFlag<DestroyedComponent>(entity);
         }
         
         //_contexts.gameState.ReplaceScore(score + totalReward);

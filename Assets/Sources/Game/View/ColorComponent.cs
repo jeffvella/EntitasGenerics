@@ -2,7 +2,7 @@
 using Entitas.CodeGeneration.Attributes;
 using UnityEngine;
 
-[Game]
+//[Game]
 [Event(EventTarget.Any)]
 public sealed class ColorComponent : IComponent
 {

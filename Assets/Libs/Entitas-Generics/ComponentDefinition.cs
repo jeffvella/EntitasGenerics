@@ -28,7 +28,7 @@ namespace Entitas.Generics
 
         public bool IsEvent => ComponentHelper<TContext, TComponent>.IsEvent;
 
-        public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)Matcher<TContext, TEntity, TComponent>.AllOf;
+        public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)GenericMatcher<TContext, TEntity, TComponent>.AllOf;
 
         public int ComponentIndex => ComponentHelper<TContext, TComponent>.ComponentIndex;
 

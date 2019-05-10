@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
@@ -37,7 +39,7 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
         //if (!_contexts.input.isPointerHolding)
         //    return;
 
-        if (!_input.IsTagged<PointerHoldingComponent>())
+        if (!_input.IsFlagged<PointerHoldingComponent>())
             return;
 
         //var targetSelectionId = _contexts.gameState.maxSelectedElement.value - 1;
@@ -86,7 +88,7 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
     {
         var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
         var lastSelectedEntity = _game.FindEntity<IdComponent, int>(lastSelectedId);
-        _game.SetTag<SelectedComponent>(lastSelectedEntity, false);
+        _game.SetFlag<SelectedComponent>(lastSelectedEntity, false);
         _game.Remove<SelectionIdComponent>(lastSelectedEntity);
     }
 }

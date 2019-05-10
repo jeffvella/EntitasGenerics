@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
@@ -38,7 +40,7 @@ public sealed class FillAllElementsSystem : GenericReactiveSystem<GameEntity>, I
 
         foreach (var entity in entities)
         {
-            _game.SetTag<DestroyedComponent>(entity, true);
+            _game.SetFlag<DestroyedComponent>(entity, true);
             //entity.isDestroyed = true;
         }
     }

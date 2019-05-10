@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-[Game]
-public sealed class RestartHappenedComponent : ITagComponent
+//[Game]
+public sealed class RestartHappenedComponent : IFlagComponent
 {
 }

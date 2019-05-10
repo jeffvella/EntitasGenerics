@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using Assets.Sources.GameState;
+using Entitas.Generics;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class UIRewardView : MonoBehaviour, IScoreListener
+public class UIRewardView : MonoBehaviour //, IScoreListener
 {
     [SerializeField] private Text _label;
     [SerializeField] private Animator _animator;
@@ -13,8 +15,15 @@ public class UIRewardView : MonoBehaviour, IScoreListener
 
     private void Start()
     {
-        Contexts.sharedInstance.gameState.CreateEntity().AddScoreListener(this);
+        GenericContexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreAddedEvent);
+
+        //Contexts.sharedInstance.gameState.CreateEntity().AddScoreListener(this);
         _triggerHash = Animator.StringToHash(_triggerName);
+    }
+
+    private void OnScoreAddedEvent((GameStateEntity Entity, ScoreComponent Component) obj)
+    {
+        OnScore(obj.Entity, obj.Component.value);
     }
 
     public void OnScore(GameStateEntity entity, int value)

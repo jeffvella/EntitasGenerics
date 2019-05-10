@@ -42,16 +42,15 @@ public interface IListenerComponent<T> : IListenerComponent
 }
 
 
-public class ComponentAddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
+public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>
 {
 
 }
 
-public class ComponentRemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>
+public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>
 {
 
 }
-
 
 //public interface IListenerComponent<in TEntity, T> : IListenerComponent where TEntity : IEntity
 //{

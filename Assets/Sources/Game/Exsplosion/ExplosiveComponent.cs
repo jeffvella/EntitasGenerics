@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-[Game]
-public sealed class ExplosiveComponent : ITagComponent
+//[Game]
+public sealed class ExplosiveComponent : IFlagComponent
 {
 }

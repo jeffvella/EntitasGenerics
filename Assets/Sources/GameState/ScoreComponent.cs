@@ -2,10 +2,10 @@
 using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[GameState]
+//[GameState]
 [Unique]
 [Event(EventTarget.Any)]
-public sealed class ScoreComponent : IComponent //ValueComponent<ScoreComponent, int>
+public sealed class ScoreComponent : IUniqueComponent //ValueComponent<ScoreComponent, int>
 {
     public int value;
 

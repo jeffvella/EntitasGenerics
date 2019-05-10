@@ -2,8 +2,8 @@
 using Entitas.CodeGeneration.Attributes;
 using Entitas.Generics;
 
-[Input]
+//[Input]
 [Unique]
-public sealed class PointerStartedHoldingComponent : ITagComponent
+public sealed class PointerStartedHoldingComponent : IUniqueComponent, IFlagComponent
 {
 }

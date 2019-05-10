@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -20,7 +22,7 @@ public sealed class ExsplosiveRewardEmitterSystem : GenericReactiveSystem<GameEn
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.IsTagged<MatchedComponent>(entity) && context.IsTagged<ExplosiveComponent>();
+        return context.IsFlagged<MatchedComponent>(entity) && context.IsFlagged<ExplosiveComponent>();
     }
 
 

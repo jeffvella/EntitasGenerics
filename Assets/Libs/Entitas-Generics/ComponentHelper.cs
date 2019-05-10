@@ -44,10 +44,10 @@ namespace Entitas.Generics
 
                 throw new ComponentNotInContextException($"Component index for '{ComponentType.Name}' wasn't found for context '{contextType}'. Make sure it was registered in the ContextDefinition");
             }
-            
-            IsUnique = AttributeHelper.HasAttribute<UniqueAttribute>(ComponentType);
-            IsEvent = AttributeHelper.HasAttribute<EventAttribute>(ComponentType);
+
             Default = new TComponent();
+            IsUnique = Default is IUniqueComponent || AttributeHelper.HasAttribute<UniqueAttribute>(ComponentType);
+            IsEvent = AttributeHelper.HasAttribute<EventAttribute>(ComponentType);
             IsInitialized = true;
         }
     }

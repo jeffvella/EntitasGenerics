@@ -3,6 +3,8 @@ using Entitas.Generics;
 
 public class GenericEntity : Entitas.Entity, IContextLinkedEntity<IEntity>
 {
+    private IContextLinkedEntity<IEntity> _contextLinkedEntityImplementation;
+
     public IGenericContext<IEntity> Context { get; }
 
     public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
@@ -10,10 +12,20 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity<IEntity>
         Context.Set(this, component);
     }
 
-    public void SetTag<TComponent>(bool toggle) where TComponent : ITagComponent, new()
+    public void SetFlag<TComponent>(bool toggle) where TComponent : IFlagComponent, new()
     {
-        Context.SetTag<TComponent>(toggle);
+        Context.SetFlag<TComponent>(this, toggle);
     }
+
+    //public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
+    //{
+    //    _contextLinkedEntityImplementation.Set(component);
+    //}
+
+    //public void SetTag<TComponent>(bool toggle) where TComponent : IFlagComponent, new()
+    //{
+    //    _contextLinkedEntityImplementation.SetTag<TComponent>(toggle);
+    //}
 }
 
 public readonly ref struct EntityAccessor<TEntity> where TEntity : class, IEntity
@@ -39,17 +51,19 @@ public readonly ref struct EntityAccessor<TEntity> where TEntity : class, IEntit
     }
 }
 
-public interface IContextLinkedEntity
-{
-    void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new();
-
-    void SetTag<TComponent>(bool toggle) where TComponent : ITagComponent, new();
-}
-
 public interface IContextLinkedEntity<T> : IContextLinkedEntity where T : class, IEntity
 {
     IGenericContext<T> Context { get; }
 }
+
+public interface IContextLinkedEntity
+{
+    void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new();
+
+    void SetFlag<TComponent>(bool toggle) where TComponent : IFlagComponent, new();
+}
+
+
 
 //public static class GenericEntityExtensions
 //{
@@ -62,7 +76,7 @@ public interface IContextLinkedEntity<T> : IContextLinkedEntity where T : class,
 //    }
 
 //    public static void SetTag<TComponent>(this TEntity entity, bool toggle)
-//        where TComponent : ITagComponent, new()
+//        where TComponent : IFlagComponent, new()
 //        where TEntity : class, IContextLinkedEntity<TEntity>, IEntity, new()
 //    {
 //        entity.Context.SetTag<TComponent>(toggle);

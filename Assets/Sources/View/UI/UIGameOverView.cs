@@ -1,4 +1,5 @@
-﻿using Entitas.Generics;
+﻿using Assets.Sources.GameState;
+using Entitas.Generics;
 using Events;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,17 +17,18 @@ public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemov
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverListener(this);
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverRemovedListener(this);
 
-        GenericContexts.Instance.GameState.RegisterAddedTagListener<GameOverComponent>(OnGameOverAdded);
-        GenericContexts.Instance.GameState.RegisterRemovedTagListener<GameOverComponent>(OnGameOverRemoved);
+        var state = GenericContexts.Instance.GameState;
+        state.RegisterAddedTagListener<GameOverComponent>(OnGameOverAdded);
+        state.RegisterRemovedTagListener<GameOverComponent>(OnGameOverRemoved);
 
         _boolHash = Animator.StringToHash(_boolName);
 
-        SetGameOver(Contexts.sharedInstance.gameState.gameOverEntity, Contexts.sharedInstance.gameState.isGameOver);
+        SetGameOver(state.IsFlagged<GameOverComponent>());
     }
 
     private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
     {
-        SetGameOver(obj.Entity, true);
+        SetGameOver(true);
     }
 
 
@@ -37,22 +39,21 @@ public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemov
 
     public void OnGameOverRemoved(GameStateEntity entity)
     {
-        SetGameOver(entity, false);
+        SetGameOver(false);
     }
 
-    private void SetGameOver(GameStateEntity entity, bool value)
+    private void SetGameOver(bool value)
     {
         _animator.SetBool(_boolHash, value);
     }
 
-    public void OnEvent(GameOverComponent gameOverComponent)
-    {
+    //public void OnEvent(GameOverComponent gameOverComponent)
+    //{
         
+    //}
 
-    }
-
-    public void OnEvent((GameStateEntity Entity, GameOverComponent Component) args)
-    {
+    //public void OnEvent((GameStateEntity Entity, GameOverComponent Component) args)
+    //{
         
-    }
+    //}
 }

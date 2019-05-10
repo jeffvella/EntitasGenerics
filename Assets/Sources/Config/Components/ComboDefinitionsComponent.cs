@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Config]
+//[Config]
 [Unique]
-public sealed class ComboDefinitionsComponent : IComponent
+public sealed class ComboDefinitionsComponent : IUniqueComponent
 {
     public ComboDefinitions value;
 }

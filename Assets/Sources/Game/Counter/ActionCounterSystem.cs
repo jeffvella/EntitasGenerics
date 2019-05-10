@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 

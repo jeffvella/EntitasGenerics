@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -35,7 +37,7 @@ public sealed class MarkMatchedSystem : GenericReactiveSystem<InputEntity>
         //if (_contexts.input.isPointerHolding)
         //    return;
 
-        if (_input.IsTagged<PointerHoldingComponent>())
+        if (_input.IsFlagged<PointerHoldingComponent>())
             return;
 
         var selectedEntities = _selectedGroup.GetEntities(_buffer);
@@ -45,7 +47,7 @@ public sealed class MarkMatchedSystem : GenericReactiveSystem<InputEntity>
         {
             foreach (var entity in selectedEntities)
             {               
-                _game.SetTag<MatchedComponent>(entity, true);
+                _game.SetFlag<MatchedComponent>(entity, true);
 
                 //entity.isMatched = true;
 

@@ -41,7 +41,7 @@ namespace Entitas.Generics
 
         public void AddDefaultComponents()
         {            
-            Add<TagHolderComponent>();
+            Add<UniqueFlagHolderComponent>();
         }
 
         private List<string> _componentNames { get; } = new List<string>();
@@ -90,10 +90,10 @@ namespace Entitas.Generics
                 //var listenerComponent = new ListenerHolderComponent<TEntity, T>(); 
 
                 EventListenerIndices.Add(_componentTypes.Count);                
-                AddComponentType(typeof(ComponentAddedListenersComponent<TEntity, T>));
+                AddComponentType(typeof(AddedListenersComponent<TEntity, T>));
 
                 EventListenerIndices.Add(_componentTypes.Count);
-                AddComponentType(typeof(ComponentRemovedListenersComponent<TEntity, T>));
+                AddComponentType(typeof(RemovedListenersComponent<TEntity, T>));
             }
 
             // Is it useful to be able to access these IComponentDefinitions later via the context?

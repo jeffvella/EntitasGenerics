@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Input]
+//[Input]
 [Unique]
-public sealed class DeltaTimeComponent : IComponent
+public sealed class DeltaTimeComponent : IUniqueComponent
 {
     public float value;
 }

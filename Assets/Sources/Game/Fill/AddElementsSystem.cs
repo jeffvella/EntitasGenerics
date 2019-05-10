@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 using GameContext = Assets.Sources.Game.GameContext;

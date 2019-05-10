@@ -14,6 +14,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using EventType = Entitas.CodeGeneration.Attributes.EventType;
 using System;
+using Assets.Sources.GameState;
 using Entitas.VisualDebugging.Unity.Editor;
 using UnityEditor;
 using UnityEditorInternal;
@@ -22,7 +23,7 @@ using SystemInfo = Entitas.VisualDebugging.Unity.SystemInfo;
 
 namespace Entitas.Generics
 {
-    public interface IGenericContext<TEntity> : ISpecificEntityContext<TEntity> where TEntity : class, IEntity
+    public interface IGenericContext<TEntity> : IImpliedEntityContext<TEntity> where TEntity : class, IEntity
     {
         IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new();
 
@@ -40,20 +41,21 @@ namespace Entitas.Generics
 
         TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : IComponent, new();
 
-        void SetTag<TComponent>(TEntity entity, bool toggle = true) where TComponent : ITagComponent, new();
 
-        bool IsTagged<TComponent>(TEntity entity) where TComponent : ITagComponent, new();
+        // Flags
+
+        void SetFlag<TComponent>(TEntity entity, bool toggle = true) where TComponent : IFlagComponent, new();
+        bool IsFlagged<TComponent>(TEntity entity) where TComponent : IFlagComponent, new();
 
         bool HasComponent<TComponent>(TEntity entity) where TComponent : IComponent, new();
-
         void Set<TComponent>(TEntity entity, TComponent component = default) where TComponent : IComponent, new();
 
         void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
         void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
         void RegisterAddedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity, TComponent> listener) where TComponent : IComponent;
 
-        void RegisterAddedTagListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : ITagComponent, new();
-        void RegisterRemovedTagListener<TComponent>(Action<TEntity> action) where TComponent : ITagComponent, new();
+        void RegisterAddedTagListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IFlagComponent, new();
+        void RegisterRemovedTagListener<TComponent>(Action<TEntity> action) where TComponent : IFlagComponent, new();
 
 
         void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IComponent, new();
@@ -65,22 +67,22 @@ namespace Entitas.Generics
         EntityAccessor<TEntity> GetAccessor(TEntity entity);
 
 
-        (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IComponent, new();
+        (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IUniqueComponent, new();
 
         bool TryGetComponent<T>(TEntity entity, out T component) where T : IComponent, new();
     }
 
-    public interface ISpecificEntityContext<TEntity> : IContext<TEntity> where TEntity : class, IEntity
+    public interface IImpliedEntityContext<TEntity> : IContext<TEntity> where TEntity : class, IEntity
     {
-        TComponent GetUnique<TComponent>() where TComponent : IComponent, new();
+        TComponent GetUnique<TComponent>() where TComponent : IUniqueComponent, new();
 
         ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : IComponent, new();
 
-        void SetTag<TComponent>(bool toggle = true) where TComponent : ITagComponent, new();
+        bool IsFlagged<TComponent>() where TComponent : IFlagComponent, new();
 
-        bool IsTagged<TComponent>() where TComponent : ITagComponent, new();
+        void SetUniqueFlag<TComponent>(bool toggle = true) where TComponent : IFlagComponent, IUniqueComponent, new();
 
-        void SetUnique<TComponent>(TComponent component) where TComponent : IComponent, new();
+        void SetUnique<TComponent>(TComponent component) where TComponent : IUniqueComponent, new();
 
         void RegisterAddedComponentListener<TComponent>(IEventObserver<TComponent> listener) where TComponent : IComponent, new();
 
@@ -209,9 +211,9 @@ namespace Entitas.Generics
             {
                 foreach (var entity in _addedCollector.collectedEntities)
                 {
-                    if (_context.HasComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity))
+                    if (_context.HasComponent<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
-                        var addedListenerComponent = _context.Get<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+                        var addedListenerComponent = _context.Get<AddedListenersComponent<TEntity, TComponent>>(entity);
                         if (addedListenerComponent.ListenerCount > 0)
                         {
                             if (_context.HasComponent<TComponent>(entity))
@@ -229,9 +231,9 @@ namespace Entitas.Generics
             {
                 foreach (var entity in _removedCollector.collectedEntities)
                 {
-                    if (_context.HasComponent<ComponentRemovedListenersComponent<TEntity, TComponent>>(entity))
+                    if (_context.HasComponent<RemovedListenersComponent<TEntity, TComponent>>(entity))
                     {
-                        var removedListenersComponent = _context.Get<ComponentRemovedListenersComponent<TEntity, TComponent>>(entity);
+                        var removedListenersComponent = _context.Get<RemovedListenersComponent<TEntity, TComponent>>(entity);
                         if (removedListenersComponent.ListenerCount > 0)
                         {
                             removedListenersComponent.Raise(entity);
@@ -358,6 +360,13 @@ namespace Entitas.Generics
             {
                 OnEntityWillBeDestroyed += ClearEventListenersOnDestroyed;
             }
+
+            OnEntityCreated += LinkContextToEntity;
+        }
+
+        private void LinkContextToEntity(IContext context, IEntity entity)
+        {
+            
         }
 
         private void ClearEventListenersOnDestroyed(IContext context, IEntity entity)
@@ -386,7 +395,7 @@ namespace Entitas.Generics
         public void AddEventListener<TComponent>(IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent, new()
         {
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(listener);
         }
 
@@ -396,20 +405,20 @@ namespace Entitas.Generics
             RegisterAddedComponentListener(entity, action);
         }
 
-        public void RegisterAddedTagListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : ITagComponent, new()
+        public void RegisterAddedTagListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IFlagComponent, new()
         {
-            RegisterAddedComponentListener(UniqueTagEntity, action);
+            RegisterAddedComponentListener(UniqueFlagEntity, action);
         }
 
         public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
         {
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(action);
         }
 
-        public void RegisterRemovedTagListener<TComponent>(Action<TEntity> action) where TComponent : ITagComponent, new()
+        public void RegisterRemovedTagListener<TComponent>(Action<TEntity> action) where TComponent : IFlagComponent, new()
         {
-            RegisterRemovedComponentListener<TComponent>(UniqueTagEntity, action);
+            RegisterRemovedComponentListener<TComponent>(UniqueFlagEntity, action);
         }
 
         public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IComponent, new()
@@ -420,13 +429,13 @@ namespace Entitas.Generics
 
         public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IComponent, new()
         {
-            var component = GetOrCreateComponent<ComponentRemovedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(action);
         }
 
         public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity> listener) where TComponent : IComponent
         {
-            var component = GetOrCreateComponent<ComponentRemovedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(listener.OnEvent);
         }
 
@@ -435,7 +444,7 @@ namespace Entitas.Generics
             Debug.Log($"RegisterAddedComponentListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent(t.Component));
         }
 
@@ -443,7 +452,7 @@ namespace Entitas.Generics
         {
             Debug.Log($"RegisterAddedComponentListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((t.Entity, t.Component)));
         }
 
@@ -457,7 +466,7 @@ namespace Entitas.Generics
             Debug.Log($"RegisterAddedComponentListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((t.Entity, t.Component)));
         }
 
@@ -474,7 +483,7 @@ namespace Entitas.Generics
             Debug.Log($"RegisterAddedComponentListener called for {typeof(TComponent).Name} / {typeof(TEntity).Name}");
 
             var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<ComponentAddedListenersComponent<TEntity, TComponent>>(entity);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(t => listener.OnEvent((this, t.Entity, t.Component)));
         }
 
@@ -538,12 +547,12 @@ namespace Entitas.Generics
 
         public IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new()
         {
-            return Matcher<TContext, TEntity, T>.AllOf;
+            return GenericMatcher<TContext, TEntity, T>.AllOf;
         }
 
         public ICollector<TEntity> GetCollector<T>() where T : IComponent, new()
         {
-            return this.CreateCollector(Matcher<TContext, TEntity, T>.AllOf);
+            return this.CreateCollector(GenericMatcher<TContext, TEntity, T>.AllOf);
         }
 
         private ICollector<TEntity> GetCollector<T>(TriggerOnEvent<TEntity> triggerOnEvent) where T : IComponent, new()
@@ -553,7 +562,7 @@ namespace Entitas.Generics
 
         public IGroup<TEntity> GetGroup<T>() where T : IComponent, new()
         {
-            return GetGroup(Matcher<TContext, TEntity, T>.AllOf);
+            return GetGroup(GenericMatcher<TContext, TEntity, T>.AllOf);
         }
 
         public TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : IComponent, new()
@@ -616,7 +625,7 @@ namespace Entitas.Generics
             return (TComponent)entity.GetComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
         }
 
-        public TComponent GetUnique<TComponent>() where TComponent : IComponent, new()
+        public TComponent GetUnique<TComponent>() where TComponent : IUniqueComponent, new()
         {
             if (TryGetEntityWith<TComponent>(out var entity))
             {
@@ -632,7 +641,7 @@ namespace Entitas.Generics
             return default;
         }
 
-        public (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IComponent, new()
+        public (TEntity Entity, TComponent Component) GetUniqueEntityAndComponent<TComponent>() where TComponent : IUniqueComponent, new()
         {
             if (TryGetEntityWith<TComponent>(out var entity))
             {
@@ -753,7 +762,14 @@ namespace Entitas.Generics
         //    throw new NotImplementedException();
         //}
 
-        public void SetUnique<TComponent>(TComponent component) where TComponent : IComponent, new()
+
+
+        #region Unique
+
+        public TEntity UniqueEntity => _uniqueEntity ?? (_uniqueEntity = CreateEntityWith(new UniqueHolderComponent()));
+        private TEntity _uniqueEntity;
+
+        public void SetUnique<TComponent>(TComponent component) where TComponent : IUniqueComponent, new()
         {
             if (TryGetEntityWith<TComponent>(out var entity))
             {
@@ -766,13 +782,12 @@ namespace Entitas.Generics
             }
         }
 
-        #region Unique
-
-        public TEntity UniqueEntity => _uniqueEntity ?? (_uniqueEntity = CreateEntityWith(new UniqueHolderComponent()));
-        private TEntity _uniqueEntity;
+        public void SetUniqueFlag<TComponent>(bool toggle = true) where TComponent : IFlagComponent, IUniqueComponent, new()
+        {
+            SetFlag<TComponent>(UniqueFlagEntity, toggle);
+        }
 
         #endregion
-
 
         #region Tags
 
@@ -787,14 +802,14 @@ namespace Entitas.Generics
         // versus together in the same inspector?
 
         // Is there value is having empty components intended to be used as tags explicitly
-        // designated as such with a [Tag] or ITagComponent interface? Does it matter if the
+        // designated as such with a [Tag] or IFlagComponent interface? Does it matter if the
         // user marks non-empty components as tags? is there value to be being able to have
         // tag-style boolean assignment for any component?
 
-        public TEntity UniqueTagEntity => _tagEntity ?? (_tagEntity = CreateEntityWith(new TagHolderComponent()));
+        public TEntity UniqueFlagEntity => _tagEntity ?? (_tagEntity = CreateEntityWith(new UniqueFlagHolderComponent()));
         private TEntity _tagEntity;
 
-        public void SetTag<TComponent>(TEntity entity, bool toggle = true) where TComponent : ITagComponent, new()
+        public void SetFlag<TComponent>(TEntity entity, bool toggle = true) where TComponent : IFlagComponent, new()
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
             var hasComponent = entity.HasComponent(index);
@@ -818,15 +833,12 @@ namespace Entitas.Generics
             }
         }
 
-        public void SetTag<TComponent>(bool toggle = true) where TComponent : ITagComponent, new()
-        {
-            SetTag<TComponent>(UniqueTagEntity, toggle);
-        }
 
-        public bool IsTagged<TComponent>() where TComponent : ITagComponent, new() 
-            => UniqueTagEntity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
 
-        public bool IsTagged<TComponent>(TEntity entity) where TComponent : ITagComponent, new()
+        public bool IsFlagged<TComponent>() where TComponent : IFlagComponent, new() 
+            => UniqueFlagEntity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
+
+        public bool IsFlagged<TComponent>(TEntity entity) where TComponent : IFlagComponent, new()
             => entity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
 
         #endregion

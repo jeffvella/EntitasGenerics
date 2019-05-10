@@ -1,10 +1,10 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[GameState]
+//[GameState]
 [Unique]
 [Event(EventTarget.Any, EventType.Added)]
 [Event(EventTarget.Any, EventType.Removed)]
-public sealed class GameOverComponent : ITagComponent
+public sealed class GameOverComponent : IUniqueComponent, IFlagComponent
 {
 }

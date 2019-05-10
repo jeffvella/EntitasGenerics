@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
@@ -39,7 +42,7 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
         //if (!_contexts.input.isPointerHolding)
         //    return;
 
-        if (!_input.IsTagged<PointerHoldingComponent>())
+        if (!_input.IsFlagged<PointerHoldingComponent>())
             return;
 
         //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
@@ -55,10 +58,10 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
             if(!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var entityUnderPointer))
                 return;
 
-            if (_game.IsTagged<BlockComponent>(entityUnderPointer))
+            if (_game.IsFlagged<BlockComponent>(entityUnderPointer))
                 return;
 
-            if (_game.IsTagged<SelectedComponent>(entityUnderPointer))
+            if (_game.IsFlagged<SelectedComponent>(entityUnderPointer))
                 return;
 
             //var entityUnderPointer = _contexts.game.GetEntityWithPosition(position);
@@ -94,20 +97,20 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 
     private void StartNewSelection(GameEntity entityUnderPointer, int entityUnderPointerId)
     {
-        _game.SetTag<SelectedComponent>(entityUnderPointer, true);
+        _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
         _game.Set(entityUnderPointer, new SelectionIdComponent { value = 0 });
 
         _gameState.SetUnique(new LastSelectedComponent { value = entityUnderPointerId });
         _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
 
-        Debug.Log($"Started Selection with Entity Id: {entityUnderPointerId}");
+        //Debug.Log($"Started Selection with Entity Id: {entityUnderPointerId}");
     }
 
     private void AddToExistingSelection(int lastSelectedId, GameEntity entityUnderPointer, int entityUnderPointerId)
     {
         var lastSelected = _game.FindEntity<IdComponent, int>(lastSelectedId);
-        var isLastElementType = _game.IsTagged<ElementComponent>(lastSelected);
-        var isCurrentElementType = _game.IsTagged<ElementComponent>(entityUnderPointer);
+        var isLastElementType = _game.IsFlagged<ElementComponent>(lastSelected);
+        var isCurrentElementType = _game.IsFlagged<ElementComponent>(entityUnderPointer);
 
         //if (lastSelected.hasElementType && entityUnderPointer.hasElementType)
         if (isLastElementType && isCurrentElementType)
@@ -117,7 +120,7 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
 
             if (lastElementType == currentElementType)
             {
-                Debug.Log($"Added Selection of same type Type={lastElementType} Id={entityUnderPointerId}");
+                //Debug.Log($"Added Selection of same type Type={lastElementType} Id={entityUnderPointerId}");
 
 
                 var lastPosition = _game.Get<PositionComponent>(lastSelected).value;
@@ -131,11 +134,11 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
                     selectionId++;
 
                     _game.Set(entityUnderPointer, new SelectionIdComponent {value = selectionId});
-                    _game.SetTag<SelectedComponent>(entityUnderPointer, true);
+                    _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
 
                     _gameState.SetUnique(new LastSelectedComponent {value = entityUnderPointerId});
 
-                    Debug.Log($"MaxSelectedElement set to {selectionId}");
+                    //Debug.Log($"MaxSelectedElement set to {selectionId}");
                     _gameState.SetUnique(new MaxSelectedElementComponent {value = selectionId});
 
                     //entityUnderPointer.isSelected = true;

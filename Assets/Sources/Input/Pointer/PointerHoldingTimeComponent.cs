@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Input]
+//[Input]
 [Unique]
-public sealed class PointerHoldingTimeComponent : IComponent
+public sealed class PointerHoldingTimeComponent : IUniqueComponent
 {
     public float value;
 }

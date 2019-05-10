@@ -1,9 +1,10 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
+using Entitas.Generics;
 
-[Config]
+//[Config]
 [Unique]
-public sealed class TypeCountComponent : IComponent
+public sealed class TypeCountComponent : IUniqueComponent
 {
     public int Value;
 }

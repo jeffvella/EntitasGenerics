@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -55,7 +56,7 @@ public sealed class ExplosionSystem : GenericReactiveSystem<GameEntity>
                         if (neighbourPosition.Equals(component.value))
                         {
                             found = true;
-                            _game.SetTag<MatchedComponent>(entity, true);        
+                            _game.SetFlag<MatchedComponent>(entity, true);        
                             break;
                         }
                     }

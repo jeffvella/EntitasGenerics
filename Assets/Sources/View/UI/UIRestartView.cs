@@ -1,8 +1,9 @@
-﻿using Entitas.Generics;
+﻿using Assets.Sources.GameState;
+using Entitas.Generics;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedListener
+public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemovedListener
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private string _boolName;
@@ -11,24 +12,39 @@ public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedL
 
     private void Start()
     {
-        Contexts.sharedInstance.gameState.CreateEntity().AddGameOverListener(this);
-        Contexts.sharedInstance.gameState.CreateEntity().AddGameOverRemovedListener(this);
+        var listenerEntity = GenericContexts.Instance.GameState.CreateEntity();
+
+        var state = GenericContexts.Instance.GameState;
+        state.RegisterAddedTagListener<GameOverComponent>(OnGameOverAdded);
+        state.RegisterRemovedTagListener<GameOverComponent>(OnGameOverRemoved);
+
+        //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverListener(this);
+        //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverRemovedListener(this);
+
         _boolHash = Animator.StringToHash(_boolName);
 
-        SetGameOver(Contexts.sharedInstance.gameState.gameOverEntity, Contexts.sharedInstance.gameState.isGameOver);
+        //SetGameOver(Contexts.sharedInstance.gameState.gameOverEntity, Contexts.sharedInstance.gameState.isGameOver);
+
+        SetGameOver(state.IsFlagged<GameOverComponent>());
     }
 
-    public void OnGameOver(GameStateEntity entity)
+    private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
     {
-        SetGameOver(entity, true);
+        SetGameOver(true);
     }
+
+
+    //public void OnGameOver(GameStateEntity entity)
+    //{
+    //    SetGameOver(entity, true);
+    //}
 
     public void OnGameOverRemoved(GameStateEntity entity)
     {
-        SetGameOver(entity, false);
+        SetGameOver(false);
     }
 
-    private void SetGameOver(GameStateEntity entity, bool value)
+    private void SetGameOver(bool value)
     {
         _animator.SetBool(_boolHash, value);
     }
@@ -37,8 +53,8 @@ public class UIRestartView : MonoBehaviour, IGameOverListener, IGameOverRemovedL
     {
         var context = GenericContexts.Instance.Input;
         var e = GenericContexts.Instance.Input.CreateEntity();
-        context.SetTag<RestartComponent>(e, true);
-        context.SetTag<DestroyedComponent>(e, true);
+        context.SetFlag<RestartComponent>(e, true);
+        context.SetFlag<DestroyedComponent>(e, true);
 
         Debug.Log($"UIRestartView OnPressed");
         //var e = Contexts.sharedInstance.input.CreateEntity();

@@ -10,16 +10,6 @@ using Object = UnityEngine.Object;
 
 namespace Events
 {
-    public class TestEventComponent : GameEventBase<(string, string)>
-    {
-
-    }
-
-    public static class Events
-    {
-        public static TestEventComponent TestEvent { get; } = new TestEventComponent();
-    }
-
 
     public interface IEventObserver { }
 
@@ -38,6 +28,24 @@ namespace Events
     {
         void OnEvent((TEntity Entity, TComponent Component) args);
     }
+
+    public interface IAddedEventObserver<TEntity, TComponent>
+    {
+        void OnAdded(TEntity entity, TComponent component);
+    }
+
+    public interface IAddedEventObserver<TEntity>
+    {
+        void OnAdded(TEntity entity);
+    }
+
+    public interface IRemovedEventObserver<TEntity>
+    {
+        void OnAdded(TEntity entity);
+    }
+
+
+
 
     public interface IEventObserver<in TArg>
     {
@@ -63,6 +71,36 @@ namespace Events
         public void OnEvent((T Entity, TArg Component) args)
         {
             _action.Invoke(args.Entity, args.Component);
+        }
+    }
+
+    public class AddedActionEventDelegator<TEntity, TComponent> : IAddedEventObserver<TEntity, TComponent>, IEventObserver
+    {
+        public AddedActionEventDelegator(Action<TEntity, TComponent> action)
+        {
+            _action = action;
+        }
+
+        private readonly Action<TEntity, TComponent> _action;
+
+        public void OnAdded(TEntity entity, TComponent component)
+        {
+            _action.Invoke(entity, component);
+        }
+    }
+
+    public class AddedActionEventDelegator<TEntity> : IAddedEventObserver<TEntity>, IEventObserver
+    {
+        public AddedActionEventDelegator(Action<TEntity> action)
+        {
+            _action = action;
+        }
+
+        private readonly Action<TEntity> _action;
+
+        public void OnAdded(TEntity entity)
+        {
+            _action.Invoke(entity);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 
@@ -18,7 +19,7 @@ public sealed class RemoveMatchedSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return !context.IsTagged<DestroyedComponent>(entity);
+        return !context.IsFlagged<DestroyedComponent>(entity);
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -35,7 +36,7 @@ public sealed class RemoveMatchedSystem : GenericReactiveSystem<GameEntity>
     {
         foreach (var entity in entities)
         {
-            _game.SetTag<DestroyedComponent>(entity);
+            _game.SetFlag<DestroyedComponent>(entity);
 
             //entity.SetTag<DestroyedComponent>(true);
             //entity.isDestroyed = true;           

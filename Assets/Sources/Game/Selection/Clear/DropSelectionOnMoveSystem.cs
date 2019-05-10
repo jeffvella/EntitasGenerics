@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
@@ -8,7 +10,6 @@ using GameStateContext = Assets.Sources.GameState.GameStateContext;
 
 public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity>
 {
-    private readonly Contexts _contexts;
     private readonly IGroup<GameEntity> _selectedGroup;
     private readonly List<GameEntity> _buffer;
     private readonly IGenericContext<GameEntity> _game;
@@ -48,7 +49,7 @@ public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity
         {
             Debug.Log($"Drop Selection {_game.Get<SelectionIdComponent>(entity).value}");
 
-            _game.SetTag<SelectedComponent>(entity, false);
+            _game.SetFlag<SelectedComponent>(entity, false);
             _game.Remove<SelectionIdComponent>(entity);
             
             //entity.isSelected = false;

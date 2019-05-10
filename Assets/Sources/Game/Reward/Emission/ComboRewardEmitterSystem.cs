@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine;
@@ -43,7 +45,8 @@ public sealed class ComboRewardEmitterSystem : GenericReactiveSystem<GameEntity>
 
         foreach (var entity in entities)
         {
-            var definition = definitions.Definitions[entity.combo.value];
+            var combo = _game.Get<ComboComponent>(entity).value;
+            var definition = definitions.Definitions[combo];
             
             //var e = _contexts.game.CreateEntity();
             //e.AddReward(defenition.Reward);

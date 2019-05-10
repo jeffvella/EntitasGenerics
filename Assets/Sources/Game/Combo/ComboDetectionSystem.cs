@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
 using UnityEngine.UIElements;
@@ -25,7 +27,7 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.IsTagged<MatchedComponent>() && context.HasComponent<PositionComponent>(entity);
+        return context.IsFlagged<MatchedComponent>() && context.HasComponent<PositionComponent>(entity);
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
@@ -74,7 +76,8 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
                         {
                             foreach (var entity in _currentBuffer)
                             {
-                                entity.isInCombo = true;
+                                _game.SetFlag<InComboComponent>(entity, true);
+                                //entity.isInCombo = true;
 
                                 //var index = entity.position.value.ToIndex(size);
                                 var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
@@ -137,6 +140,6 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
         //e.AddCombo(id);
         //e.isDestroyed = true;
         _game.Set(e, new ComboComponent { value =  id });
-        _game.SetTag<DestroyedComponent>(e);
+        _game.SetFlag<DestroyedComponent>(e);
     }
 }

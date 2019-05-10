@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Config;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 
@@ -40,7 +42,7 @@ public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
 
         if (actionCount >= maxActions)
         {
-            _gameState.SetTag<GameOverComponent>();
+            _gameState.SetUniqueFlag<GameOverComponent>();
         }
 
         //if (_contexts.gameState.actionCount.value >= maxActions)

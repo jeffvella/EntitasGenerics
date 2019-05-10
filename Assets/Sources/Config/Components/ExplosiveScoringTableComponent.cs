@@ -2,9 +2,9 @@
 using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Config]
+//[Config]
 [Unique]
-public sealed class ExplosiveScoringTableComponent : IComponent
+public sealed class ExplosiveScoringTableComponent : IUniqueComponent
 {
     public List<int> value;
 }

@@ -1,4 +1,6 @@
-﻿using Entitas;
+﻿using Assets.Sources.Config;
+using Assets.Sources.Game;
+using Entitas;
 using Entitas.Generics;
 using ConfigContext = Assets.Sources.Config.ConfigContext;
 using GameContext = Assets.Sources.Game.GameContext;
@@ -40,7 +42,7 @@ public sealed class MoveSystem : IExecuteSystem
                 //if (!element.isMovable)
                 //    continue;
         
-                if (!_game.IsTagged<MovableComponent>(element))
+                if (!_game.IsFlagged<MovableComponent>(element))
                     continue;
 
                 var targetPosition = new GridPosition(x, y - 1);
@@ -63,8 +65,8 @@ public sealed class MoveSystem : IExecuteSystem
         if (moveCount > 0)
         {
             var e = _game.CreateEntity();
-            _game.SetTag<FieldMovedComponent>(e);
-            _game.SetTag<DestroyedComponent>(e);
+            _game.SetFlag<FieldMovedComponent>(e);
+            _game.SetFlag<DestroyedComponent>(e);
 
             //e.isFieldMoved = true;
             //e.isDestroyed = true;

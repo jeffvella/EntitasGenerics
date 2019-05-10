@@ -1,9 +1,9 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-[Game]
-[Input]
+//[Game]
+//[Input]
 [Event(EventTarget.Any)]
-public sealed class DestroyedComponent : ITagComponent
+public sealed class DestroyedComponent : IFlagComponent
 {
 }

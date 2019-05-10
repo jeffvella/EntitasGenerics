@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Sources.Game;
+using Assets.Sources.GameState;
 using Entitas;
 using Entitas.Generics;
 
@@ -40,12 +42,12 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
         //if (_contexts.input.isPointerHolding)
         //    return;
 
-        if (_input.IsTagged<PointerHoldingComponent>())
+        if (_input.IsFlagged<PointerHoldingComponent>())
             return;
 
         foreach (var entity in _selectedGroup.GetEntities(_buffer))
         {
-            _game.SetTag<SelectedComponent>(entity, false);
+            _game.SetFlag<SelectedComponent>(entity, false);
             _game.Remove<SelectionIdComponent>(entity);
 
             //entity.isSelected = false;

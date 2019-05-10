@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-[Game]
-public sealed class InComboComponent : IComponent
+//[Game]
+public sealed class InComboComponent : IFlagComponent
 {
 }

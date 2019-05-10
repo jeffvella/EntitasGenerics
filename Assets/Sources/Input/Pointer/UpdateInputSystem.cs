@@ -14,11 +14,11 @@ public sealed class UpdateInputSystem : IExecuteSystem
 
     public void Execute()
     {
-        if (_contexts.GameState.IsTagged<GameOverComponent>())
+        if (_contexts.GameState.IsFlagged<GameOverComponent>())
         {
-            _contexts.Input.SetTag<PointerHoldingComponent>(false);
-            _contexts.Input.SetTag<PointerStartedHoldingComponent>(false);
-            _contexts.Input.SetTag<PointerReleasedComponent>(true);
+            _contexts.Input.SetUniqueFlag<PointerHoldingComponent>(false);
+            _contexts.Input.SetUniqueFlag<PointerStartedHoldingComponent>(false);
+            _contexts.Input.SetUniqueFlag<PointerReleasedComponent>(true);
 
             //_contexts.input.isPointerHolding = false;
             //_contexts.input.isPointerStartedHolding = false;
@@ -30,13 +30,13 @@ public sealed class UpdateInputSystem : IExecuteSystem
             _inputService.Update(deltaTime);
 
             var isHolding = _inputService.IsHolding();
-            _contexts.Input.SetTag<PointerHoldingComponent>(isHolding);
+            _contexts.Input.SetUniqueFlag<PointerHoldingComponent>(isHolding);
 
             var isStartedHolding = _inputService.IsStartedHolding();
-            _contexts.Input.SetTag<PointerStartedHoldingComponent>(isStartedHolding);
+            _contexts.Input.SetUniqueFlag<PointerStartedHoldingComponent>(isStartedHolding);
 
             var isReleased = _inputService.IsReleased();
-            _contexts.Input.SetTag<PointerReleasedComponent>(isReleased);
+            _contexts.Input.SetUniqueFlag<PointerReleasedComponent>(isReleased);
 
             _contexts.Input.SetUnique(new PointerHoldingPositionComponent
             {
