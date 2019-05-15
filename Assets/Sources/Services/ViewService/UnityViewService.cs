@@ -8,11 +8,11 @@ public sealed class UnityViewService : Service, IViewService
 {
     private Transform _root;
 
-    public UnityViewService(GenericContexts contexts) : base(contexts)
+    public UnityViewService(Contexts contexts) : base(contexts)
     {
     }
 
-    public void LoadAsset(GenericContexts contexts, IEntity entity, string asset)
+    public void LoadAsset(Contexts contexts, IEntity entity, string asset)
     {
         if (_root == null)
         {

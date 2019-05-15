@@ -9,7 +9,7 @@ public sealed class ExsplosiveRewardEmitterSystem : GenericReactiveSystem<GameEn
     private readonly IGenericContext<ConfigEntity> _config;
     private readonly IGenericContext<GameEntity> _game;
 
-    public ExsplosiveRewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public ExsplosiveRewardEmitterSystem(Contexts contexts) : base(contexts.Game, Trigger, Filter)
     {
         _game = contexts.Game;
         _config = contexts.Config;

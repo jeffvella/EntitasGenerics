@@ -15,7 +15,7 @@ public class UIRewardView : MonoBehaviour //, IScoreListener
 
     private void Start()
     {
-        GenericContexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreAddedEvent);
+        Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreAddedEvent);
 
         //Contexts.sharedInstance.gameState.CreateEntity().AddScoreListener(this);
         _triggerHash = Animator.StringToHash(_triggerName);

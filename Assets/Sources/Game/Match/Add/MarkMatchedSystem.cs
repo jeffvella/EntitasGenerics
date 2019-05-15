@@ -12,7 +12,7 @@ public sealed class MarkMatchedSystem : GenericReactiveSystem<InputEntity>
     private IGenericContext<ConfigEntity> _config;
     private IGenericContext<InputEntity> _input;
 
-    public MarkMatchedSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
+    public MarkMatchedSystem(Contexts contexts) : base(contexts.Input, Trigger)
     {
         //_selectedGroup = _contexts.game.GetGroup(GameMatcher.Selected);
         _selectedGroup = contexts.Game.GetGroup<SelectedComponent>();

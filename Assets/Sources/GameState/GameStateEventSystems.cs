@@ -10,12 +10,12 @@ namespace Assets.Sources.GameState
 {
     public sealed class GameStateEventSystems : Feature
     {
-        public GameStateEventSystems(GenericContexts contexts)
+        public GameStateEventSystems(Contexts contexts)
         {
-            Add(new GenericEventSystem<GameStateEntity, ScoreComponent>(contexts.GameState));
-            Add(new GenericEventSystem<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Added));
-            Add(new GenericEventSystem<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Removed));
-            Add(new GenericEventSystem<GameStateEntity, ActionCountComponent>(contexts.GameState));
+            Add(new EventSystem<GameStateEntity, ScoreComponent>(contexts.GameState, GroupEvent.Added));
+            Add(new EventSystem<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Added));
+            Add(new EventSystem<GameStateEntity, GameOverComponent>(contexts.GameState, GroupEvent.Removed));
+            Add(new EventSystem<GameStateEntity, ActionCountComponent>(contexts.GameState, GroupEvent.Added));
         }
     }
 

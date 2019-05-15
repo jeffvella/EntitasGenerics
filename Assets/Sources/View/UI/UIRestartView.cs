@@ -12,11 +12,11 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
 
     private void Start()
     {
-        var listenerEntity = GenericContexts.Instance.GameState.CreateEntity();
+        //var listenerEntity = Contexts.Instance.GameState.CreateEntity();
 
-        var state = GenericContexts.Instance.GameState;
-        state.RegisterAddedTagListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedTagListener<GameOverComponent>(OnGameOverRemoved);
+        var state = Contexts.Instance.GameState;
+        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
+        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
 
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverListener(this);
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverRemovedListener(this);
@@ -51,12 +51,11 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
 
     public void OnPressed()
     {
-        var context = GenericContexts.Instance.Input;
-        var e = GenericContexts.Instance.Input.CreateEntity();
-        context.SetFlag<RestartComponent>(e, true);
-        context.SetFlag<DestroyedComponent>(e, true);
+        var context = Contexts.Instance.Input;
+        var e = Contexts.Instance.Input.CreateEntity();    
+        e.SetFlag<RestartComponent>();
+        e.SetFlag<DestroyedComponent>();
 
-        Debug.Log($"UIRestartView OnPressed");
         //var e = Contexts.sharedInstance.input.CreateEntity();
         //e.isRestart = true;
         //e.isDestroyed = true;

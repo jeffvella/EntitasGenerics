@@ -12,7 +12,7 @@ public sealed class FillAllElementsSystem : GenericReactiveSystem<GameEntity>, I
     private readonly IGenericContext<ConfigEntity> _config;
     private readonly IGenericContext<GameEntity> _game;
 
-    public FillAllElementsSystem(GenericContexts contexts, Services services) : base(contexts.Game, Trigger)
+    public FillAllElementsSystem(Contexts contexts, Services services) : base(contexts.Game, Trigger)
     {
         _game = contexts.Game;
         _config = contexts.Config;

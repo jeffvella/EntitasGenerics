@@ -2,7 +2,7 @@
 
 public class GameSystems : Feature
 {
-    public GameSystems(GenericContexts contexts, Services services)
+    public GameSystems(Contexts contexts, Services services)
     {
         Add(new FillAllElementsSystem(contexts,  services));
 

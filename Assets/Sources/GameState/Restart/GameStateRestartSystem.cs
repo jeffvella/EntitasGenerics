@@ -5,9 +5,9 @@ using Entitas.Generics;
 
 public sealed class GameStateRestartSystem : GenericReactiveSystem<InputEntity>
 {
-    private readonly GenericContexts _contexts;
+    private readonly Contexts _contexts;
 
-    public GameStateRestartSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
+    public GameStateRestartSystem(Contexts contexts) : base(contexts.Input, Trigger)
     {
         _contexts = contexts;
     }

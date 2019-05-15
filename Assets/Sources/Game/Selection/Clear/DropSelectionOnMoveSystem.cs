@@ -15,7 +15,7 @@ public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity
     private readonly IGenericContext<GameEntity> _game;
     private readonly IGenericContext<GameStateEntity> _gameState;
 
-    public DropSelectionOnMoveSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
+    public DropSelectionOnMoveSystem(Contexts contexts) : base(contexts.Game, Trigger)
     {
         // todo fix these systems that trigger off one group then do nothing with the data.
 
@@ -56,8 +56,11 @@ public sealed class DropSelectionOnMoveSystem : GenericReactiveSystem<GameEntity
             //entity.RemoveSelectionId();
         }
 
-        _gameState.SetUnique(new LastSelectedComponent { value = -1 });
-        _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+        //_gameState.SetUnique(new LastSelectedComponent { value = -1 });
+        //_gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+
+        _gameState.SetUnique<LastSelectedComponent>(c => c.value = -1);
+        _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
 
         //_contexts.gameState.ReplaceLastSelected(-1);
         //_contexts.gameState.ReplaceMaxSelectedElement(0);

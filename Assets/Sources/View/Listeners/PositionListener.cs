@@ -13,7 +13,7 @@ public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver
 
     private Vector3 _targetPosition;
     
-    public void RegisterListeners(GenericContexts contexts, IEntity entity)
+    public void RegisterListeners(Contexts contexts, IEntity entity)
     {
         _entity = (GameEntity) entity;
         //_entity.AddPositionListener(this);

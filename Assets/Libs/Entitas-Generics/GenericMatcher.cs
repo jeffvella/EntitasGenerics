@@ -2,6 +2,9 @@
 
 namespace Entitas.Generics
 {
+    /// <summary>
+    /// Provides matcher instance for a Context/Entity/Component combination.
+    /// </summary>
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
         where TEntity : class, IEntity, new()
@@ -9,18 +12,20 @@ namespace Entitas.Generics
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
         private static IAnyOfMatcher<TEntity> _allOf;
-        private static int _c1Index;
+        
+        // ReSharper disable once StaticMemberInGenericType; Intended.
+        private static readonly int Index;
 
         static GenericMatcher()
         {
-            _c1Index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            Index = ComponentHelper<TContext, TComponent>.ComponentIndex;
         }
 
         public static IMatcher<TEntity> AnyOf
-            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(_c1Index));
+            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(Index));
 
         public static IMatcher<TEntity> AllOf
-            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(_c1Index));
+            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(Index));
     }
 
     public class MatcherFactory
@@ -42,7 +47,6 @@ namespace Entitas.Generics
             matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
             return matcher;
         }
-
     }
 
 }

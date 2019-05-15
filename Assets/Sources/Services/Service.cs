@@ -2,9 +2,9 @@
 
 public abstract class Service
 {
-    protected readonly GenericContexts _contexts;
+    protected readonly Contexts _contexts;
 
-    public Service(GenericContexts contexts)
+    public Service(Contexts contexts)
     {
         _contexts = contexts;
     }

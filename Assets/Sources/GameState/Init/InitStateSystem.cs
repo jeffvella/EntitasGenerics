@@ -3,9 +3,9 @@ using Entitas.Generics;
 
 public sealed class InitStateSystem : IInitializeSystem
 {
-    private readonly GenericContexts _contexts;
+    private readonly Contexts _contexts;
 
-    public InitStateSystem(GenericContexts contexts)
+    public InitStateSystem(Contexts contexts)
     {
         _contexts = contexts;
     }

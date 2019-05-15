@@ -12,7 +12,7 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<GameEntity> _game;
     private IGenericContext<GameStateEntity> _gameState;
 
-    public ApplyRewardSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
+    public ApplyRewardSystem(Contexts contexts) : base(contexts.Game, Trigger)
     {
         _game = contexts.Game;
         _gameState = contexts.GameState;
@@ -54,9 +54,6 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
         
         //_contexts.gameState.ReplaceScore(score + totalReward);
 
-        _gameState.SetUnique(new ScoreComponent
-        {
-            value = score + totalReward
-        });
+        _gameState.SetUnique<ScoreComponent>(c => c.value = score + totalReward);
     }
 }

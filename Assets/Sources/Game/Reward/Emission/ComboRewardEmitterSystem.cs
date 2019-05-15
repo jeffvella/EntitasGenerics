@@ -11,7 +11,7 @@ public sealed class ComboRewardEmitterSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<ConfigEntity> _config;
     private readonly IGenericContext<GameEntity> _game;
 
-    public ComboRewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public ComboRewardEmitterSystem(Contexts contexts) : base(contexts.Game, Trigger, Filter)
     {
         _game = contexts.Game;
         _config = contexts.Config;
@@ -24,7 +24,7 @@ public sealed class ComboRewardEmitterSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.HasComponent<ComboComponent>(entity);
+        return context.Has<ComboComponent>(entity);
     }
 
 

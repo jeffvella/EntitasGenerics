@@ -12,7 +12,7 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<ConfigEntity> _config;
     private readonly IGenericContext<GameEntity> _game;
 
-    public ComboDetectionSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public ComboDetectionSystem(Contexts contexts) : base(contexts.Game, Trigger, Filter)
     {
         _config = contexts.Config;
         _game = contexts.Game;
@@ -27,7 +27,7 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.IsFlagged<MatchedComponent>() && context.HasComponent<PositionComponent>(entity);
+        return context.IsFlagged<MatchedComponent>() && context.Has<PositionComponent>(entity);
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)

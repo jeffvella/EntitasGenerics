@@ -9,6 +9,7 @@ namespace Assets.Sources.GameState
 {
     public sealed class GameStateEntity : Entity
     {
+
     }
 }
 

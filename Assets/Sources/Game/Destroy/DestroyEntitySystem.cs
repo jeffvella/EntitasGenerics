@@ -11,7 +11,7 @@ public sealed class DestroyEntitySystem : ICleanupSystem
     private readonly IGroup<InputEntity> _inputGroup;
     private readonly List<InputEntity> _inputBuffer;
 
-    public DestroyEntitySystem(GenericContexts contexts)
+    public DestroyEntitySystem(Contexts contexts)
     {
         //_gameGroup = contexts.game.GetGroup(GameMatcher.Destroyed);
         _gameGroup = contexts.Game.GetGroup<DestroyedComponent>();

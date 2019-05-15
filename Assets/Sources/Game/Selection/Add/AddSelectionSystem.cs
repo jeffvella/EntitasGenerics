@@ -13,7 +13,7 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
     private IGenericContext<InputEntity> _input;
     private IGenericContext<ConfigEntity> _config;
 
-    public AddSelectionSystem(GenericContexts contexts) 
+    public AddSelectionSystem(Contexts contexts) 
         : base(contexts.Input, Trigger)
     {
         _game = contexts.Game;
@@ -100,8 +100,11 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
         _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
         _game.Set(entityUnderPointer, new SelectionIdComponent { value = 0 });
 
-        _gameState.SetUnique(new LastSelectedComponent { value = entityUnderPointerId });
-        _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+        //_gameState.SetUnique(new LastSelectedComponent { value = entityUnderPointerId });
+        //_gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+
+        _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
+        _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
 
         //Debug.Log($"Started Selection with Entity Id: {entityUnderPointerId}");
     }
@@ -136,10 +139,13 @@ public sealed class AddSelectionSystem : GenericReactiveSystem<InputEntity>
                     _game.Set(entityUnderPointer, new SelectionIdComponent {value = selectionId});
                     _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
 
-                    _gameState.SetUnique(new LastSelectedComponent {value = entityUnderPointerId});
+                    //_gameState.SetUnique(new LastSelectedComponent {value = entityUnderPointerId});
 
-                    //Debug.Log($"MaxSelectedElement set to {selectionId}");
-                    _gameState.SetUnique(new MaxSelectedElementComponent {value = selectionId});
+                    ////Debug.Log($"MaxSelectedElement set to {selectionId}");
+                    //_gameState.SetUnique(new MaxSelectedElementComponent {value = selectionId});
+
+                    _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
+                    _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = selectionId);
 
                     //entityUnderPointer.isSelected = true;
                     //entityUnderPointer.ReplaceSelectionId(selectionId);

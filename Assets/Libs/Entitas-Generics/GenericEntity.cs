@@ -1,84 +1,67 @@
+using System;
+using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
+using Events;
 
-public class GenericEntity : Entitas.Entity, IContextLinkedEntity<IEntity>
+/// <summary>
+/// An entity with access to its creating context.
+/// </summary>
+public interface IContextLinkedEntity : IEntity
 {
-    private IContextLinkedEntity<IEntity> _contextLinkedEntityImplementation;
+    IEntityContext Context { get; set; }
+}
 
-    public IGenericContext<IEntity> Context { get; }
 
-    public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
+/// <summary>
+/// GenericEntity is an option instead of deriving from Entitas.Entity.
+/// It allows access to components directly from the entity and is slightly slower
+/// than access via the context but in most cases would be indistinguishable.
+/// </summary>
+public class GenericEntity : Entitas.Entity, IContextLinkedEntity 
+{
+    // Entities implementing IContextLinkedEntity are on creation given an IEntity version
+    // of their context by GenericContext<TEntity>.LinkContextToEntity();
+
+    public IEntityContext Context { get; set; }
+
+    public TComponent Get<TComponent>() where TComponent : IComponent, new()
     {
-        Context.Set(this, component);
+        return Context.Get<TComponent>(this);
     }
 
-    public void SetFlag<TComponent>(bool toggle) where TComponent : IFlagComponent, new()
+    public bool HasComponent<TComponent>() where TComponent : IComponent, new()
+    {
+        return Context.Has<TComponent>(this);
+    }
+
+    public bool IsFlagged<TComponent>() where TComponent : IFlagComponent, new()
+    {
+        return Context.Has<TComponent>(this);
+    }
+
+    public void SetFlag<TComponent>(bool toggle = true) where TComponent : IFlagComponent, new()
     {
         Context.SetFlag<TComponent>(this, toggle);
     }
 
-    //public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
+    //public void Set<TComponent>(TComponent component = default) where TComponent : class, IComponent, new()
     //{
-    //    _contextLinkedEntityImplementation.Set(component);
+    //    Context.Set(this, component);
     //}
 
-    //public void SetTag<TComponent>(bool toggle) where TComponent : IFlagComponent, new()
-    //{
-    //    _contextLinkedEntityImplementation.SetTag<TComponent>(toggle);
-    //}
-}
-
-public readonly ref struct EntityAccessor<TEntity> where TEntity : class, IEntity
-{
-    public IGenericContext<TEntity> Context { get; }
-
-    public TEntity Entity { get; }
-
-    public EntityAccessor(IGenericContext<TEntity> context, TEntity entity)
+    public void Set<TComponent>(Action<TComponent> componentUpdater) where TComponent : class, IComponent, new()
     {
-        Context = context;
-        Entity = entity;
+        Context.Set(this, componentUpdater);
     }
 
-    public T Get<T>() where T : IComponent, new()
+    public void RegisterAddedComponentListener<TComponent>(Action<(IEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
     {
-        return Context.Get<T>(Entity);
+        Context.RegisterAddedComponentListener<TComponent>(this, action);
     }
 
-    public void Set<T>(T component = default) where T : IComponent, new()
+    void RegisterRemovedComponentListener<TComponent>(Action<IEntity> action) where TComponent : IComponent, new()
     {
-        Context.Set(Entity, component);
+        Context.RegisterRemovedComponentListener<TComponent>(this, action);
     }
 }
-
-public interface IContextLinkedEntity<T> : IContextLinkedEntity where T : class, IEntity
-{
-    IGenericContext<T> Context { get; }
-}
-
-public interface IContextLinkedEntity
-{
-    void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new();
-
-    void SetFlag<TComponent>(bool toggle) where TComponent : IFlagComponent, new();
-}
-
-
-
-//public static class GenericEntityExtensions
-//{
-//    public static void Set<TEntity, TComponent>(this TEntity entity, TComponent component = default)
-//        where TComponent : IComponent, new()
-//        where TEntity : class, IContextLinkedEntity<TEntity>, IEntity, new()
-//    {
-
-//        entity.Context.Set(entity, component);
-//    }
-
-//    public static void SetTag<TComponent>(this TEntity entity, bool toggle)
-//        where TComponent : IFlagComponent, new()
-//        where TEntity : class, IContextLinkedEntity<TEntity>, IEntity, new()
-//    {
-//        entity.Context.SetTag<TComponent>(toggle);
-//    }
-//}

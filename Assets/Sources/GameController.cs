@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public static GenericContexts Contexts { get; private set; }
+    public static Contexts Contexts { get; private set; }
 
     private RootSystems _rootSystems;
     private Services _services;
@@ -12,12 +12,12 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private TextAsset ComboDefinitions;
 
-    //private GenericContexts _contexts;
+    //private Contexts _contexts;
 
     private void Awake()
     {
         //Contexts = Contexts.sharedInstance;
-        Contexts = GenericContexts.Instance;
+        Contexts = Contexts.Instance;
         //Contexts.GenericTemp = _contexts;
 
         Configure(Contexts);
@@ -48,35 +48,27 @@ public class GameController : MonoBehaviour
         _rootSystems.TearDown();
     }
 
-    private void Configure(GenericContexts contexts)
+    private void Configure(Contexts contexts)
     {
-        contexts.Config.SetUnique(new MapSizeComponent
+        contexts.Config.SetUnique<MapSizeComponent>(c => c.value = new GridSize(6, 6));
+
+        contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = 4); 
+        contexts.Config.SetUnique<MaxActionCountComponent>(c => c.value = 20);
+        contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = 3);
+
+        contexts.Config.SetUnique<ScoringTableComponent>(c =>
         {
-            value = new GridSize(6, 6)
+            c.value = new List<int> {0, 10, 30, 90, 200, 500, 1200, 2500};
         });
-        contexts.Config.SetUnique(new TypeCountComponent
+
+        contexts.Config.SetUnique<ExplosiveScoringTableComponent>(c =>
         {
-            Value = 4
-        }); 
-        contexts.Config.SetUnique(new MaxActionCountComponent
-        {
-            value = 20
+            c.value = new List<int> {300, 900, 1200, 2000};
         });
-        contexts.Config.SetUnique(new MinMatchCountComponent
+
+        contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
         {
-            value = 3
-        }); 
-        contexts.Config.SetUnique(new ScoringTableComponent
-        {
-            value = new List<int> { 0, 10, 30, 90, 200, 500, 1200, 2500 }
-        }); 
-        contexts.Config.SetUnique(new ExplosiveScoringTableComponent
-        {
-            value = new List<int> { 300, 900, 1200, 2000 }
-        }); 
-        contexts.Config.SetUnique(new ComboDefinitionsComponent
-        {
-            value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text)
+            c.value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text);
         });
     }
 }

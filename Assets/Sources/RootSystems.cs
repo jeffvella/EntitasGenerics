@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RootSystems : Feature
 {
-    public RootSystems(GenericContexts contexts, Services services)
+    public RootSystems(Contexts contexts, Services services)
     {
         Add(new InputSystems(contexts, services));
 
@@ -13,8 +13,6 @@ public class RootSystems : Feature
 
         Add(new GameSystems(contexts, services));
         Add(new GameEventSystems(contexts));
-
-        Add(new DebugMessageSystem(contexts, services));
     }
 }
 

@@ -9,7 +9,7 @@ public sealed class RewardEmitterSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<ConfigEntity> _config;
     private readonly IGenericContext<GameEntity> _game;
 
-    public RewardEmitterSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public RewardEmitterSystem(Contexts contexts) : base(contexts.Game, Trigger, Filter)
     {
         _game = contexts.Game;
         _config = contexts.Config;

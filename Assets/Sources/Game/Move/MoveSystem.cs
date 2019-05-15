@@ -2,6 +2,7 @@
 using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
+using UnityEngine.UIElements;
 using ConfigContext = Assets.Sources.Config.ConfigContext;
 using GameContext = Assets.Sources.Game.GameContext;
 
@@ -10,7 +11,7 @@ public sealed class MoveSystem : IExecuteSystem
     private IGenericContext<ConfigEntity> _config;
     private IGenericContext<GameEntity> _game;
 
-    public MoveSystem(GenericContexts contexts)
+    public MoveSystem(Contexts contexts)
     {
         _config = contexts.Config;
         _game = contexts.Game;
@@ -48,7 +49,8 @@ public sealed class MoveSystem : IExecuteSystem
                 var targetPosition = new GridPosition(x, y - 1);
                 if (!_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out GameEntity targetEntity))
                 {
-                    _game.Set(element, new PositionComponent { value = targetPosition });
+                    //_game.Set(element, new PositionComponent { value = targetPosition });
+                    _game.Set<PositionComponent>(element, c => c.value = targetPosition);
                     moveCount++;
                 }
 

@@ -11,7 +11,7 @@ public sealed class AddElementsSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<GameEntity> _game;
     private readonly IGenericContext<ConfigEntity> _config;
 
-    public AddElementsSystem(GenericContexts contexts, Services services) : base(contexts.Game, Trigger)
+    public AddElementsSystem(Contexts contexts, Services services) : base(contexts.Game, Trigger)
     {
         _elementService = services.ElementService;
         _game = contexts.Game;

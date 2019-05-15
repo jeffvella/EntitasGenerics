@@ -9,7 +9,7 @@ public sealed class GameRestartSystem : GenericReactiveSystem<InputEntity>
     private readonly List<GameEntity> _buffer;
     private IGenericContext<GameEntity> _game;
 
-    public GameRestartSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
+    public GameRestartSystem(Contexts contexts) : base(contexts.Input, Trigger)
     {
         _elementGroup = contexts.Game.GetGroup<ElementComponent>();
         _game = contexts.Game;

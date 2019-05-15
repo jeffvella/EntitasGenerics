@@ -9,7 +9,7 @@ public sealed class ElementService : Service
 
     private IGenericContext<GameEntity> _game;
 
-    public ElementService(GenericContexts contexts) : base(contexts)
+    public ElementService(Contexts contexts) : base(contexts)
     {
         _entityCounter = 0;
         _game = contexts.Game;
@@ -31,7 +31,8 @@ public sealed class ElementService : Service
         _game.Set(entity, new ElementTypeComponent { value = randomType });
         _game.Set(entity, new AssetComponent { value = "Element" });
         _game.Set(entity, new ColorComponent { value = new Color(normalizedType, normalizedType, normalizedType) });
-        _game.Set(entity, new PositionComponent { value = position });
+        //_game.Set(entity, new PositionComponent { value = position });
+        _game.Set<PositionComponent>(entity, c => c.value = position);
 
         //var entity = _contexts.game.CreateEntity();
         //entity.isElement = true;
@@ -61,7 +62,8 @@ public sealed class ElementService : Service
         _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });       
         _game.Set(entity, new AssetComponent { value = "Block" });
-        _game.Set(entity, new PositionComponent { value = position });
+        //_game.Set(entity, new PositionComponent { value = position });
+        _game.Set<PositionComponent>(entity, c => c.value = position);
 
         _entityCounter++;
     }
@@ -80,7 +82,8 @@ public sealed class ElementService : Service
         _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });
         _game.Set(entity, new AssetComponent { value = "NotMovableBlock" });
-        _game.Set(entity, new PositionComponent { value = position });
+        //_game.Set(entity, new PositionComponent { value = position });
+        _game.Set<PositionComponent>(entity, c => c.value = position);
 
         _entityCounter++;
     }
@@ -101,7 +104,8 @@ public sealed class ElementService : Service
         _game.SetFlag<BlockComponent>(entity, true);
         _game.Set(entity, new IdComponent { value = _entityCounter });
         _game.Set(entity, new AssetComponent { value = "ExsplosiveBlock" });
-        _game.Set(entity, new PositionComponent { value = position });
+        //_game.Set(entity, new PositionComponent { value = position });
+        _game.Set<PositionComponent>(entity, c => c.value = position);
 
         _entityCounter++;
     }

@@ -4,17 +4,11 @@ using Entitas.Generics;
 
 public sealed class GameEventSystems : Feature
 {
-    public GameEventSystems(GenericContexts contexts)
+    public GameEventSystems(Contexts contexts)
     {
-        Add(EventSystemFactory.Create<GameEntity, ColorComponent>(contexts.Game));
-        Add(EventSystemFactory.Create<GameEntity, DestroyedComponent>(contexts.Game));
-        Add(EventSystemFactory.Create<GameEntity, PositionComponent>(contexts.Game));
-        Add(new GenericEventSystem<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.AddedOrRemoved));
-
-        //Add(EventSystemFactory.Create<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.AddedOrRemoved));
-
-
-
-        //Add(EventSystemFactory.Create<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.Removed));
+        Add(new EventSystem<GameEntity, ColorComponent>(contexts.Game, GroupEvent.Added));
+        Add(new EventSystem<GameEntity, DestroyedComponent>(contexts.Game, GroupEvent.Added));
+        Add(new EventSystem<GameEntity, PositionComponent>(contexts.Game, GroupEvent.Added));
+        Add(new EventSystem<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.AddedOrRemoved));
     }
 }

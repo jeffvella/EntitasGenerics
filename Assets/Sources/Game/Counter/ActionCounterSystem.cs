@@ -9,7 +9,7 @@ public sealed class ActionCounterSystem : GenericReactiveSystem<GameEntity>
     private readonly IGenericContext<GameEntity> _game;
     private IGenericContext<GameStateEntity> _gameState;
 
-    public ActionCounterSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
+    public ActionCounterSystem(Contexts contexts) : base(contexts.Game, Trigger)
     {
         _game = contexts.Game;
         _gameState = contexts.GameState;
@@ -34,10 +34,7 @@ public sealed class ActionCounterSystem : GenericReactiveSystem<GameEntity>
     {
         var currentActionCount = _gameState.GetUnique<ActionCountComponent>();
 
-        _gameState.SetUnique(new ActionCountComponent
-        {
-            value = currentActionCount.value + 1
-        });
+        _gameState.SetUnique<ActionCountComponent>(c => c.value = currentActionCount.value + 1);
 
 
         //_contexts.gameState.ReplaceActionCount(_contexts.gameState.actionCount.value + 1);

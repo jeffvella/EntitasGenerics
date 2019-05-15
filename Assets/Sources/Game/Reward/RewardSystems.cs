@@ -2,7 +2,7 @@
 
 public class RewardSystems : Feature
 {
-    public RewardSystems(GenericContexts contexts, Services services)
+    public RewardSystems(Contexts contexts, Services services)
     {
         Add(new RewardEmitterSystem(contexts));
         Add(new ExsplosiveRewardEmitterSystem(contexts));

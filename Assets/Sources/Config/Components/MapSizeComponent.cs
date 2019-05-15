@@ -5,13 +5,8 @@ using UnityEngine;
 
 //[Config]
 [Unique]
-public sealed class MapSizeComponent : IValueComponent<GridSize>, IUniqueComponent
+public sealed class MapSizeComponent : IUniqueComponent
 {
     public GridSize value { get; set; }
-}
-
-public interface IValueComponent<T>
-{
-    T value { get; set; }
 }
 

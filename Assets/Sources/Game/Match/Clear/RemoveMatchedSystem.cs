@@ -7,7 +7,7 @@ public sealed class RemoveMatchedSystem : GenericReactiveSystem<GameEntity>
 {
     private readonly IGenericContext<GameEntity> _game;
 
-    public RemoveMatchedSystem(GenericContexts contexts) : base(contexts.Game, Trigger, Filter)
+    public RemoveMatchedSystem(Contexts contexts) : base(contexts.Game, Trigger, Filter)
     {
         _game = contexts.Game;
     }

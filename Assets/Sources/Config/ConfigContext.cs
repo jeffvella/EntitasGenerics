@@ -16,13 +16,13 @@ namespace Assets.Sources.Config
         {
             public ConfigContextDefinition()
             {
-                Add<ComboDefinitionsComponent>();
                 Add<ExplosiveScoringTableComponent>();
                 Add<MaxActionCountComponent>();
                 Add<MinMatchCountComponent>();
                 Add<ScoringTableComponent>();
                 Add<TypeCountComponent>();
                 Add<MapSizeComponent>();
+                Add<ComboDefinitionsComponent>();
             }
         }        
     }

@@ -6,10 +6,10 @@ using UnityEditor.VersionControl;
 
 public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
 {
-    private readonly GenericContexts _contexts;
+    private readonly Contexts _contexts;
     private readonly IViewService _viewService;
 
-    public ViewSystem(GenericContexts contexts, Services services) : base(contexts.Game, Trigger, Filter)
+    public ViewSystem(Contexts contexts, Services services) : base(contexts.Game, Trigger, Filter)
     {
         _contexts = contexts;
         _viewService = services.ViewService;
@@ -22,7 +22,7 @@ public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
 
     private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
     {
-        return context.HasComponent<AssetComponent>(entity) && !context.IsFlagged<AssetLoadedComponent>();
+        return context.Has<AssetComponent>(entity) && !context.IsFlagged<AssetLoadedComponent>();
     }
 
     //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)

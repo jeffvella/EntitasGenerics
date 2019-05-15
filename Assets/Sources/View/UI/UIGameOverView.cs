@@ -17,9 +17,9 @@ public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemov
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverListener(this);
         //Contexts.sharedInstance.gameState.CreateEntity().AddGameOverRemovedListener(this);
 
-        var state = GenericContexts.Instance.GameState;
-        state.RegisterAddedTagListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedTagListener<GameOverComponent>(OnGameOverRemoved);
+        var state = Contexts.Instance.GameState;
+        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
+        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
 
         _boolHash = Animator.StringToHash(_boolName);
 

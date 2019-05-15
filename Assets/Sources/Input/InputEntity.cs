@@ -7,7 +7,7 @@ using Entitas;
 
 namespace Assets.Sources.Game
 {
-    public sealed class InputEntity : Entity
+    public sealed class InputEntity : GenericEntity
     {
 
     }

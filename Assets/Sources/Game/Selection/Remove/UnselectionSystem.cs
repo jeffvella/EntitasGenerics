@@ -12,7 +12,7 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
     private IGenericContext<InputEntity> _input;
     private IGenericContext<GameEntity> _game;
 
-    public UnselectionSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
+    public UnselectionSystem(Contexts contexts) : base(contexts.Input, Trigger)
     {
         _gameState = contexts.GameState;
         _input = contexts.Input;
@@ -52,16 +52,72 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
         //var targetEntity = _contexts.game.GetEntityWithSelectionId(targetSelectionId);
         var targetEntity = _game.FindEntity<SelectionIdComponent,int>(targetSelectionId);
 
-        var target = _game.GetAccessor(targetEntity);
-        
-        //var pos = target.Get<PositionComponent>().value;
+        //var target = _game.GetAccessor(targetEntity);
 
-        var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).value;
+        //var pos = target.Get<PositionComponent>().value;
+        //var sw = new System.Diagnostics.Stopwatch();
+
+        //GridPosition targetEntityPosition = default;
+        //var component = _game.Get<PositionComponent>(targetEntity);
+
+        //targetEntityPosition = component.value;
+        //var pos = targetEntityPosition;
+
+        //sw.Restart();
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    _game.Set<PositionComponent>(targetEntity, c => c.value = pos);
+        //    //targetEntityPosition = targetEntity.Get<PositionComponent>().value;
+        //}
+        //sw.Stop();
+
+        //var acc1 = new ComponentAccessor<PositionComponent, GridPosition>(_game, targetEntity);
+        //var cc = new ComponentAccessor<PositionComponent, GridPosition>(_game, targetEntity);
+
+        
+
+        //var sw2 = new System.Diagnostics.Stopwatch();        
+        //sw2.Restart();
+        //for (int i = 0; i < 100; i++)
+        //{
+            //cc.Value = pos;
+
+            //acc1.Value = pos;
+
+            //targetEntity.Set<PositionComponent>(c => c.value = pos);
+
+            //var v = _game.ForEntity(targetEntity).Get<PositionComponent>().value;
+
+            //_game.ForEntity(targetEntity).Set<PositionComponent>(c => c.value = pos);
+
+            //var index = _game.GetComponentIndex<PositionComponent>();
+            //var c1 = targetEntity.Get<PositionComponent>();
+            //c1.value = pos;
+            //targetEntity.RaiseComponentReplaced(index, c1, c1);
+
+            //targetEntity.Set<PositionComponent>(c => c.value = pos);
+
+            //.Set<PositionComponent>(c => c.value = pos);
+            //targetEntityPosition = _game.Get<PositionComponent>(targetEntity).value;
+            //component.value = pos;
+            //targetEntity.RaiseComponentReplaced(index, component, component);
+            //_game.Set(targetEntity, component);
+
+            //targetEntityPosition = targetEntity.Get<PositionComponent>().value;
+        //}
+        //sw2.Stop();
+        //Debug.Log($"A: {sw.Elapsed.TotalMilliseconds:N6} B: {sw2.Elapsed.TotalMilliseconds:N6} {(sw.Elapsed.TotalMilliseconds/sw2.Elapsed.TotalMilliseconds):N6}");
+
+
+        //targetEntityPosition = _game.Get<PositionComponent>(targetEntity).value;
+
+
+        var targetEntityPosition2 = _game.Get<PositionComponent>(targetEntity).value;
 
         //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
         var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().value.ToGridPosition();
 
-        if (pointerHoldingPosition.Equals(targetEntityPosition))
+        if (pointerHoldingPosition.Equals(targetEntityPosition2))
         {
             //var lastSelectedEntity = _contexts.game.GetEntityWithId(_contexts.gameState.lastSelected.value);
 
@@ -80,8 +136,8 @@ public sealed class UnselectionSystem : GenericReactiveSystem<InputEntity>
     private void SelectEntity(GameEntity targetEntity, int targetSelectionId)
     {
         var targetEntityId = _game.Get<IdComponent>(targetEntity).value;
-        _gameState.SetUnique(new LastSelectedComponent {value = targetEntityId});
-        _gameState.SetUnique(new MaxSelectedElementComponent {value = targetSelectionId});
+        _gameState.SetUnique<LastSelectedComponent>(c => c.value = targetEntityId);
+        _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = targetSelectionId);
     }
 
     private void DeselectCurrentEntity()

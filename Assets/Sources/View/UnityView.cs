@@ -8,7 +8,7 @@ public class UnityView : MonoBehaviour, IView // , IGameDestroyedListener
 {
     private GameEntity _entity;
 
-    public void InitializeView(GenericContexts contexts, IEntity entity)
+    public void InitializeView(Contexts contexts, IEntity entity)
     {
         _entity = (GameEntity) entity;
 

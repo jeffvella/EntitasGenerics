@@ -9,7 +9,7 @@ public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
     private IGenericContext<ConfigEntity> _config;
     private IGenericContext<GameStateEntity> _gameState;
 
-    public GameOverSystem(GenericContexts contexts) : base(contexts.GameState, Trigger)
+    public GameOverSystem(Contexts contexts) : base(contexts.GameState, Trigger)
     {
         _config = contexts.Config;
         _gameState = contexts.GameState;
@@ -42,7 +42,7 @@ public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
 
         if (actionCount >= maxActions)
         {
-            _gameState.SetUniqueFlag<GameOverComponent>();
+            _gameState.SetFlag<GameOverComponent>();
         }
 
         //if (_contexts.gameState.actionCount.value >= maxActions)

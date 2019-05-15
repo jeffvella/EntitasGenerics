@@ -10,7 +10,7 @@ public sealed class ExplosionSystem : GenericReactiveSystem<GameEntity>
     private readonly IGroup<GameEntity> _explosiveGroup;
     private readonly IGenericContext<GameEntity> _game;
 
-    public ExplosionSystem(GenericContexts contexts) : base(contexts.Game, Trigger)
+    public ExplosionSystem(Contexts contexts) : base(contexts.Game, Trigger)
     {
         //_exsplosives = contexts.game.GetGroup(GameMatcher.Exsplosive);
 
@@ -51,7 +51,7 @@ public sealed class ExplosionSystem : GenericReactiveSystem<GameEntity>
             {
                 foreach (var matchedEntity in entities)
                 {
-                    if (_game.TryGetComponent(matchedEntity, out PositionComponent component))
+                    if (_game.TryGet(matchedEntity, out PositionComponent component))
                     {                    
                         if (neighbourPosition.Equals(component.value))
                         {

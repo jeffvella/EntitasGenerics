@@ -23,19 +23,19 @@ public class UIActionCountView : MonoBehaviour
         //Contexts.sharedInstance.gameState.CreateEntity().AddActionCountListener(this);
         //Contexts.sharedInstance.config.CreateEntity().AddMaxActionCountListener(this);
 
-        GenericContexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
-        GenericContexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
+        Contexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
+        Contexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
 
-        //GenericContexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(this);
-        //GenericContexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(this);
+        //Contexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(this);
+        //Contexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(this);
 
         _triggerHash = Animator.StringToHash(_triggerName);
 
         //Contexts.sharedInstance.config.maxActionCountEntity;
 
-        //var pair = GenericContexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
+        //var pair = Contexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
 
-        _maxActionCount = GenericContexts.Instance.Config.GetUnique<MaxActionCountComponent>().value;            
+        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().value;            
         Apply();
     }
 

@@ -3,7 +3,7 @@ using Entitas.Generics;
 
 public interface IView
 {
-    void InitializeView(GenericContexts contexts, IEntity entity);
+    void InitializeView(Contexts contexts, IEntity entity);
 }
 // CONGRATULATIONS! YOU FOUND THE CAT!
 //               )\._.,--....,'``.       

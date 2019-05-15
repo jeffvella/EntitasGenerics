@@ -17,9 +17,9 @@ public class UIScoreView : MonoBehaviour, IEventObserver<GameStateEntity, ScoreC
     {
         //Contexts.sharedInstance.gameState.CreateEntity().AddScoreListener(this);
 
-        //GenericContexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(this);
+        //Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(this);
 
-        GenericContexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(this);
+        Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(this);
 
         _triggerHash = Animator.StringToHash(_triggerName);
     }

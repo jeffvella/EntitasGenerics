@@ -12,7 +12,7 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
     private readonly IGenericContext<GameStateEntity> _gameState;
     private readonly IGenericContext<InputEntity> _input;
 
-    public DropSelectionSystem(GenericContexts contexts) : base(contexts.Input, Trigger)
+    public DropSelectionSystem(Contexts contexts) : base(contexts.Input, Trigger)
     {
         //_group = _contexts.game.GetGroup(GameMatcher.Selected);
         _selectedGroup = contexts.Game.GetGroup<SelectedComponent>();
@@ -54,8 +54,8 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
             //entity.RemoveSelectionId();
         }
 
-        _gameState.SetUnique(new LastSelectedComponent {value = -1});
-        _gameState.SetUnique(new MaxSelectedElementComponent { value = 0 });
+        _gameState.SetUnique<LastSelectedComponent>(c => c.value = -1);
+        _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
 
         //_contexts.gameState.ReplaceLastSelected(-1);
         //_contexts.gameState.ReplaceMaxSelectedElement(0);
