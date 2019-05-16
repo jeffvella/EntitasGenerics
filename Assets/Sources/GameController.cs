@@ -12,17 +12,11 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private TextAsset ComboDefinitions;
 
-    //private Contexts _contexts;
-
     private void Awake()
     {
-        //Contexts = Contexts.sharedInstance;
         Contexts = Contexts.Instance;
-        //Contexts.GenericTemp = _contexts;
-
         Configure(Contexts);
         
-        //How to live without DI? 
         _services = new Services
         {
             ViewService = new UnityViewService(Contexts),
@@ -51,7 +45,6 @@ public class GameController : MonoBehaviour
     private void Configure(Contexts contexts)
     {
         contexts.Config.SetUnique<MapSizeComponent>(c => c.value = new GridSize(6, 6));
-
         contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = 4); 
         contexts.Config.SetUnique<MaxActionCountComponent>(c => c.value = 20);
         contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = 3);

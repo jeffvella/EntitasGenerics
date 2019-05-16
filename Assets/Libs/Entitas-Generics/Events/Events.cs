@@ -11,12 +11,7 @@ using Object = UnityEngine.Object;
 namespace Events
 {
 
-    public interface IEventObserver { }
-
-    //public interface IEventObserver<in T, in TArg>
-    //{
-    //    void OnEvent(T eventInfo, TArg value);
-    //}
+    public interface IEventListener { }
 
     public interface IEventObserver<TContext, TEntity, TComponent> 
         where TContext : IGenericContext<TEntity> where TEntity : class, IEntity, new()
@@ -29,50 +24,30 @@ namespace Events
         void OnEvent((TEntity Entity, TComponent Component) args);
     }
 
-    public interface IAddedEventObserver<TEntity, TComponent>
+    public interface IAddedComponentListener<in TEntity, in TComponent> : IEventListener
     {
-        void OnAdded(TEntity entity, TComponent component);
+        void OnComponentAdded(TEntity entity, TComponent component);
     }
 
-    public interface IAddedEventObserver<TEntity>
+    public interface IAddedEventObserver<in TEntity> : IEventListener
     {
-        void OnAdded(TEntity entity);
+        void OnComponentAdded(TEntity entity);
     }
 
-    public interface IRemovedEventObserver<TEntity>
+    public interface IRemovedComponentListener<in TEntity> : IEventListener
     {
-        void OnAdded(TEntity entity);
+        void OnComponentRemoved(TEntity entity);
     }
 
     public interface IEventObserver<in TArg>
     {
         void OnEvent(TArg value);
-
-        //void OnEvent(IEntity entity, TArg value);
     }
 
-    public class ActionEventDelegator<T, TArg> : IEventObserver<T, TArg>, IEventObserver
+    public class AddedActionEventDelegator<TEntity, TComponent> : IAddedComponentListener<TEntity, TComponent>, IEventListener, ICustomDebugInfo
     {
-        public ActionEventDelegator(Action<T, TArg> action)
-        {
-            _action = action;
-        }
+        private int _invocations;
 
-        private readonly Action<T, TArg> _action;
-
-        public void OnEvent(T eventInfo, TArg value)
-        {
-            _action.Invoke(eventInfo, value);
-        }
-
-        public void OnEvent((T Entity, TArg Component) args)
-        {
-            _action.Invoke(args.Entity, args.Component);
-        }
-    }
-
-    public class AddedActionEventDelegator<TEntity, TComponent> : IAddedEventObserver<TEntity, TComponent>, IEventObserver
-    {
         public AddedActionEventDelegator(Action<TEntity, TComponent> action)
         {
             _action = action;
@@ -80,14 +55,19 @@ namespace Events
 
         private readonly Action<TEntity, TComponent> _action;
 
-        public void OnAdded(TEntity entity, TComponent component)
+        public void OnComponentAdded(TEntity entity, TComponent component)
         {
+            _invocations++;
             _action.Invoke(entity, component);
         }
+
+        public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
     }
 
-    public class AddedActionEventDelegator<TEntity> : IAddedEventObserver<TEntity>, IEventObserver
+    public class AddedActionEventDelegator<TEntity> : IAddedEventObserver<TEntity>, IEventListener, ICustomDebugInfo
     {
+        private int _invocations;
+
         public AddedActionEventDelegator(Action<TEntity> action)
         {
             _action = action;
@@ -95,13 +75,36 @@ namespace Events
 
         private readonly Action<TEntity> _action;
 
-        public void OnAdded(TEntity entity)
+        public void OnComponentAdded(TEntity entity)
         {
+            _invocations++;
             _action.Invoke(entity);
         }
+
+        public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
     }
 
-    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventObserver, ICustomDebugInfo
+    public class RemovedActionEventDelegator<TEntity> : IRemovedComponentListener<TEntity>, IEventListener, ICustomDebugInfo
+    {
+        private int _invocations;
+
+        public RemovedActionEventDelegator(Action<TEntity> action)
+        {
+            _action = action;
+        }
+
+        private readonly Action<TEntity> _action;
+
+        public void OnComponentRemoved(TEntity entity)
+        {
+            _invocations++;
+            _action.Invoke(entity);
+        }
+
+        public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
+    }
+
+    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventListener, ICustomDebugInfo
     {
         private int _invocations;
 
@@ -125,26 +128,11 @@ namespace Events
     /// A <see cref="ScriptableObject"/> based event that can notify event listeners, with one argument.
     /// </summary>
     /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
-    public class GameEventBase<TArgs> : IListenerComponent<TArgs> //: GameEventBaseScriptableObject //where TArgs : struct
+    public class GameEventBase<TArgs> : IListenerComponent<TArgs>
     {
-        public void ClearListeners()
-        {
-            Observers.Clear();
-        }
-
-        public string[] GetListenersNames() => Observers.Select(observer =>
-        {
-            if(observer is ICustomDebugInfo delegator)
-            {
-                return delegator.DisplayName;
-            }
-            return observer.GetType().Name;
-
-        }).ToArray();
-
         public int ListenerCount => Observers.Count;
 
-        // Must be public in order for debug drawer display within Entitas
+        // Must be public for debug drawer display within Entitas
         public List<IEventObserver<TArgs>> Observers = new List<IEventObserver<TArgs>>();
 
         public void Register(Action<TArgs> action)
@@ -170,64 +158,27 @@ namespace Events
 
         public void Raise(TArgs arg)
         {
-            //OnBeforeRaised(arg);
-            //Debug.Log($"Firing event on {_observers.Count} observers");
-
             for (int i = Observers.Count - 1; i >= 0; i--)
             {
-                // todo automatically remove null/destroyed observers
                 Observers[i]?.OnEvent(arg);
             }
-
-            //OnAfterRaised(arg);
         }
 
-        //public void Raise(IEntity entity, TArgs arg)
-        //{
-        //    for (int i = _observers.Count - 1; i >= 0; i--)
-        //    {
-        //        // todo automatically remove null/destroyed observers
-        //        _observers[i]?.OnEvent(entity, arg);
-        //    }
-        //}
+        public void ClearListeners()
+        {
+            Observers.Clear();
+        }
 
-        ///// <summary>
-        ///// Called before observers are notified of the event. Useful for debugging/logging,
-        ///// e.g setting breakpoints in derived class lets you filter to that specific type.
-        ///// </summary>
-        //protected virtual void OnBeforeRaised(TArgs args) { }
+        public string[] GetListenersNames() => Observers.Select(observer =>
+        {
+            if (observer is ICustomDebugInfo delegator)
+            {
+                return delegator.DisplayName;
+            }
+            return observer.GetType().Name;
 
-        ///// <summary>
-        ///// Called after observers are notified of the event. Useful for debugging/logging,
-        ///// e.g setting breakpoints in derived class lets you filter to that specific type.
-        ///// </summary>
-        //protected virtual void OnAfterRaised(TArgs args) { }
+        }).ToArray();
     }
-
-    //public static class EventHelper
-    //{
-    //    private static readonly Func<int, Object> FindObjectFromInstanceId;
-
-    //    static EventHelper()
-    //    {
-    //        var methodInfo = typeof(Object).GetMethod("FindObjectFromInstanceID", BindingFlags.NonPublic | BindingFlags.Static);
-    //        if (methodInfo == null)
-    //            Debug.LogError("FindObjectFromInstanceID was not found in UnityEngine.Object");
-    //        else
-    //            FindObjectFromInstanceId = (Func<int, Object>)Delegate.CreateDelegate(typeof(Func<int, Object>), methodInfo);
-    //    }
-
-    //    public static T FindObjectById<T>(int instanceId) where T : Object
-    //    {
-    //        return (T)FindObjectFromInstanceId.Invoke(instanceId);
-    //    }
-    //}
-
-    //public class GameEventBaseScriptableObject : ScriptableObject
-    //{
-
-    //}
-
 }
 
 
