@@ -1,7 +1,6 @@
 ﻿using Assets.Sources.Config;
 using Assets.Sources.GameState;
 using Entitas.Generics;
-using Events;
 using UnityEngine;
 using UnityEngine.UI;
 

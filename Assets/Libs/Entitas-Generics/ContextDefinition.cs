@@ -32,8 +32,7 @@ namespace Entitas.Generics
 
         public void AddDefaultComponents()
         {            
-            Add<UniqueComponents>();
-            Add<UniqueFlags>();
+            Add<UniqueComponents>();     
         }
 
         private List<string> ComponentNames { get; } = new List<string>();

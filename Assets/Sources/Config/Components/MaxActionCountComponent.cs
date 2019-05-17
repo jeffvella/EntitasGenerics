@@ -1,7 +1,8 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
+using Entitas.Generics;
 
-//[Config]
+
 [Unique]
 [Event(EventTarget.Any)]
 public sealed class MaxActionCountComponent : IUniqueComponent

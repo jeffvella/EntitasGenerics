@@ -1,7 +1,6 @@
 ﻿using Assets.Sources.Game;
 using Entitas;
 using Entitas.Generics;
-using Events;
 using UnityEngine;
 
 public class SelectedListener : MonoBehaviour, IEventListener

@@ -1,6 +1,5 @@
 ﻿using Entitas;
 using Entitas.Generics;
-using Events;
 
 namespace Entitas.Generics
 {

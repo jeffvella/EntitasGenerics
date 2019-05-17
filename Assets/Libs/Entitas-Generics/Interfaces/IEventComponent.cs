@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace Entitas.Generics
 {
-    public interface IEventComponent
-    {
-
-    }
+    public interface IEventComponent : IComponent { }
 }

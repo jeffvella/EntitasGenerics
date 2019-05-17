@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
-using Events;
 
 /// <summary>
 /// An entity with access to its creating context.
@@ -15,8 +14,7 @@ public interface IContextLinkedEntity : IEntity
 
 /// <summary>
 /// GenericEntity is an option instead of deriving from Entitas.Entity.
-/// It allows access to components directly from the entity and is slightly slower
-/// than access via the context but in most cases would be indistinguishable.
+/// It allows access to components directly from the entity.
 /// </summary>
 public class GenericEntity : Entitas.Entity, IContextLinkedEntity 
 {
@@ -44,11 +42,6 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity
     {
         Context.SetFlag<TComponent>(this, toggle);
     }
-
-    //public void Set<TComponent>(TComponent component = default) where TComponent : class, IComponent, new()
-    //{
-    //    Context.Set(this, component);
-    //}
 
     public void Set<TComponent>(Action<TComponent> componentUpdater) where TComponent : class, IComponent, new()
     {

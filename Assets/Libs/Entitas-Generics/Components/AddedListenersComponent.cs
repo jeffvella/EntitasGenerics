@@ -1,4 +1,4 @@
-﻿using Events;
+﻿using Entitas.Generics;
 
 namespace Entitas.Generics
 {

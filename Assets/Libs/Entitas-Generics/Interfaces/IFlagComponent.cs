@@ -1,6 +1,8 @@
 ﻿using Entitas;
 
-public interface IFlagComponent : IComponent
+namespace Entitas.Generics
 {
+
+    public interface IFlagComponent : IComponent { }
 
 }

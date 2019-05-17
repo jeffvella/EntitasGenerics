@@ -32,4 +32,3 @@ public sealed class UnityViewService : Service, IViewService
             listener.RegisterListeners(contexts, entity);
     }
 }
-

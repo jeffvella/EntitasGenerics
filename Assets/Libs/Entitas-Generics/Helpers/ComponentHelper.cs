@@ -18,8 +18,6 @@ namespace Entitas.Generics
     {
         public static int ComponentIndex { get; private set; } = -1;
 
-        public static Type ComponentType { get; private set; }
-
         public static bool IsUnique { get; private set; }
 
         public static bool IsEvent { get; private set; }
@@ -33,7 +31,6 @@ namespace Entitas.Generics
         public static void Initialize(int componentIndex)
         {
             ComponentIndex = componentIndex;
-            ComponentType = typeof(TComponent);
             IsUnique = ComponentHelper.IsUniqueComponent<TComponent>();
             IsEvent = ComponentHelper.IsEventComponent<TComponent>();
             IsFlag = ComponentHelper.IsFlagComponent<TComponent>();
