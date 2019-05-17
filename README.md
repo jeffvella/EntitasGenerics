@@ -69,7 +69,7 @@ Components intended to contain no data ('Flags' in entitas) are explicitly marke
     {
     }
 
-Components intended to be searched by value should implment IEquatableT
+Components intended to be searched by value should implement IEquatableT
 
     public sealed class PositionComponent : IComponent, IEquatable<GridPosition>
     {
