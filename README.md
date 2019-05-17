@@ -264,12 +264,12 @@ for changing values a lamda is used:
     
 which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In many cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
 
-Unique and Flags have their own accessors because they have special behavior and it felt like this would fit best with Entitas' mantra of clear intent:
+`Unique` and `Flags` have their own special methods because they have special behavior and fits with Entitas' mantra of clear intent.
 
     entity.SetFlag<DestroyedComponent>();
     entity.IsFlagged<DestroyedComponent>();
 
-Unique components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the "Unqiue" Get/Set methods from a context you don't have to specify the entity.
+`Unique` components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the "Unqiue" Get/Set methods from a context you don't have to specify the entity.
 
     contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
     {
