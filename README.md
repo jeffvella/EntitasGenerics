@@ -269,7 +269,7 @@ which seemed to be the cleanest approach while ensuring that Entitas' procedure 
     entity.SetFlag<DestroyedComponent>();
     entity.IsFlagged<DestroyedComponent>();
 
-`Unique` components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the "Unqiue" Get/Set methods from a context you don't have to specify the entity.
+`Unique` components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the GetUnique/SetUnique methods from a context you don't have to specify the entity.
 
     contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
     {
