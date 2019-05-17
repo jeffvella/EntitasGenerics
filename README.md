@@ -69,8 +69,7 @@ Components intended to contain no data ('Flags' in entitas) are explicitly marke
     {
     }
 
-Components intended to searched by value should implment IEquatable<TValue>
-  
+Components intended to be searched by value should implment IEquatableT
     [Event(EventTarget.Any)]
     public sealed class PositionComponent : IComponent, IEquatable<GridPosition>
     {
@@ -148,7 +147,7 @@ Currently working with systems is pretty much the same.
         }
     }
 
-You can still work with groups, trigger, collectors and partial systems using just IExecuteSystem etc.
+You can still work with groups, triggers, collectors and partial systems using just IExecuteSystem etc.
 
     public sealed class DestroyEntitySystem : ICleanupSystem
     {
@@ -178,6 +177,34 @@ You can still work with groups, trigger, collectors and partial systems using ju
             {
                 e.Destroy();
             }
+        }
+    }
+
+
+##### Events #####
+
+Event listeners can be used in a similar fashion either inline as an action...
+
+    public class SelectedListener : MonoBehaviour, IEventListener<GameEntity>
+    { 
+        [SerializeField] private GameObject _selectedEffect;
+
+        public void RegisterListeners(Contexts contexts, GameEntity entity)
+        {
+            entity.RegisterAddedComponentListener<SelectedComponent>(OnSelected);
+            entity.RegisterRemovedComponentListener<SelectedComponent>(OnDeselected);
+
+            _selectedEffect.SetActive(entity.IsFlagged<SelectedComponent>());
+        }
+
+        private void OnSelected((IEntity Entity, SelectedComponent Component) obj)
+        {
+            _selectedEffect.SetActive(true);
+        }
+
+        private void OnDeselected(IEntity entity)
+        {
+            _selectedEffect.SetActive(false);
         }
     }
 
