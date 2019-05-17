@@ -70,6 +70,7 @@ Components intended to contain no data ('Flags' in entitas) are explicitly marke
     }
 
 Components intended to be searched by value should implment IEquatableT
+
     [Event(EventTarget.Any)]
     public sealed class PositionComponent : IComponent, IEquatable<GridPosition>
     {
