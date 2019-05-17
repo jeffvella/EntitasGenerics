@@ -232,7 +232,7 @@ or by implementing an event interface (IAddedComponentListener/IRemovedComponent
         }
     }
 
-registering via the context delivers a typed entity instead of IEntity (which might be useful in the case that you have added extra functionality to the dervied type).
+registering via the context delivers your concrete implementation to the event handler instead of IEntity (which might be useful in the case that you have added extra functionality).
 
     public class UnityView : MonoBehaviour, IView<GameEntity>
     {
@@ -248,8 +248,34 @@ registering via the context delivers a typed entity instead of IEntity (which mi
     }
 
 
+##### Working with Components #####
 
+Components can be retrieved from an entity using `Get<>()` methods via the context:
 
+    var idComponent = _game.Get<IdComponent>(targetEntity);
+
+or from the entity itself when deriving your entities from GenericEntity base class:
+
+    var idComponent = targetEntity.Get<IdComponent>();
+    
+for changing values a lamda is used:
+
+    entity.Set<PositionComponent>(c => c.value = position);
+    
+which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In most cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
+
+Unique and Flags have their own accessors because they have special behavior and it felt like this would fit best with Entitas' mantra of clear intent:
+
+    entity.SetFlag<DestroyedComponent>();
+    entity.IsFlagged<DestroyedComponent>();
+
+Unique components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the "Unqiue" Get/Set methods from a context you don't have to specify the entity.
+
+    contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
+    {
+        c.value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text);
+    });
+    
 
 # Known Issues #
 
