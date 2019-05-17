@@ -42,7 +42,7 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
     protected override void Execute(List<GameEntity> entities)
     {
         //var score = _contexts.gameState.score.value;
-        var score = _gameState.GetUnique<ScoreComponent>().value;
+        var score = _gameState.GetUnique<ScoreComponent>().Value;
         var totalReward = 0;
         
         foreach (var entity in entities)
@@ -54,6 +54,6 @@ public sealed class ApplyRewardSystem : GenericReactiveSystem<GameEntity>
         
         //_contexts.gameState.ReplaceScore(score + totalReward);
 
-        _gameState.SetUnique<ScoreComponent>(c => c.value = score + totalReward);
+        _gameState.SetUnique<ScoreComponent>(c => c.Value = score + totalReward);
     }
 }

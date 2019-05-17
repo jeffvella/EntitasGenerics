@@ -19,10 +19,6 @@ public sealed class UpdateInputSystem : IExecuteSystem
             _contexts.Input.SetFlag<PointerHoldingComponent>(false);
             _contexts.Input.SetFlag<PointerStartedHoldingComponent>(false);
             _contexts.Input.SetFlag<PointerReleasedComponent>(true);
-
-            //_contexts.input.isPointerHolding = false;
-            //_contexts.input.isPointerStartedHolding = false;
-            //_contexts.input.isPointerReleased = true;
         }
         else
         {
@@ -37,17 +33,9 @@ public sealed class UpdateInputSystem : IExecuteSystem
 
             var isReleased = _inputService.IsReleased();
             _contexts.Input.SetFlag<PointerReleasedComponent>(isReleased);
-
             _contexts.Input.SetUnique<PointerHoldingPositionComponent>(c => c.value = _inputService.HoldingPosition());
-
             _contexts.Input.SetUnique<PointerHoldingTimeComponent>(c => c.value = _inputService.HoldingTime());
 
-            //_inputService.Update(_contexts.input.deltaTime.value);
-            //_contexts.input.isPointerHolding = _inputService.IsHolding();
-            //_contexts.input.isPointerStartedHolding = _inputService.IsStartedHolding();
-            //_contexts.input.isPointerReleased = _inputService.IsReleased();
-            //_contexts.input.ReplacePointerHoldingPosition(_inputService.HoldingPosition());
-            //_contexts.input.ReplacePointerHoldingTime(_inputService.HoldingTime());
         }
     }
 }

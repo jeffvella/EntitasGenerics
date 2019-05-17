@@ -139,7 +139,8 @@ public sealed class ComboDetectionSystem : GenericReactiveSystem<GameEntity>
         var e = _game.CreateEntity();
         //e.AddCombo(id);
         //e.isDestroyed = true;
-        _game.Set(e, new ComboComponent { value =  id });
+        _game.Set<ComboComponent>(e, c => c.Value = id ); //, new ComboComponent { Value =  id });
         _game.SetFlag<DestroyedComponent>(e);
+
     }
 }

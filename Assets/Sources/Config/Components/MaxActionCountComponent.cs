@@ -7,5 +7,5 @@ using Entitas.Generics;
 [Event(EventTarget.Any)]
 public sealed class MaxActionCountComponent : IUniqueComponent
 {
-    public int value;
+    public int Value;
 }

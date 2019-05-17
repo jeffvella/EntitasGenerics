@@ -15,4 +15,3 @@ public class RootSystems : Feature
         Add(new GameEventSystems(contexts));
     }
 }
-

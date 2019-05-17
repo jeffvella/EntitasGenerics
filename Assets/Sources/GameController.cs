@@ -46,7 +46,7 @@ public class GameController : MonoBehaviour
     {
         contexts.Config.SetUnique<MapSizeComponent>(c => c.value = new GridSize(6, 6));
         contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = 4); 
-        contexts.Config.SetUnique<MaxActionCountComponent>(c => c.value = 20);
+        contexts.Config.SetUnique<MaxActionCountComponent>(c => c.Value = 20);
         contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = 3);
 
         contexts.Config.SetUnique<ScoringTableComponent>(c =>

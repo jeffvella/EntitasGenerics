@@ -23,7 +23,7 @@ public class UIRewardView : MonoBehaviour //, IScoreListener
 
     private void OnScoreAddedEvent((GameStateEntity Entity, ScoreComponent Component) obj)
     {
-        OnScore(obj.Entity, obj.Component.value);
+        OnScore(obj.Entity, obj.Component.Value);
     }
 
     public void OnScore(GameStateEntity entity, int value)

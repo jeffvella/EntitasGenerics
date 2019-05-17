@@ -25,29 +25,13 @@ public sealed class ViewSystem : GenericReactiveSystem<GameEntity>
         return context.Has<AssetComponent>(entity) && !context.IsFlagged<AssetLoadedComponent>();
     }
 
-    //protected override ICollector<GameEntity> GetTrigger(IContext<GameEntity> context)
-    //{
-    //    return context.CreateCollector(GameMatcher.Asset.Added());
-    //}
-
-    //protected override bool Filter(GameEntity entity)
-    //{
-    //    return entity.hasAsset && !entity.isAssetLoaded;
-    //}
-
     protected override void Execute(List<GameEntity> entities)
     {
         foreach (var entity in entities)
         {
-            //_viewService.LoadAsset(_contexts, _genericContexts, entity, entity.asset.value);
-
-            var assetName = _contexts.Game.Get<AssetComponent>(entity).value;
-
-            _viewService.LoadAsset(_contexts, entity, assetName);
-
+            var assetName = _contexts.Game.Get<AssetComponent>(entity).value;     
+            _viewService.LoadAsset<GameEntity>(_contexts, entity, assetName);
             _contexts.Game.SetFlag<AssetLoadedComponent>(entity, true);
-
-            //entity.isAssetLoaded = true;
         }
     }
 }

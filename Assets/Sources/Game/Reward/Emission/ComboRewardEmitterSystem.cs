@@ -45,7 +45,7 @@ public sealed class ComboRewardEmitterSystem : GenericReactiveSystem<GameEntity>
 
         foreach (var entity in entities)
         {
-            var combo = _game.Get<ComboComponent>(entity).value;
+            var combo = _game.Get<ComboComponent>(entity).Value;
             var definition = definitions.Definitions[combo];
             
             //var e = _contexts.game.CreateEntity();

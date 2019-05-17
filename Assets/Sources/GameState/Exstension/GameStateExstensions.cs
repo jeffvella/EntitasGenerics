@@ -8,7 +8,7 @@ public static class GameStateExstensions
     {        
         context.SetUnique<LastSelectedComponent>(c => c.value = -1);
         context.SetUnique<ActionCountComponent>(c => c.value = 0);
-        context.SetUnique<ScoreComponent>(c => c.value = 0); 
+        context.SetUnique<ScoreComponent>(c => c.Value = 0); 
         context.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
         context.SetFlag<GameOverComponent>(false);
     }

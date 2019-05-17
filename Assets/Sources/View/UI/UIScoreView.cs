@@ -14,10 +14,6 @@ public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntit
 
     private void Start()
     {
-        //Contexts.sharedInstance.gameState.CreateEntity().AddScoreListener(this);
-
-        //Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(this);
-
         Contexts.Instance.GameState.RegisterAddedComponentListener(this);
 
         _triggerHash = Animator.StringToHash(_triggerName);
@@ -25,45 +21,7 @@ public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntit
 
     public void OnComponentAdded(GameStateEntity entity, ScoreComponent component)
     {
-        _label.text = component.value.ToString();
+        _label.text = component.Value.ToString();
         _animator.SetTrigger(_triggerHash);
     }
-
-    //public void OnScore(GameStateEntity entity, int value)
-    //{
-    //    _label.text = value.ToString();
-    //    _animator.SetTrigger(_triggerHash);
-    //}
-
-    //public void OnEvent((GameStateEntity Entity, ScoreComponent Component) arg)
-    //{
-    //    OnScore(arg.Entity, arg.Component.value);
-    //}
-
-    //public void OnEvent(ScoreComponent component)
-    //{
-    //    _label.text = component.value.ToString();
-    //    _animator.SetTrigger(_triggerHash);
-    //}
-
-    //public void OnEvent((GameStateEntity Entity, ScoreComponent Component) args)
-    //{
-    //    _label.text = args.Component.value.ToString();
-    //    _animator.SetTrigger(_triggerHash);
-    //}
-
-    //public void OnEvent((GameStateContext Context, GameStateEntity Entity, ScoreComponent Component) args)
-    //{
-    //    _label.text = args.Component.value.ToString();
-    //    _animator.SetTrigger(_triggerHash);
-    //}
-
-    //public void OnEvent((Assets.Sources.GameState.GameStateContext Context, GameStateEntity Entity, ScoreComponent Component) args)
-    //{
-    //    _label.text = args.Component.value.ToString();
-    //    _animator.SetTrigger(_triggerHash);
-    //}
-
-
-
 }

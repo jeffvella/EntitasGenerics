@@ -37,7 +37,7 @@ public sealed class GameOverSystem : GenericReactiveSystem<GameStateEntity>
         //    _contexts.gameState.isGameOver = true;
         //}
 
-        var maxActions = _config.GetUnique<MaxActionCountComponent>().value;
+        var maxActions = _config.GetUnique<MaxActionCountComponent>().Value;
         var actionCount = _gameState.GetUnique<ActionCountComponent>().value;
 
         if (actionCount >= maxActions)

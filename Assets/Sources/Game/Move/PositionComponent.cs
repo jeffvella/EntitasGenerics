@@ -5,34 +5,11 @@ using Entitas.Generics;
 using UnityEngine;
 
 [Event(EventTarget.Any)]
-public sealed class PositionComponent : IComponent, IEquatable<GridPosition> //, IValueComponent<GridPosition>, IEntityLinkedComponent
-//ValueComponent<PositionComponent, GridPosition>
+public sealed class PositionComponent : IComponent, IEquatable<GridPosition>
 {
-    //private ComponentAccessor<PositionComponent, GridPosition> _accessor;
-
     public GridPosition value;
 
     public bool Equals(GridPosition other) => other.Equals(value);
-
-    //public GridPosition value { get; set; }
-
-    ////private GridPosition _value;
-
-    ////public GridPosition value
-    ////{
-    ////    get => _value;
-    ////    set => _accessor.Value = value;
-    ////}
-
-    //public void DirectSetValue(GridPosition v)
-    //{
-    //    value = v;
-    //}
-
-    //public void Link(IEntityContext context, IEntity entity)
-    //{
-    //    _accessor = new ComponentAccessor<PositionComponent, GridPosition>(context, entity);
-    //}
 }
 
 

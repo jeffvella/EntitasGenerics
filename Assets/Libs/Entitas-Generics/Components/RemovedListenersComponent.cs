@@ -10,7 +10,8 @@ namespace Entitas.Generics
     /// </summary> 
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
-    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity> where TEntity : IEntity where TComponent : IComponent
+    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity> 
+        where TEntity : IEntity where TComponent : IComponent
     {
 
     }

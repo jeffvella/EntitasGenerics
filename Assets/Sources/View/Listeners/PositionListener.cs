@@ -3,8 +3,7 @@ using Entitas;
 using Entitas.Generics;
 using UnityEngine;
 
-public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver<PositionComponent>
-// , IPositionListener
+public class PositionListener : MonoBehaviour, IEventListener
 {
     [SerializeField] private float _lerpSpeed = 1f;
 
@@ -15,7 +14,6 @@ public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver
     public void RegisterListeners(Contexts contexts, IEntity entity)
     {
         _entity = (GameEntity) entity;
-        //_entity.AddPositionListener(this);
 
         contexts.Game.RegisterAddedComponentListener<PositionComponent>(_entity, OnPositionChanged);
 
@@ -28,11 +26,6 @@ public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver
     {
         _targetPosition = obj.Component.value.ToVector3();
     }
-
-    //public void OnPosition(GameEntity entity, GridPosition value)
-    //{
-    //    _targetPosition = value.ToVector3();
-    //}
     
     private void Update()
     {
@@ -41,9 +34,4 @@ public class PositionListener : MonoBehaviour, IEventListener //, IEventObserver
 
         transform.position = Vector3.Lerp(transform.position, _targetPosition, _lerpSpeed * Time.deltaTime);
     }
-
-    //public void OnEvent(PositionComponent value)
-    //{
-    //    throw new System.NotImplementedException();
-    //}
 }

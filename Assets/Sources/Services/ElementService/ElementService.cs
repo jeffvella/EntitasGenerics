@@ -32,7 +32,8 @@ public sealed class ElementService : Service
         _game.Set(entity, new AssetComponent { value = "Element" });
         _game.Set(entity, new ColorComponent { value = new Color(normalizedType, normalizedType, normalizedType) });
         //_game.Set(entity, new PositionComponent { value = position });
-        _game.Set<PositionComponent>(entity, c => c.value = position);
+        //_game.Set<PositionComponent>(entity, c => c.value = position);
+        entity.Set<PositionComponent>(c => c.value = position);
 
         //var entity = _contexts.game.CreateEntity();
         //entity.isElement = true;

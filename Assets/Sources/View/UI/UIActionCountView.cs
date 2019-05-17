@@ -34,7 +34,7 @@ public class UIActionCountView : MonoBehaviour
 
         //var pair = Contexts.Instance.Config.GetUniqueEntityAndComponent<MaxActionCountComponent>(); 
 
-        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().value;            
+        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Value;            
         Apply();
     }
 
@@ -47,7 +47,7 @@ public class UIActionCountView : MonoBehaviour
 
     private void OnMaxActionCountChanged((ConfigEntity Entity, MaxActionCountComponent Component) obj)
     {
-        _maxActionCount = obj.Component.value;
+        _maxActionCount = obj.Component.Value;
         Apply();
     }
 

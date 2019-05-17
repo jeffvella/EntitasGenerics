@@ -27,21 +27,8 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
         return context.GetCollector<PointerReleasedComponent>();
     }
 
-    //protected override ICollector<InputEntity> GetTrigger(IContext<InputEntity> context)
-    //{
-    //    return context.CreateCollector(InputMatcher.PointerReleased);
-    //}
-
-    //protected override bool Filter(InputEntity entity)
-    //{
-    //    return true;
-    //}
-
     protected override void Execute(List<InputEntity> entities)
     {
-        //if (_contexts.input.isPointerHolding)
-        //    return;
-
         if (_input.IsFlagged<PointerHoldingComponent>())
             return;
 
@@ -49,15 +36,9 @@ public sealed class DropSelectionSystem : GenericReactiveSystem<InputEntity>
         {
             _game.SetFlag<SelectedComponent>(entity, false);
             _game.Remove<SelectionIdComponent>(entity);
-
-            //entity.isSelected = false;
-            //entity.RemoveSelectionId();
         }
 
         _gameState.SetUnique<LastSelectedComponent>(c => c.value = -1);
         _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
-
-        //_contexts.gameState.ReplaceLastSelected(-1);
-        //_contexts.gameState.ReplaceMaxSelectedElement(0);
     }
 }

@@ -576,17 +576,19 @@ namespace Entitas.Generics
 
         public void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
         {
-            ((IGenericContext<TEntity>)this).RegisterAddedComponentListener(entity, action);
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>((TEntity)entity);
+            component.Register(args => action((args.Entity, args.Component)));
         }
 
         public void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IComponent, new()
         {
-            ((IGenericContext<TEntity>)this).RegisterRemovedComponentListener<TComponent>(entity, action);
+            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>((TEntity)entity);
+            component.Register(action);
         }
 
         public bool IsFlagged<TComponent>(IEntity entity) where TComponent : IFlagComponent, new()
         {
-            return ((IGenericContext<TEntity>)this).IsFlagged<TComponent>(entity);
+            return entity.HasComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
         }
 
         bool IEntityContext.Has<TComponent>(IEntity entity)

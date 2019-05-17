@@ -53,8 +53,9 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity
         Context.RegisterAddedComponentListener<TComponent>(this, action);
     }
 
-    void RegisterRemovedComponentListener<TComponent>(Action<IEntity> action) where TComponent : IComponent, new()
+    public void RegisterRemovedComponentListener<TComponent>(Action<IEntity> action) where TComponent : IComponent, new()
     {
         Context.RegisterRemovedComponentListener<TComponent>(this, action);
     }
 }
+
