@@ -264,7 +264,7 @@ for changing values a lamda is used:
     
 which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In many cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
 
-`Unique` and `Flags` have their own special methods because they have special behavior and fits with Entitas' mantra of clear intent.
+`Unique` and `Flags` have their own special methods because they have special behavior and fits with Entitas' mantra of clear intent. But it would be trivial to also use the normal Set/Get methods since these are all simply `IComponent`s
 
     entity.SetFlag<DestroyedComponent>();
     entity.IsFlagged<DestroyedComponent>();
