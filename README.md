@@ -208,6 +208,49 @@ Event listeners can be used in a similar fashion either inline as an action...
         }
     }
 
+or by implementing an event interface (IAddedComponentListener/IRemovedComponentListener)
+
+    public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntity, ScoreComponent>
+    {
+        [SerializeField] private Text _label;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private string _triggerName;
+
+        private int _triggerHash;
+
+        private void Start()
+        {
+            Contexts.Instance.GameState.RegisterAddedComponentListener(this);
+
+            _triggerHash = Animator.StringToHash(_triggerName);
+        }
+
+        public void OnComponentAdded(GameStateEntity entity, ScoreComponent component)
+        {
+            _label.text = component.Value.ToString();
+            _animator.SetTrigger(_triggerHash);
+        }
+    }
+
+registering via the context delivers a typed entity instead of IEntity (which might be useful in the case that you have added extra functionality to the dervied type).
+
+    public class UnityView : MonoBehaviour, IView<GameEntity>
+    {
+        public void InitializeView(Contexts contexts, GameEntity entity)
+        {
+            contexts.Game.RegisterAddedComponentListener<DestroyedComponent>(entity, OnEntityDestroyed));
+        }
+
+        private void OnEntityDestroyed((GameEntity Entity, DestroyedComponent Component) obj)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+
+
+
+
 # Known Issues #
 
 * 'Indexed' Entity searches currently loops through for Equality versus the dictionary-based generated code in default Entitas.
