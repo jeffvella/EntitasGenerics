@@ -262,7 +262,7 @@ for changing values a lamda is used:
 
     entity.Set<PositionComponent>(c => c.value = position);
     
-which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In most cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
+which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In many cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
 
 Unique and Flags have their own accessors because they have special behavior and it felt like this would fit best with Entitas' mantra of clear intent:
 
