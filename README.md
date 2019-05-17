@@ -208,7 +208,7 @@ Event listeners can be used in a similar fashion either inline as an action...
         }
     }
 
-or by implementing an event interface (IAddedComponentListener/IRemovedComponentListener)
+... or by implementing an event interface (IAddedComponentListener/IRemovedComponentListener)
 
     public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntity, ScoreComponent>
     {
