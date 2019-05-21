@@ -1,5 +1,4 @@
-﻿using System;
-using Entitas.CodeGeneration.Attributes;
+﻿using Entitas.CodeGeneration.Attributes;
 
 namespace Entitas.Generics
 {

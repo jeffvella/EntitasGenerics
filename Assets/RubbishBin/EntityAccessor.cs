@@ -1,6 +1,3 @@
-using System;
-using Entitas;
-using Entitas.Generics;
 
 //public interface IEntityAccessor2
 //{

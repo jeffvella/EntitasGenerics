@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Entitas;
-
-namespace Entitas.Generics
+﻿namespace Entitas.Generics
 {
     // This is currently not used; if it were useful to store a version of the Components on
     // ContextDefinition.Add (ie to enumerate them for debugging) then this could be used

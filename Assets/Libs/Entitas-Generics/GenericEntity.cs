@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Entitas;
 using Entitas.Generics;
 

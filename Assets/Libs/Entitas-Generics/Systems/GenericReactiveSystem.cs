@@ -133,7 +133,7 @@ namespace Entitas
     {
         string _toStringCache;
         readonly ICollector<TEntity> _collector;
-        readonly List<TEntity> _buffer;
+        readonly List<TEntity> _buffer = new List<TEntity>();
         private Func<IGenericContext<TEntity>, TEntity, bool> _filter;
 
         protected readonly IGenericContext<TEntity> Context;
@@ -142,7 +142,7 @@ namespace Entitas
             Func<IGenericContext<TEntity>, ICollector<TEntity>> triggerProducer)
         {
             _collector = triggerProducer(context);
-            _buffer = new List<TEntity>();
+            //_buffer = new List<TEntity>();
         }
 
 
@@ -153,13 +153,13 @@ namespace Entitas
             Context = context;
             _filter = filter;
             _collector = triggerProducer(context);
-            _buffer = new List<TEntity>();
+            //_buffer = new List<TEntity>();
         }
 
         protected GenericReactiveSystem(ICollector<TEntity> collector)
         {
             _collector = collector;
-            _buffer = new List<TEntity>();
+            //_buffer = new List<TEntity>();
         }
 
         protected abstract void Execute(List<TEntity> entities);
@@ -191,6 +191,9 @@ namespace Entitas
         /// if there are any. Otherwise it will not call Execute(entities).
         public void Execute()
         {
+            if (_buffer == null)
+                throw new InvalidOperationException("_buffer is null, probably a thread access ownership issue");
+
             if (_collector.count != 0)
             {
                 if (_filter != null)

@@ -1,6 +1,4 @@
-﻿using Entitas;
-
-namespace Entitas.Generics
+﻿namespace Entitas.Generics
 {
 
     public interface IUniqueComponent : IComponent { }

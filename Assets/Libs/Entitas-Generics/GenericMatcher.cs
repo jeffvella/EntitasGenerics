@@ -1,6 +1,4 @@
-﻿using Entitas;
-
-namespace Entitas.Generics
+﻿namespace Entitas.Generics
 {
     /// <summary>
     /// Provides matcher instance for a Context/Entity/Component combination.

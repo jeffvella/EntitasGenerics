@@ -1,4 +1,5 @@
-﻿using Entitas.VisualDebugging.Unity;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Entitas.Generics
 {
@@ -36,7 +37,9 @@ namespace Entitas.Generics
         {
             if (_isAddType && _addedCollector.count > 0)
             {
-                foreach (var entity in _addedCollector.collectedEntities)
+                var entities = _addedCollector.collectedEntities.ToList(); // todo buffer like reactive system
+
+                foreach (var entity in entities)
                 {
                     if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
@@ -51,12 +54,14 @@ namespace Entitas.Generics
                         }
                     }
                 }
-                _addedCollector.ClearCollectedEntities();
+                _addedCollector?.ClearCollectedEntities();
             }
 
             if (_isRemoveType && _removedCollector.count > 0)
             {
-                foreach (var entity in _removedCollector.collectedEntities)
+                var entities = _removedCollector.collectedEntities.ToList(); // todo buffer like reactive system
+
+                foreach (var entity in entities)
                 {
                     if (_context.Has<RemovedListenersComponent<TEntity, TComponent>>(entity))
                     {
@@ -67,7 +72,7 @@ namespace Entitas.Generics
                         }
                     }
                 }            
-                _removedCollector.ClearCollectedEntities();
+                _removedCollector?.ClearCollectedEntities();
             }            
         }
 

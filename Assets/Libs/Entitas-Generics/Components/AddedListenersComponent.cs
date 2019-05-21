@@ -1,6 +1,4 @@
-﻿using Entitas.Generics;
-
-namespace Entitas.Generics
+﻿namespace Entitas.Generics
 {
     /// <summary>
     /// A component that stores event listeners for component 'Added' events. 

@@ -1,7 +1,4 @@
-﻿using System;
-using Entitas;
-
-namespace Entitas.Generics
+﻿namespace Entitas.Generics
 {
     /// <summary>
     /// Provides info about a Context/Component combinations

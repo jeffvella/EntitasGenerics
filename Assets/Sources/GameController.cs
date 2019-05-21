@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Entitas.MatchLine;
+using System.Collections.Generic;
 using Entitas.Generics;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class GameController : MonoBehaviour
     public static Contexts Contexts { get; private set; }
 
     private RootSystems _rootSystems;
-    private Services _services;
+    private IServices _services;
 
     [SerializeField]
     private TextAsset ComboDefinitions;
@@ -16,13 +17,15 @@ public class GameController : MonoBehaviour
     {
         Contexts = Contexts.Instance;
         Configure(Contexts);
-        
+
+        Contexts.EnableVisualDebugging();
+
         _services = new Services
         {
             ViewService = new UnityViewService(Contexts),
             InputService = new UnityInputService(Contexts, Camera.main),
             TimeService = new UnityTimeService(Contexts),
-            ElementService = new ElementService(Contexts),
+            ElementService = new UnityElementService(Contexts),
         };
 
         _rootSystems = new RootSystems(Contexts, _services);

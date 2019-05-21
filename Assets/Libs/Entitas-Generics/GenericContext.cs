@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Entitas.VisualDebugging.Unity;
-using Entitas.VisualDebugging;
-using Entitas.Generics;
-using Debug = UnityEngine.Debug;
 
 
 namespace Entitas.Generics
@@ -134,8 +132,6 @@ namespace Entitas.Generics
         public GenericContext(IContextDefinition contextDefinition) 
             : base(contextDefinition.ComponentCount, 0, contextDefinition.ContextInfo, AercFactory, EntityFactory)
         {
-            SetupVisualDebugging();
-
             Definition = contextDefinition;
 
             if (contextDefinition.EventListenerIndices.Count > 0)
@@ -154,17 +150,6 @@ namespace Entitas.Generics
         private static IAERC AercFactory(IEntity entity)
         {
             return new UnsafeAERC();
-        }
-
-        private void SetupVisualDebugging()
-        {
-#if (!ENTITAS_DISABLE_VISUAL_DEBUGGING && UNITY_EDITOR)
-            if (!UnityEngine.Application.isPlaying)
-                return;
-
-            var observer = new ContextObserver(this);
-            UnityEngine.Object.DontDestroyOnLoad(observer.gameObject);
-#endif
         }
 
         private void ClearEventListenersOnDestroyed(IContext context, IEntity entity)
