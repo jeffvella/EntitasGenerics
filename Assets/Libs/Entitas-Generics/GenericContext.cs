@@ -31,9 +31,9 @@ namespace Entitas.Generics
 
         // Events:
 
-        void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new();
 
-        void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IComponent, new();
+        void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new();
     }
 
     /// <summary>
@@ -65,13 +65,13 @@ namespace Entitas.Generics
 
         // Events:
 
-        void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new();
 
-        void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IComponent, new();
+        void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new();
 
-        void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IComponent, new();
+        void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new();
 
-        void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IComponent, new();
+        void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new();
 
         // Entity Searches:
 
@@ -112,9 +112,9 @@ namespace Entitas.Generics
 
         // Events
 
-        void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IComponent, new();
+        void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new();
 
-        void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IComponent, new();
+        void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IEventComponent, new();
 
         // Helpers
 
@@ -173,25 +173,25 @@ namespace Entitas.Generics
             }
         }
 
-        public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
         {
             var entity = GetOrCreateEntityWith<TComponent>();
             RegisterAddedComponentListener(entity, action);
         }
 
-        public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(action);
         }
 
-        public void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IComponent, new()
+        public void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
         {
             var entity = GetOrCreateEntityWith<TComponent>();
             RegisterAddedComponentListener(entity, listener);
         }
 
-        public void RegisterAddedComponentListener<TComponent>(TEntity entity, IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IComponent, new()
+        public void RegisterAddedComponentListener<TComponent>(TEntity entity, IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(UniqueEntity);
             component.Register(arg => listener.OnComponentAdded(arg.Entity, arg.Component));
@@ -204,30 +204,30 @@ namespace Entitas.Generics
             component.Register(listener);
         }
 
-        public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IComponent, new()
+        public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new()
         {
             var entity = GetOrCreateEntityWith<TComponent>();
             RegisterRemovedComponentListener<TComponent>(entity, action);                     
         }
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IComponent, new()
+        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(action);
         }
 
-        public void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IComponent, new()
+        public void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
         {
             var entity = GetOrCreateEntityWith<TComponent>();
             RegisterRemovedComponentListener<TComponent>(entity, listener);
         }
 
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IRemovedComponentListener<TEntity> listener) where TComponent : IComponent, new()
+        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(listener.OnComponentRemoved);
         }
 
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity> listener) where TComponent : IComponent
+        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity> listener) where TComponent : IEventComponent
         {
             var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
             component.Register(listener.OnEvent);
@@ -559,13 +559,13 @@ namespace Entitas.Generics
             }
         }
 
-        public void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+        public void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>((TEntity)entity);
             component.Register(args => action((args.Entity, args.Component)));
         }
 
-        public void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IComponent, new()
+        public void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IEventComponent, new()
         {
             var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>((TEntity)entity);
             component.Register(action);

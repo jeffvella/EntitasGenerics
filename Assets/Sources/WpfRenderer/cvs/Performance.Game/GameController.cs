@@ -27,11 +27,15 @@ namespace Performance
 
             Configure(_viewModel.Settings, _contexts);
 
+            // The difference between a 'View' and an 'EntityListener' is that listeners are created to monitor a specific (already created) entity
+            // whereas Views are being initialized once here and can monitor against any entity that may be created at any point.
+
             _viewModel.Views.Add<UIScoreView>();
             _viewModel.Views.Add<UIRewardView>();
             _viewModel.Views.Add<UIActionCountView>();
             _viewModel.Views.Add<UIRestartView>();
             _viewModel.Views.Add<UIGameOverView>();
+            _viewModel.Views.Add<UIComboView>();
 
             _services = new TestServices
             {
@@ -76,11 +80,14 @@ namespace Performance
         private void Configure(SettingsViewModel settings, Contexts contexts)
         {
             settings.GridSize = new GridSize(6, 6);
+            settings.TypeCount = 4;
+            settings.MaxActionCount = 20;
+            settings.MinMatchCount = 3;            
 
             contexts.Config.SetUnique<MapSizeComponent>(c => c.value = settings.GridSize);
-            contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = 4);
-            contexts.Config.SetUnique<MaxActionCountComponent>(c => c.Value = 20);
-            contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = 3);
+            contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = settings.TypeCount);
+            contexts.Config.SetUnique<MaxActionCountComponent>(c => c.Value = settings.MaxActionCount);
+            contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = settings.MinMatchCount);
 
             contexts.Config.SetUnique<ScoringTableComponent>(c =>
             {

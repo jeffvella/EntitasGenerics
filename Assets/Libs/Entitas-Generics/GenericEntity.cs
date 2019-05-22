@@ -47,12 +47,12 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity
         Context.Set(this, componentUpdater);
     }
 
-    public void RegisterAddedComponentListener<TComponent>(Action<(IEntity Entity, TComponent Component)> action) where TComponent : IComponent, new()
+    public void RegisterAddedComponentListener<TComponent>(Action<(IEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
     {
         Context.RegisterAddedComponentListener<TComponent>(this, action);
     }
 
-    public void RegisterRemovedComponentListener<TComponent>(Action<IEntity> action) where TComponent : IComponent, new()
+    public void RegisterRemovedComponentListener<TComponent>(Action<IEntity> action) where TComponent : IEventComponent, new()
     {
         Context.RegisterRemovedComponentListener<TComponent>(this, action);
     }

@@ -1,6 +1,6 @@
 ﻿namespace Entitas.MatchLine
 {
-    public sealed class GameStateEntity : Entity
+    public sealed class GameStateEntity : GenericEntity
     {
 
     }
