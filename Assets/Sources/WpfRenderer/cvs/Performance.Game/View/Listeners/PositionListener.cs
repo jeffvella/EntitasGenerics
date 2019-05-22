@@ -5,7 +5,7 @@ using Performance.Controls;
 using Performance.ViewModels;
 using UnityEngine;
 
-public class PositionListener : IEventListener
+public class PositionListener : IEventListener<GameEntity>
 {
     private SettingsViewModel _settings;
     private BoardViewModel _board;
@@ -16,12 +16,12 @@ public class PositionListener : IEventListener
 
    // private Vector3 _targetPosition;
 
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity)
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
     {
         _settings = model.Settings;
         _board = model.Board;
         _element = element;
-        _entity = (GameEntity)entity;
+        _entity = entity;
 
         contexts.Game.RegisterAddedComponentListener<PositionComponent>(_entity, OnPositionChanged);        
 

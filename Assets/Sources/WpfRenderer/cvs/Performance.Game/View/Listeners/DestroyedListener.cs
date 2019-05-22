@@ -5,12 +5,21 @@ using Entitas.MatchLine;
 using Performance.ViewModels;
 using Performance.Controls;
 
-public class DestroyedListener : IView<GameEntity>
+public class DestroyedListener : IEventListener<GameEntity>
 {
     private BoardViewModel _board;
     private ElementViewModel _element;
 
+    public DestroyedListener()
+    {
+    }
+
     public void InitializeView(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
     {
         _board = model.Board;
         _element = element;
@@ -23,8 +32,6 @@ public class DestroyedListener : IView<GameEntity>
         Performance.Common.Logger.Log("Destroyed Entity");
 
         _board.RemoveElement(_element);
-
-        //Destroy(gameObject);
     }
 }
 

@@ -7,15 +7,18 @@ public sealed class TestViewService : Service, IViewService
 {
     public TestViewService(Contexts contexts, MainViewModel viewModel) : base(contexts, viewModel)
     {
+        LoadViews();
+    }
 
+    public void LoadViews()
+    {
+        foreach (var view in _viewModel.Views)
+            view.InitializeView(_viewModel, _contexts);
     }
 
     public void LoadAsset(Contexts contexts, IEntity entity, string assetName, int assetType)
     {
         var element = CreateElement(assetName, assetType);
-
-        var view = element.GetBehavior<IView>();
-        view.InitializeView(_viewModel, element, contexts, entity);
 
         var eventListeners = element.GetBehaviors<IEventListener>();
         foreach (var listener in eventListeners)
@@ -24,13 +27,7 @@ public sealed class TestViewService : Service, IViewService
 
     public void LoadAsset<TEntity>(Contexts contexts, TEntity entity, string assetName, int assetType) where TEntity : IEntity
     {
-        var element = CreateElement(assetName, assetType);
-
-        foreach (var view in element.GetBehaviors<IView>())
-            view.InitializeView(_viewModel, element, contexts, entity);
-
-        foreach (var view in element.GetBehaviors<IView<TEntity>>())
-            view.InitializeView(_viewModel, element, contexts, entity);
+        var element = CreateElement(assetName, assetType);        
 
         foreach (var listener in element.GetBehaviors<IEventListener>())
             listener.RegisterListeners(_viewModel, element, contexts, entity);
@@ -46,7 +43,6 @@ public sealed class TestViewService : Service, IViewService
         element.AddBehavior<ColorListener>();
         element.AddBehavior<PositionListener>();
         element.AddBehavior<SelectedListener>();
-        element.AddBehavior<ScoreListener>();
         element.AssetName = assetName;
         element.ActorType = (ActorType)assetType;
 

@@ -6,23 +6,19 @@ using Performance.ViewModels;
 using System;
 using Performance.Common;
 
-public class ScoreListener : IEventListener
+public class UIScoreView : IView
 {
-    private ElementViewModel _element;
     private SessionViewModel _session;
 
-
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity)
+    public void InitializeView(MainViewModel model, Contexts contexts)
     {
-        _element = element;
         _session = model.Session;
-
         contexts.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreChanged);
     }
 
     private void OnScoreChanged((GameStateEntity Entity, ScoreComponent Component) obj)
     {
-        //Logger.Log($"Score changed to {obj.Component.Value}");
+        Logger.Log($"Score changed to {obj.Component.Value}");
 
         _session.Score = obj.Component.Value;
     }

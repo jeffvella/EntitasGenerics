@@ -8,17 +8,17 @@ public interface IViewBehavior
 
 }
 
-public interface IView : IViewBehavior
+public interface IEventListener : IViewBehavior
 {
-    void InitializeView(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity);
+    void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity);
 }
 
-public interface IView<in TEntity> : IViewBehavior
+public interface IEventListener<in TEntity> : IViewBehavior
 {
-    void InitializeView(MainViewModel model, ElementViewModel element, Contexts contexts, TEntity entity);
+    void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, TEntity entity);
 }
 
-// CONGRATULATIONS! YOU FOUND THE CAT!
-//               )\._.,--....,'``.       
-// .b--.        /;   _.. \   _\  (`._ ,. 
-//`=,-,-'~~~   `----(,_..'--(,_..'`-.;.'
+public interface IView
+{
+    void InitializeView(MainViewModel model, Contexts contexts);
+}

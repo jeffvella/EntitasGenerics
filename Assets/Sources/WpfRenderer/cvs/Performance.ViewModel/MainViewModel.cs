@@ -12,6 +12,7 @@ namespace Performance.ViewModels
         private SettingsViewModel _settings;
         private WorkContext _context;
         private SessionViewModel _session;
+        private ViewsViewModel _views;
 
         public MainViewModel()
         {
@@ -20,6 +21,7 @@ namespace Performance.ViewModels
             _board = new BoardViewModel();
             _context = new WorkContext();
             _session = new SessionViewModel();
+            _views = new ViewsViewModel();            
         }
 
         public SessionViewModel Session
@@ -50,6 +52,12 @@ namespace Performance.ViewModels
         {
             get => _board;
             set => SetField(ref _board, value);
+        }
+
+        public ViewsViewModel Views
+        {
+            get => _views;
+            set => SetField(ref _views, value);
         }
 
         public void Pulse()

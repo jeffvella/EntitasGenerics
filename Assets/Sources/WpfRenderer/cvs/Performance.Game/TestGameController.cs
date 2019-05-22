@@ -30,6 +30,8 @@ namespace Performance
 
             Configure(_viewModel.Settings, _contexts);
 
+            _viewModel.Views.Add<UIScoreView>();
+
             _services = new TestServices
             {
                 ViewService = new TestViewService(_contexts, _viewModel),

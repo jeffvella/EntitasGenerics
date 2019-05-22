@@ -8,22 +8,17 @@ using UnityEngine;
 using Color = System.Windows.Media.Color;
 using Logger = Performance.Common.Logger;
 
-public class ColorListener : IEventListener
+public class ColorListener : IEventListener<GameEntity>
 {
     private BoardViewModel _board;
-
-    //[SerializeField] private Renderer _renderer;
     private ElementViewModel _element;
     private GameEntity _entity;
 
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity)
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
     {
         _board = model.Board;
         _element = element;
-        _entity = (GameEntity)entity;
-
-        //var component = contexts.Game.Get<ColorComponent>(_entity);
-        //OnColorAdded((_entity, component));
+        _entity = entity;
 
         contexts.Game.RegisterAddedComponentListener<ColorComponent>(_entity, OnColorAdded);
     }
@@ -32,8 +27,5 @@ public class ColorListener : IEventListener
     {
         var unityColor = obj.Component.value;
         _element.Color = Color.FromArgb((byte)(unityColor.a * 255), (byte)(unityColor.r * 255), (byte)(unityColor.g * 255), (byte)(unityColor.b * 255));
-
-        //Logger.Log("Color Added");
-        //_renderer.material.color = obj.Component.value;
     }
 }
