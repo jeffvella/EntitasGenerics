@@ -13,8 +13,7 @@ namespace Entitas.Generics
             for (int i = 0; i < contexts.allContexts.Length; i++)
             {
                 SetupVisualDebugging(contexts.allContexts[i]);
-            }
-            
+            }            
         }
 
         public static void SetupVisualDebugging(IContext context)

@@ -10,6 +10,7 @@ namespace Entitas.MatchLine
             Add(new EventSystem<GameEntity, DestroyedComponent>(contexts.Game, GroupEvent.Added));
             Add(new EventSystem<GameEntity, PositionComponent>(contexts.Game, GroupEvent.Added));
             Add(new EventSystem<GameEntity, SelectedComponent>(contexts.Game, GroupEvent.AddedOrRemoved));
+            Add(new EventSystem<GameEntity, ComboComponent>(contexts.Game, GroupEvent.Added));
         }
     }
 }

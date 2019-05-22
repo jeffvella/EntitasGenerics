@@ -34,6 +34,8 @@ namespace Entitas.Generics
         void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new();
 
         void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new();
+
+        TEntity UniqueEntity { get; }
     }
 
     /// <summary>
@@ -175,8 +177,8 @@ namespace Entitas.Generics
 
         public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
         {
-            var entity = GetOrCreateEntityWith<TComponent>();
-            RegisterAddedComponentListener(entity, action);
+            //var entity = GetOrCreateEntityWith<TComponent>();
+            RegisterAddedComponentListener(UniqueEntity, action);
         }
 
         public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
@@ -187,8 +189,8 @@ namespace Entitas.Generics
 
         public void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
         {
-            var entity = GetOrCreateEntityWith<TComponent>();
-            RegisterAddedComponentListener(entity, listener);
+            //var entity = GetOrCreateEntityWith<TComponent>();            
+            RegisterAddedComponentListener(UniqueEntity, listener);
         }
 
         public void RegisterAddedComponentListener<TComponent>(TEntity entity, IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
@@ -199,15 +201,15 @@ namespace Entitas.Generics
 
         public void AddEventListener<TComponent>(IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent, new()
         {
-            var entity = GetOrCreateEntityWith<TComponent>();
-            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
+            //var entity = GetOrCreateEntityWith<TComponent>();
+            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(UniqueEntity);
             component.Register(listener);
         }
 
         public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new()
         {
-            var entity = GetOrCreateEntityWith<TComponent>();
-            RegisterRemovedComponentListener<TComponent>(entity, action);                     
+            //var entity = GetOrCreateEntityWith<TComponent>();
+            RegisterRemovedComponentListener<TComponent>(UniqueEntity, action);                     
         }
         public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new()
         {
@@ -217,8 +219,8 @@ namespace Entitas.Generics
 
         public void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
         {
-            var entity = GetOrCreateEntityWith<TComponent>();
-            RegisterRemovedComponentListener<TComponent>(entity, listener);
+            //var entity = GetOrCreateEntityWith<TComponent>();
+            RegisterRemovedComponentListener<TComponent>(UniqueEntity, listener);
         }
 
         public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()

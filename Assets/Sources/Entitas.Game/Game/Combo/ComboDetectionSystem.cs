@@ -25,7 +25,7 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return context.IsFlagged<MatchedComponent>() && context.Has<PositionComponent>(entity);
+            return context.IsFlagged<MatchedComponent>(entity) && context.Has<PositionComponent>(entity);
         }
 
         protected override void Execute(List<GameEntity> entities)

@@ -13,7 +13,7 @@ namespace Entitas.MatchLine
         {
             allContexts = new IContext[]
             {
-                Config, Input, GameState, Game
+                Input, GameState, Game, Config
             };
         }
 

@@ -2,6 +2,9 @@
 
 namespace Entitas.MatchLine
 {
+    /// <summary>
+    /// Moves blocks downwards to fill any gaps that have opened up beneath them.
+    /// </summary>
     public sealed class MoveSystem : IExecuteSystem
     {
         private IGenericContext<ConfigEntity> _config;
@@ -23,9 +26,8 @@ namespace Entitas.MatchLine
             {
                 for (int y = 1; y < size.y; y++)
                 {
-                    GridPosition position = new GridPosition(x, y);
-
-                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out GameEntity element))
+                    var sourcePosition = new GridPosition(x, y);
+                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(sourcePosition, out GameEntity element))
                     {
                         continue;
                     }

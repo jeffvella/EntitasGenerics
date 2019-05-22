@@ -5,7 +5,7 @@ namespace Entitas.Generics
 {
     public sealed class EventSystem<TEntity, TComponent> : IReactiveSystem, ICustomDebugInfo
         where TEntity : class, IEntity
-        where TComponent : IComponent, new()
+        where TComponent : IEventComponent, new()
     {
         private readonly GroupEvent _type;
         private readonly IGenericContext<TEntity> _context;
@@ -37,10 +37,15 @@ namespace Entitas.Generics
         {
             if (_isAddType && _addedCollector.count > 0)
             {
-                var entities = _addedCollector.collectedEntities.ToList(); // todo buffer like reactive system
+                var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
 
-                foreach (var entity in entities)
+                foreach (var entity in _addedCollector.collectedEntities)
                 {
+                    bool componentFound = false;
+                    TComponent changedComponent = default;
+
+                    // Handle listeners stored on the entity that owns the event.
+
                     if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
                         var addedListenerComponent = _context.Get<AddedListenersComponent<TEntity, TComponent>>(entity);
@@ -48,31 +53,62 @@ namespace Entitas.Generics
                         {
                             if (_context.Has<TComponent>(entity))
                             {
-                                var changedComponent = _context.Get<TComponent>(entity);
+                                changedComponent = _context.Get<TComponent>(entity);
+                                componentFound = true;
                                 addedListenerComponent.Raise((entity, changedComponent));
                             }
                         }
                     }
+
+                    // Handle listeners that should be notified whenever the event occurs on ANY entity.
+                    // These are currently stored on the unique entity.
+
+                    if (notifyUniqueListeners)
+                    {              
+                        if (!componentFound)
+                        {
+                            changedComponent = _context.Get<TComponent>(entity);
+                        }
+                        unqiueListener.Raise((entity, changedComponent));                       
+                    }
                 }
-                _addedCollector?.ClearCollectedEntities();
+
+                if (_addedCollector.count > 0)
+                {
+                    _addedCollector.ClearCollectedEntities();
+                }
             }
 
             if (_isRemoveType && _removedCollector.count > 0)
             {
-                var entities = _removedCollector.collectedEntities.ToList(); // todo buffer like reactive system
+                var notifyUniqueListeners = _context.TryGet<RemovedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
 
-                foreach (var entity in entities)
+                foreach (var entity in _removedCollector.collectedEntities)
                 {
+                    // Handle listeners stored on the entity that owns the event.
+
                     if (_context.Has<RemovedListenersComponent<TEntity, TComponent>>(entity))
                     {
-                        var removedListenersComponent = _context.Get<RemovedListenersComponent<TEntity, TComponent>>(entity);
-                        if (removedListenersComponent.ListenerCount > 0)
-                        {
-                            removedListenersComponent.Raise(entity);
+                        var addedListenerComponent = _context.Get<RemovedListenersComponent<TEntity, TComponent>>(entity);
+                        if (addedListenerComponent.ListenerCount > 0)
+                        {        
+                            addedListenerComponent.Raise(entity);                         
                         }
                     }
-                }            
-                _removedCollector?.ClearCollectedEntities();
+
+                    // Handle listeners that should be notified whenever the event occurs on ANY entity.
+                    // These are currently stored on the unique entity.
+
+                    if (notifyUniqueListeners)
+                    {
+                        unqiueListener.Raise(entity);
+                    }
+                }
+
+                if (_removedCollector.count > 0)
+                {
+                    _removedCollector.ClearCollectedEntities();
+                }
             }            
         }
 

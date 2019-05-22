@@ -16,9 +16,10 @@ public class GameController : MonoBehaviour
     private void Awake()
     {
         Contexts = Contexts.Instance;
-        Configure(Contexts);
 
         Contexts.EnableVisualDebugging();
+
+        Configure(Contexts);
 
         _services = new Services
         {
