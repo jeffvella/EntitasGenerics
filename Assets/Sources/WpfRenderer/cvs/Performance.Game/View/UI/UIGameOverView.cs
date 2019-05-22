@@ -1,23 +1,18 @@
 ﻿using UnityEngine;
 using Entitas.MatchLine;
-//using UnityEngine.UI;
+using Performance.ViewModels;
 
-public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemovedListener, 
-    //IEventObserver<GameOverComponent>, IEventObserver<GameStateEntity, GameOverComponent>
+public class UIGameOverView : IView
 {
-    //[SerializeField] private Animator _animator;
-    [SerializeField] private string _boolName;
+    private SessionViewModel _session;
 
-    private int _boolHash;
-
-    private void Start()
+    public void InitializeView(MainViewModel model, Contexts contexts)
     {
-        var state = Contexts.Instance.GameState;
-        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
+        _session = model.Session;
 
-        //_boolHash = Animator.StringToHash(_boolName);
-        SetGameOver(state.IsFlagged<GameOverComponent>());
+        contexts.GameState.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
+        contexts.GameState.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
+        SetGameOver(contexts.GameState.IsFlagged<GameOverComponent>());
     }
 
     private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
@@ -32,7 +27,6 @@ public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemov
 
     private void SetGameOver(bool value)
     {
-        //_animator.SetBool(_boolHash, value);
+        _session.IsGameOver = value;
     }
-
 }

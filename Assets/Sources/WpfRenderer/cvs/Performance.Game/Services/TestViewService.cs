@@ -20,7 +20,7 @@ public sealed class TestViewService : Service, IViewService
     {
         var element = CreateElement(assetName, assetType);
 
-        var eventListeners = element.GetBehaviors<IEventListener>();
+        var eventListeners = element.GetBehaviors<IEntityListener>();
         foreach (var listener in eventListeners)
             listener.RegisterListeners(_viewModel, element, contexts, entity);
     }
@@ -29,10 +29,10 @@ public sealed class TestViewService : Service, IViewService
     {
         var element = CreateElement(assetName, assetType);        
 
-        foreach (var listener in element.GetBehaviors<IEventListener>())
+        foreach (var listener in element.GetBehaviors<IEntityListener>())
             listener.RegisterListeners(_viewModel, element, contexts, entity);
 
-        foreach (var listener in element.GetBehaviors<IEventListener<TEntity>>())
+        foreach (var listener in element.GetBehaviors<IEntityListener<TEntity>>())
             listener.RegisterListeners(_viewModel, element, contexts, entity);
     }
 

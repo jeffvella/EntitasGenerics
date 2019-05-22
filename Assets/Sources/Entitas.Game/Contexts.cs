@@ -24,5 +24,7 @@ namespace Entitas.MatchLine
         public readonly IGenericContext<GameStateEntity> GameState = new GameStateContext();
 
         public readonly IGenericContext<GameEntity> Game = new GameContext();
+
+
     }
 }

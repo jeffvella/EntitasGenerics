@@ -9,20 +9,17 @@ using Performance.ViewModels;
 
 namespace Performance
 {
-    public class TestGameController 
+    public class GameController 
     {
         private Contexts _contexts;
         private RootSystems _rootSystems;
         private IServices _services;
         private MainViewModel _viewModel;
 
-        public TestGameController(MainViewModel viewModel)
+        public GameController(MainViewModel viewModel)
         {
             _viewModel = viewModel;
         }
-
-        //[SerializeField]
-        //private TextAsset ComboDefinitions;
 
         public void Awake()
         {
@@ -31,6 +28,10 @@ namespace Performance
             Configure(_viewModel.Settings, _contexts);
 
             _viewModel.Views.Add<UIScoreView>();
+            _viewModel.Views.Add<UIRewardView>();
+            _viewModel.Views.Add<UIActionCountView>();
+            _viewModel.Views.Add<UIRestartView>();
+            _viewModel.Views.Add<UIGameOverView>();
 
             _services = new TestServices
             {

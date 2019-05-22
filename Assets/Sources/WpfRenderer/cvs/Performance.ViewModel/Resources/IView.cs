@@ -8,12 +8,12 @@ public interface IViewBehavior
 
 }
 
-public interface IEventListener : IViewBehavior
+public interface IEntityListener : IViewBehavior
 {
     void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IEntity entity);
 }
 
-public interface IEventListener<in TEntity> : IViewBehavior
+public interface IEntityListener<in TEntity> : IViewBehavior
 {
     void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, TEntity entity);
 }

@@ -1,21 +1,26 @@
 ﻿using UnityEngine;
 using Entitas.MatchLine;
-//using UnityEngine.UI;
+using Performance.ViewModels;
 
-public class UIRewardView : MonoBehaviour //, IScoreListener
+public class UIRewardView : IView
 {
-    //[SerializeField] private Text _label;
-    //[SerializeField] private Animator _animator;
-    [SerializeField] private string _triggerName;
-
     private int _lastValue = 0;
+    private SessionViewModel _session;
 
-    private int _triggerHash;
+    public void InitializeView(MainViewModel model, Contexts contexts)
+    {
+        _session = model.Session;
+        contexts.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreChanged);
+    }
+
+    private void OnScoreChanged((GameStateEntity Entity, ScoreComponent Component) obj)
+    {
+        _session.Score = obj.Component.Value;
+    }
 
     private void Start()
     {
         Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreAddedEvent);
-        //_triggerHash = Animator.StringToHash(_triggerName);
     }
 
     private void OnScoreAddedEvent((GameStateEntity Entity, ScoreComponent Component) obj)
@@ -25,13 +30,13 @@ public class UIRewardView : MonoBehaviour //, IScoreListener
 
     public void OnScore(GameStateEntity entity, int value)
     {
-        if (value == _lastValue) return;
-        
+        if (value == _lastValue) return;        
         var difference = value - _lastValue;
                 
-        //_label.text = difference.ToString();
-        //_animator.SetTrigger(_triggerHash);
+        // todo: show the difference of score
         
         _lastValue = value;
     }
+
+
 }

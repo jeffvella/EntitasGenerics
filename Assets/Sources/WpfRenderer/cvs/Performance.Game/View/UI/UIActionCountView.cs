@@ -1,47 +1,28 @@
 ﻿using Entitas.MatchLine;
+using Performance.ViewModels;
 using UnityEngine;
-//using UnityEngine.UI;
 
-public class UIActionCountView //: IViewComponent 
-    //IEventObserver<ActionCountComponent>, IEventObserver<MaxActionCountComponent>
-//, IActionCountListener, IMaxActionCountListener, 
+public class UIActionCountView : IView
 {
-    //[SerializeField] private Text _label;
-    //[SerializeField] private Animator _animator;
-    [SerializeField] private string _triggerName;
+    private SessionViewModel _session;
 
-    private int _triggerHash;
-    private int _actionCount;
-    private int _maxActionCount;
-
-    private void Start()
+    public void InitializeView(MainViewModel model, Contexts contexts)
     {
-        Contexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
-        Contexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
+        contexts.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
+        contexts.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
 
-        //_triggerHash = Animator.StringToHash(_triggerName);
-        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Value;    
-        
-        Apply();
+        _session = model.Session;
+        _session.MaxActions = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Value;
     }
 
     private void OnActionCountChanged((GameStateEntity Entity, ActionCountComponent Component) obj)
-    {
-        _actionCount = obj.Component.value;
-        Apply();
+    {        
+        _session.Actions = obj.Component.value;
     }
-
 
     private void OnMaxActionCountChanged((ConfigEntity Entity, MaxActionCountComponent Component) obj)
     {
-        _maxActionCount = obj.Component.Value;
-        Apply();
-    }
-
-    private void Apply()
-    {
-        //_label.text = string.Format("{0}/{1}", _actionCount, _maxActionCount);
-        //_animator.SetTrigger(_triggerHash);
+        _session.MaxActions = obj.Component.Value;
     }
 
 }

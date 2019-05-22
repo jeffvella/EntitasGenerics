@@ -5,7 +5,7 @@ using Performance.Controls;
 using Performance.ViewModels;
 using UnityEngine;
 
-public class PositionListener : IEventListener<GameEntity>
+public class PositionListener : IEntityListener<GameEntity>
 {
     private SettingsViewModel _settings;
     private BoardViewModel _board;

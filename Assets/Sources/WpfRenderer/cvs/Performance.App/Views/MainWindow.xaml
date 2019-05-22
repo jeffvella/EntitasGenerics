@@ -44,10 +44,12 @@
 
 
                         <DockPanel Grid.Row="0">
-                            <WrapPanel>
+                            <Button Width="80" DockPanel.Dock="Left"  Command="{Binding Board.Input.RestartButtonClickedCommand}">Restart</Button>
+                            <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
                                 <Label>Score:</Label>
                                 <Label Content="{Binding Session.Score}" />
-
+                                <Label>Actions:</Label>
+                                <Label Content="{Binding Session.ActionsText}" />
                             </WrapPanel>
                         </DockPanel>
                         <!--<ItemsControl x:Name="StreamsItemsControl" ItemsSource="{Binding Board.Elements}">

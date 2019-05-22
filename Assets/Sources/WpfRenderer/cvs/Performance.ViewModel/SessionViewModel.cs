@@ -11,11 +11,8 @@ namespace Performance.ViewModels
     {
         private long _score;
         private long _actions;
-
-        public SessionViewModel()
-        { 
-
-        }
+        private int _maxActions;
+        private bool _isGameOver;
 
         public long Score
         {
@@ -26,8 +23,26 @@ namespace Performance.ViewModels
         public long Actions
         {
             get => _actions;
-            set => SetField(ref _actions, value);
+            set => SetField(ref _actions, value, nameof(ActionsText));
+        }
+
+        public int MaxActions
+        {
+            get => _maxActions;
+            set => SetField(ref _maxActions, value, nameof(ActionsText));
+        }
+
+        public string ActionsText
+        {
+            get => $"{_actions}/{_maxActions}";
+        }
+
+        public bool IsGameOver
+        {
+            get => _isGameOver;
+            set => SetField(ref _isGameOver, value);
         }
     }
 }
+
 

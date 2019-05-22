@@ -1,44 +1,24 @@
-﻿using UnityEngine;
-using Entitas.MatchLine;
-//using UnityEngine.UI;
+﻿using Entitas.MatchLine;
+using Performance.ViewModels;
+using Entitas.Generics;
+using Performance.Common;
 
-public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemovedListener
+public class UIRestartView : IView
 {
-    //[SerializeField] private Animator _animator;
-    [SerializeField] private string _boolName;
+    private IGenericContext<InputEntity> _input;
 
-    private int _boolHash;
-
-    private void Start()
+    public void InitializeView(MainViewModel model, Contexts contexts)
     {
-        var state = Contexts.Instance.GameState;
-        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
+        _input = contexts.Input;
 
-        //_boolHash = Animator.StringToHash(_boolName);
-
-        SetGameOver(state.IsFlagged<GameOverComponent>());
-    }
-
-    private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
-    {
-        SetGameOver(true);
-    }
-
-    public void OnGameOverRemoved(GameStateEntity entity)
-    {
-        SetGameOver(false);
-    }
-
-    private void SetGameOver(bool value)
-    {
-        //_animator.SetBool(_boolHash, value);
+        model.Board.Input.RestartClicked += OnPressed;
     }
 
     public void OnPressed()
     {
-        var context = Contexts.Instance.Input;
-        var e = Contexts.Instance.Input.CreateEntity();    
+        Logger.Log("Game Restarted");
+
+        var e = _input.CreateEntity();    
         e.SetFlag<RestartComponent>();
         e.SetFlag<DestroyedComponent>();
     }

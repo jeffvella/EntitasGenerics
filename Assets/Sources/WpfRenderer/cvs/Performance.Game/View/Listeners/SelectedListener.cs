@@ -5,7 +5,7 @@ using Performance.Controls;
 using Performance.ViewModels;
 using UnityEngine;
 
-public class SelectedListener : IEventListener<GameEntity>   
+public class SelectedListener : IEntityListener<GameEntity>   
 {
     private BoardViewModel _board;
     private ElementViewModel _element;

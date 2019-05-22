@@ -33,6 +33,14 @@ namespace Performance.ViewModels
             set => SetField(ref _currentElement, value);
         }
 
+        public delegate void ButtonClickedHandler();
+        public event ButtonClickedHandler RestartClicked;
+
+        public ICommand RestartButtonClickedCommand => new RelayCommand<InputViewModel>(input =>
+        {
+            RestartClicked?.Invoke();
+        });
+
     }
 }
 

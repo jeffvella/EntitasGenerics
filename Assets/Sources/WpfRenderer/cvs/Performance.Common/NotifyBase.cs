@@ -59,6 +59,24 @@ namespace Performance.Common
             return true;
         }
 
+        protected bool SetField<T>(ref T field, T value, string secondaryPropertyTriggerName, bool routeNotifications = false, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            if (routeNotifications)
+                SetNotifyRouting(ref field, value, propertyName);
+
+            field = value;
+
+            if (!ThrottleChangeNotifications)
+            {
+                OnPropertyChanged(propertyName);
+                OnPropertyChanged(secondaryPropertyTriggerName);
+            }
+            return true;
+        }
+
         private void SetNotifyRouting<T>(ref T oldValue, T newValue, string propertyName)
         {
             if (oldValue is INotifyPropertyChanged notifyOldValue)

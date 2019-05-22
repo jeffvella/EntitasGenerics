@@ -8,7 +8,7 @@ using UnityEngine;
 using Color = System.Windows.Media.Color;
 using Logger = Performance.Common.Logger;
 
-public class ColorListener : IEventListener<GameEntity>
+public class ColorListener : IEntityListener<GameEntity>
 {
     private BoardViewModel _board;
     private ElementViewModel _element;
