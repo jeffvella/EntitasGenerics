@@ -7,8 +7,12 @@ This project includes a conversion of the example: https://github.com/RomanZhu/M
 # Details #
 
 * Designed to work on top of Entitas, without changes to the existing Entitas core.
-* Currently using Entitas version 1.13.0
 * The Good stuff is located in: "Assets\Libs\Entitas-Generics" folder.
+
+# Dependencies #
+
+* Entitas v1.13.0
+* Unity 2019.1
 
 # Differences from Standard Entitas #
 
