@@ -8,7 +8,7 @@ This project includes a conversion of the example: https://github.com/RomanZhu/M
 
 * Designed to work on top of Entitas, without changes to the existing Entitas core.
 * The Good stuff is located in: "Assets\Libs\Entitas-Generics" folder.
-* Includes a WPF App (Non-Unity) version operating upon the same Entitas-based game core.
+* Includes a WPF App (Non-Unity) version of the MatchLine game upon the same Entitas-based game core.
 
 # Dependencies #
 
