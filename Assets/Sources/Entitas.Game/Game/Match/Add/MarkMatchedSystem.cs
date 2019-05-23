@@ -31,7 +31,7 @@ namespace Entitas.MatchLine
                 return;
 
             var selectedEntities = _selectedGroup.GetEntities(_buffer);
-            var minMatchCount = _config.GetUnique<MinMatchCountComponent>().value;
+            var minMatchCount = _config.GetUnique<MinMatchCountComponent>().Value;
 
             if (selectedEntities.Count >= minMatchCount)
             {

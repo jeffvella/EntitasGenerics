@@ -10,7 +10,7 @@ public class SelectedListener : IEntityListener<GameEntity>
     private BoardViewModel _board;
     private ElementViewModel _element;
 
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IFactories factories, GameEntity entity)
     {
         _board = model.Board;
         _element = element;

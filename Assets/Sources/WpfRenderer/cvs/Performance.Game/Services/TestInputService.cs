@@ -5,7 +5,7 @@ using Logger = Performance.Common.Logger;
 
 public sealed class TestInputService : Service, IInputService
 {
-    public TestInputService(Contexts context, MainViewModel viewModel) : base(context, viewModel)
+    public TestInputService(Contexts context, MainViewModel viewModel, IFactories factories) : base(context, viewModel, factories)
     {
 
     }
@@ -60,7 +60,7 @@ public sealed class TestInputService : Service, IInputService
             // The original project was designed with blocks flipped because of camera direction.
             // Note: this also needs to be taken into account in PositionListener when a position changes.
 
-            var pos = _viewModel.Board.Input.MouseGridPosition.Reverse(_viewModel.Settings.GridSize);
+            var pos = _viewModel.Board.Input.MouseGridPosition.Reverse(_viewModel.Settings.BoardSize);
             //Logger.Log($"_holdingPosition={_viewModel.Board.Input.MouseGridPosition} Reverse={pos}");
 
             _holdingPosition = pos;

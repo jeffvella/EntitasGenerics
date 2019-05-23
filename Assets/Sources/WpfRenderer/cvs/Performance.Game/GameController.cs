@@ -5,6 +5,7 @@ using System.Linq;
 using System.Timers;
 using Entitas.MatchLine;
 using Performance.Common;
+using Performance.ViewModel.Resources;
 using Performance.ViewModels;
 
 namespace Performance
@@ -15,6 +16,7 @@ namespace Performance
         private RootSystems _rootSystems;
         private IServices _services;
         private MainViewModel _viewModel;
+        private IFactories _factories;
 
         public GameController(MainViewModel viewModel)
         {
@@ -25,7 +27,7 @@ namespace Performance
         {
             _contexts = Contexts.Instance;
 
-            Configure(_viewModel.Settings, _contexts);
+            Configure(_viewModel, _contexts);
 
             // The difference between a 'View' and an 'EntityListener' is that listeners are created to monitor a specific (already created) entity
             // whereas Views are being initialized once here and can monitor against any entity that may be created at any point.
@@ -37,23 +39,37 @@ namespace Performance
             _viewModel.Views.Add<UIGameOverView>();
             _viewModel.Views.Add<UIComboView>();
 
+            _viewModel.Views.Add<UISettingsSync>();
+
+            _factories = new TestFactories
+            {
+                ElementFactory = new ElementPool()
+            };
+
             _services = new TestServices
             {
-                ViewService = new TestViewService(_contexts, _viewModel),
-                InputService = new TestInputService(_contexts, _viewModel),
-                TimeService = new TestTimeService(_contexts, _viewModel),
-                ElementService = new TestElementService(_contexts, _viewModel),
+                ViewService = new TestViewService(_contexts, _viewModel, _factories),
+                InputService = new TestInputService(_contexts, _viewModel, _factories),
+                TimeService = new TestTimeService(_contexts, _viewModel, _factories),
+                ElementService = new TestElementService(_contexts, _viewModel, _factories),
             };
 
             _rootSystems = new RootSystems(_contexts, _services);
             _rootSystems.Initialize();
 
             StartUpdateTimer();
+
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            _viewModel.Board.Session.ApplySettings(_viewModel.Settings);
         }
 
         private void StartUpdateTimer()
         {
-            var timer = new System.Timers.Timer(50);
+            var timer = new System.Timers.Timer(25);
             timer.Elapsed += TimerTick;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -77,17 +93,26 @@ namespace Performance
             _rootSystems.TearDown();
         }
 
-        private void Configure(SettingsViewModel settings, Contexts contexts)
+        private void Configure(MainViewModel model, Contexts contexts)
         {
-            settings.GridSize = new GridSize(6, 6);
-            settings.TypeCount = 4;
-            settings.MaxActionCount = 20;
-            settings.MinMatchCount = 3;            
+            var settings = model.Settings;
 
-            contexts.Config.SetUnique<MapSizeComponent>(c => c.value = settings.GridSize);
+            if (settings.BoardSize == null)
+                settings.BoardSize = new BoardSize(6, 8);
+
+            if (settings.TypeCount == 4)
+                settings.TypeCount = 4;
+
+            if (settings.MaxActionCount == default)
+                settings.MaxActionCount = 15;
+
+            if(settings.MinMatchCount == default)
+                settings.MinMatchCount = 3;            
+           
+            contexts.Config.SetUnique<MapSizeComponent>(c => c.Value = settings.BoardSize);
             contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = settings.TypeCount);
             contexts.Config.SetUnique<MaxActionCountComponent>(c => c.Value = settings.MaxActionCount);
-            contexts.Config.SetUnique<MinMatchCountComponent>(c => c.value = settings.MinMatchCount);
+            contexts.Config.SetUnique<MinMatchCountComponent>(c => c.Value = settings.MinMatchCount);
 
             contexts.Config.SetUnique<ScoringTableComponent>(c =>
             {
@@ -105,6 +130,7 @@ namespace Performance
             var filePath = Path.Combine(basePath, definitionsPath);
             var json = File.ReadAllText(filePath);
             var value = JsonSerializer.Deserialize<ComboDefinitions>(json);
+            settings.ComboDefinitions = value;
 
             contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
             {

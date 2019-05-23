@@ -6,7 +6,7 @@ public sealed class TestTimeService : Service, ITimeService
 {
     private readonly Stopwatch _sw = Stopwatch.StartNew();
 
-    public TestTimeService(Contexts contexts, MainViewModel viewModel) : base(contexts, viewModel)
+    public TestTimeService(Contexts contexts, MainViewModel viewModel, IFactories factories) : base(contexts, viewModel, factories)
     {
     }
 

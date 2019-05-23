@@ -26,7 +26,7 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            GridSize size = _config.GetUnique<MapSizeComponent>().value;
+            GridSize size = _config.GetUnique<MapSizeComponent>().Value;
 
             for (int x = 0; x < size.x; x++)
             {

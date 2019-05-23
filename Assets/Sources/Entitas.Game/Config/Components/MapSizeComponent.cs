@@ -2,9 +2,9 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class MapSizeComponent : IUniqueComponent
+    public sealed class MapSizeComponent : IUniqueComponent, IEventComponent
     {
-        public GridSize value { get; set; }
+        public GridSize Value { get; set; }
     }
 
 }

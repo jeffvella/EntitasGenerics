@@ -31,7 +31,12 @@ namespace Entitas.MatchLine
                 var assetComponent = _contexts.Game.Get<AssetComponent>(entity);
                 var assetName = assetComponent.value;
                 var assetId = assetComponent.id;
+
                 _viewService.LoadAsset<GameEntity>(_contexts, entity, assetName, assetId);
+            }
+
+            foreach (var entity in entities)
+            {
                 _contexts.Game.SetFlag<AssetLoadedComponent>(entity, true);
             }
         }

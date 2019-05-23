@@ -9,12 +9,16 @@
     xmlns:common="clr-namespace:Performance.Common;assembly=Performance.Common"
     xmlns:converters="clr-namespace:Performance.Converters;assembly=Performance.Common"
     xmlns:behaviors="clr-namespace:Performance.Common.Behaviors;assembly=Performance.Common"     
-    mc:Ignorable="d"  Name="ThisControl"
-    behaviors:MouseUpBehavior.Command="{Binding OnMouseUpOnBoardCommand}"
+    mc:Ignorable="d"  Name="GameBoardControl"    
+    behaviors:MouseUpBehavior.Command="{Binding Board.OnMouseUpOnBoardCommand}"
     d:DesignHeight="350" d:DesignWidth="350">
     <UserControl.Resources>
 
         <common:BindingProxy x:Key="Proxy" Data="{Binding}" />
+        
+        <converters:BoolToVisibilityConverter x:Key="HiddenWhenTrueConverter" TrueValue="Collapsed" FalseValue="Visible" />
+        <converters:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        
         <converters:ColorToSolidColorBrushValueConverter x:Key="ColorConverter" />
         <converters:DebugDataBindingConverter x:Key="DebugConverter" />
         <converters:GridPositionYConverter x:Key="GridPositionYConverter" />
@@ -27,7 +31,7 @@
         <DataTemplate x:Key="BlockElementTemplate" DataType="{x:Type viewModels:ElementViewModel}">
             <Border Margin="{Binding GridPosition, Converter={StaticResource GridPositionToMarginConverter}}" 
                     Background="Red"
-                    BorderBrush="{Binding IsSelected, Converter={StaticResource SelectedBrushOnTrue}}" 
+                    BorderBrush="{Binding Board.IsSelected, Converter={StaticResource SelectedBrushOnTrue}}" 
                     BorderThickness="2"  Width="40" Height="40"
                     
                     behaviors:MouseDownBehavior.Command="{Binding OnMouseDownCommand}"
@@ -35,10 +39,10 @@
                     behaviors:MouseEnterBehavior.Command="{Binding OnMouseEnterCommand}"
                     behaviors:MouseLeaveBehavior.Command="{Binding OnMouseLeaveCommand}"
                     
-                    behaviors:MouseDownBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
-                    behaviors:MouseUpBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
-                    behaviors:MouseEnterBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
-                    behaviors:MouseLeaveBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseDownBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseUpBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseEnterBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseLeaveBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
                     >
                 <TextBlock Foreground="White" FontSize="13"  HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock.Effect>
@@ -50,7 +54,7 @@
                 </TextBlock>
             </Border>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="DefaultElementTemplate" DataType="{x:Type viewModels:ElementViewModel}">
 
             <Border Margin="{Binding GridPosition, Converter={StaticResource GridPositionToMarginConverter}}"                     
@@ -62,9 +66,9 @@
                     behaviors:MouseEnterBehavior.Command="{Binding OnMouseEnterCommand}"
                     behaviors:MouseLeaveBehavior.Command="{Binding OnMouseLeaveCommand}"
                     
-                    behaviors:MouseDownBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
-                    behaviors:MouseEnterBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
-                    behaviors:MouseLeaveBehavior.CommandParameter="{Binding Data.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseDownBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseEnterBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
+                    behaviors:MouseLeaveBehavior.CommandParameter="{Binding Data.Board.Input, Source={StaticResource Proxy}}"
                     >
                 <TextBlock Foreground="White" FontSize="13"  HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock.Effect>
@@ -75,228 +79,48 @@
                     <Run Text="{Binding GridPosition, Converter={StaticResource GridPositionYConverter}, StringFormat=\{0:D\}}"/>
                 </TextBlock>
             </Border>
-            
+
         </DataTemplate>
-        <XmlDataProvider x:Key="mapData" XPath="/Map">
-            <x:XData>
-                <Map xmlns="">
-                    <Tile X="0" Y="0" Image="0.png" Background="Blue" />
-                    <Tile X="1" Y="0" Image="1.png" Background="Green"/>
-                    <Tile X="0" Y="1" Image="2.png" Background="Red"/>
-                    <Tile X="1" Y="1" Image="3.png" Background="Yellow"/>
-                </Map>
-            </x:XData>
-        </XmlDataProvider>
+        
     </UserControl.Resources>
     <DockPanel>
-        
-        <!--<ItemsControl x:Name="StreamsItemsControl" ItemsSource="{Binding Elements}" 
-                      ItemTemplateSelector="{StaticResource ElementDataTemplateSelector}">
-            <ItemsControl.Template>
-                --><!--<ControlTemplate>
-                    <Border Grid.Row="4" Grid.Column="4">
-                        <ItemsPresenter/>
-                    </Border>
-                </ControlTemplate>--><!--
-                <ControlTemplate TargetType="{x:Type ItemsControl}">
-                    <Grid IsItemsHost="true">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ControlTemplate>
-            </ItemsControl.Template>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type ContentPresenter}">
-                    <Setter Property="Grid.Column" Value="{Binding XPath=@GridPosition.x}"/>
-                    <Setter Property="Grid.Row" Value="{Binding XPath=@GridPosition.y}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            --><!--<ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid x:Name="StreamsGrid" IsItemsHost="True">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>--><!--
-        </ItemsControl>-->
-
-
-        <ItemsControl ItemsSource="{Binding Elements}" ItemTemplateSelector="{StaticResource ElementDataTemplateSelector}" Width="300" Height="300">
-            <ItemsControl.Style>
-                <Style TargetType="{x:Type ItemsControl}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                <!--<UniformGrid IsItemsHost="true" />-->
-                                <Grid IsItemsHost="true">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ItemsControl.Style>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type ContentPresenter}">
-                    <Setter Property="Grid.Column" Value="{Binding GridPosition, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GridPositionXConverter}}"/>
-                    <Setter Property="Grid.Row" Value="{Binding GridPosition, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GridPositionYConverter}}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
-
-
-        <!--<ItemsControl ItemsSource="{Binding Elements}" ItemTemplateSelector="{StaticResource ElementDataTemplateSelector}">
-            <ItemsControl.Style>
-                <Style TargetType="{x:Type ItemsControl}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                <Grid IsItemsHost="true">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ItemsControl.Style>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type ContentPresenter}">
-                    <Setter Property="Grid.Column" Value="{Binding Path=GridPosition.y, Converter={StaticResource DebugConverter}}"/>
-                    <Setter Property="Grid.Row" Value="{Binding Path=GridPosition.x, Converter={StaticResource DebugConverter}}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>-->
-
-        <!--<ItemsControl ItemsSource="{Binding Source={StaticResource mapData}, XPath=Tile}">
+        <Grid>
+            <ItemsControl Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Board.Elements}" ItemTemplateSelector="{StaticResource ElementDataTemplateSelector}" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ItemsControl.Style>
                     <Style TargetType="{x:Type ItemsControl}">
                         <Setter Property="Template">
                             <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                <Grid IsItemsHost="true">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                    <Grid IsItemsHost="true" 
+                                          behaviors:GridHelpers.RowCount="{Binding Board.Session.BoardRows}"                
+                                          behaviors:GridHelpers.ColumnCount="{Binding Board.Session.BoardColumns}" />
+                                </ControlTemplate>
+                            </Setter.Value>
                         </Setter>
                     </Style>
                 </ItemsControl.Style>
 
-                <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="{Binding XPath=@Background}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="{x:Type ContentPresenter}">
-                        <Setter Property="Grid.Column" Value="{Binding XPath=@X}"/>
-                        <Setter Property="Grid.Row" Value="{Binding XPath=@Y}"/>
+                        <Setter Property="Grid.Column" Value="{Binding GridPosition, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GridPositionXConverter}}"/>
+                        <Setter Property="Grid.Row" Value="{Binding GridPosition, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GridPositionYConverter}}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
-            </ItemsControl>-->
+            </ItemsControl>
 
-        <!--<ItemsControl ItemsSource="{Binding Source={StaticResource mapData}, XPath=Tile}">
-                <ItemsControl.Style>
-                    <Style TargetType="{x:Type ItemsControl}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ItemsControl}">
-                                <Grid IsItemsHost="true">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="1*" />
-                                        <RowDefinition Height="1*" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ItemsControl.Style>
+            <Border Grid.Column="0" Grid.Row="0" Background="#66979797" Visibility="{Binding Board.Session.IsGameOver, Converter={StaticResource VisibleWhenTrueConverter}}">
+                <Grid Background="WhiteSmoke" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="100">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Label FontSize="30 ">
+                            <Label.Effect>
+                                <DropShadowEffect ShadowDepth="1" Direction="315" BlurRadius="2" Color="White"/>
+                            </Label.Effect>
+                            Game Over
+                        </Label>
+                    </Grid>
+                </Grid>
+            </Border>
 
-                <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="{Binding XPath=@Background}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="{x:Type ContentPresenter}">
-                        <Setter Property="Grid.Column" Value="{Binding XPath=@X}"/>
-                        <Setter Property="Grid.Row" Value="{Binding XPath=@Y}"/>
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-            </ItemsControl>-->
-
+        </Grid>
     </DockPanel>
 </UserControl>

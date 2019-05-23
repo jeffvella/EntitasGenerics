@@ -1,6 +1,7 @@
 ﻿using Performance.Common;
 using Performance.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
@@ -11,15 +12,28 @@ namespace Performance.Controls
 {
     public class BoardViewModel : NotifyBase
     {
-        private ObservableCollection<ElementViewModel> _elements;
+        // WPF has poor performance on adding lots of items to an observable collection
+        // due to change events and the resulting redrawing between each addition.
+        // ObservableRangeCollection lets you add many at once and defers events until
+        // all batched changes have been completed.
+
+        private ObservableRangeCollection<ElementViewModel> _elements;
         private SynchronizationContext _sync;
         private InputViewModel _input;
+        private SessionViewModel _session;
 
         public BoardViewModel()
-        {
-            _elements = new ObservableCollection<ElementViewModel>();
+        {            
+            _elements = new ObservableRangeCollection<ElementViewModel>();
+            _session = new SessionViewModel();            
             _sync = SynchronizationContext.Current;
             _input = new InputViewModel();
+        }
+
+        public SessionViewModel Session
+        {
+            get => _session;
+            set => SetField(ref _session, value);
         }
 
         public InputViewModel Input
@@ -28,7 +42,7 @@ namespace Performance.Controls
             set => SetField(ref _input, value);
         }
 
-        public ObservableCollection<ElementViewModel> Elements
+        public ObservableRangeCollection<ElementViewModel> Elements
         {
             get => _elements;
             set => SetField(ref _elements, value);
@@ -56,6 +70,11 @@ namespace Performance.Controls
         {
             _input.IsMouseDown = false;
         });
+
+        public void AddElements(List<ElementViewModel> elements)
+        {
+            _elements.AddRange(elements);
+        }
     }
 
     public class ElementDataTemplateSelector : DataTemplateSelector

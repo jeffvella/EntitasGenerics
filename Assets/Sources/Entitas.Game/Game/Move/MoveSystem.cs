@@ -20,7 +20,7 @@ namespace Entitas.MatchLine
         {
             int moveCount = 0;
 
-            var size = _config.GetUnique<MapSizeComponent>().value;
+            var size = _config.GetUnique<MapSizeComponent>().Value;
 
             for (int x = 0; x < size.x; x++)
             {

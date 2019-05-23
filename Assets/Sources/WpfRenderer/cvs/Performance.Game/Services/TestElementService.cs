@@ -11,7 +11,7 @@ public sealed partial class TestElementService : Service, IElementService
 
     private IGenericContext<GameEntity> _game;
 
-    public TestElementService(Contexts contexts, MainViewModel viewModel) : base(contexts, viewModel)
+    public TestElementService(Contexts contexts, MainViewModel viewModel, IFactories factories) : base(contexts, viewModel, factories)
     {
         _entityCounter = 0;
         _game = contexts.Game;
@@ -30,9 +30,10 @@ public sealed partial class TestElementService : Service, IElementService
         else if (typeCount >= 100)
             maxType = 100;
 
-
+        // Unity's Random class can't be used outside of the Unity environment.
         //var maxType = Mathf.Clamp(typeCount - 1, 1, 100);
         //var randomType = Random.Range(0, maxType + 1);
+
         var randomType = Random.Value.Next(0, maxType + 1);
         var normalizedType = Mathf.InverseLerp(0, maxType, randomType);
 

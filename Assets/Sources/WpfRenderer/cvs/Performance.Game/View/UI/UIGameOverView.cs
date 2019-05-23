@@ -6,9 +6,9 @@ public class UIGameOverView : IView
 {
     private SessionViewModel _session;
 
-    public void InitializeView(MainViewModel model, Contexts contexts)
+    public void InitializeView(MainViewModel model, Contexts contexts, IFactories factories)
     {
-        _session = model.Session;
+        _session = model.Board.Session;
 
         contexts.GameState.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
         contexts.GameState.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);

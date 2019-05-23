@@ -42,7 +42,7 @@ namespace Entitas.MatchLine
 
         private void Fill()
         {
-            var size = _config.GetUnique<MapSizeComponent>().value;
+            var size = _config.GetUnique<MapSizeComponent>().Value;
 
             for (int row = 0; row < size.y; row++)
             {

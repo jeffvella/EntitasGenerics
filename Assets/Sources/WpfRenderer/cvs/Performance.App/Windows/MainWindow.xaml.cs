@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Performance.Common;
+using Performance.Windows;
 
 namespace Performance.Views
 {

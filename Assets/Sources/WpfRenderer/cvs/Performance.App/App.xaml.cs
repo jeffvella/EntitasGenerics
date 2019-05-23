@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Performance;
 using Performance.Common;
@@ -17,7 +18,7 @@ namespace Performance
     public partial class App : Application
     {
         private MainViewModel _viewModel;
-        private MainWindow _view;
+        private MainWindow _window;
         private static bool _showingExceptionBox;
 
         protected override void OnStartup(StartupEventArgs startupEventArgs)
@@ -26,9 +27,9 @@ namespace Performance
 
             LoadSettings();
 
-            _view = new MainWindow();
-            _view.DataContext = _viewModel;
-            _view.Show();
+            _window = new MainWindow();
+            _window.DataContext = _viewModel;
+            _window.Show();
             Current.Exit += OnExit;
 
             SetupLogging();
@@ -36,9 +37,12 @@ namespace Performance
             Game.Start(_viewModel);
 
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+
+            GlobalCommands.Bind(_viewModel, _window);
         }
 
         private void LoadSettings()
+
         {
             var path = AppDomain.CurrentDomain.BaseDirectory + "settings.json";
             if (FileSerializer.TryDeserialize(out SettingsViewModel settings, path))
@@ -87,6 +91,17 @@ namespace Performance
             _showingExceptionBox = false;
             e.Handled = true;            
         }
+
+        //public void ConfigureBindings()
+        //{
+        //    GlobalCommands.Initialize(_viewModel);
+
+        //    var binding = new CommandBinding(GlobalCommands.OpenSettingsCommand,
+        //        GlobalCommands.OpenSettingsCommandExecute,
+        //        GlobalCommands.OpenSettingsCommandCondition);
+
+        //    CommandManager.RegisterClassCommandBinding(typeof(Window), binding);
+        //}
 
     }
 }

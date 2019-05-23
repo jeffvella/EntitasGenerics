@@ -14,7 +14,7 @@ public class ColorListener : IEntityListener<GameEntity>
     private ElementViewModel _element;
     private GameEntity _entity;
 
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IFactories factories, GameEntity entity)
     {
         _board = model.Board;
         _element = element;

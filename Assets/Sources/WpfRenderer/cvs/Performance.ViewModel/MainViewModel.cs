@@ -11,7 +11,6 @@ namespace Performance.ViewModels
         private BoardViewModel _board;
         private SettingsViewModel _settings;
         private WorkContext _context;
-        private SessionViewModel _session;
         private ViewsViewModel _views;
 
         public MainViewModel()
@@ -20,14 +19,7 @@ namespace Performance.ViewModels
             _logViewer = new LogViewerViewModel();
             _board = new BoardViewModel();
             _context = new WorkContext();
-            _session = new SessionViewModel();
             _views = new ViewsViewModel();            
-        }
-
-        public SessionViewModel Session
-        {
-            get => _session;
-            set => SetField(ref _session, value);
         }
 
         public WorkContext Context

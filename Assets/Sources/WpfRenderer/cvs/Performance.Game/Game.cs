@@ -12,7 +12,6 @@ namespace Performance
             _viewModel = viewModel;
             _gameController = new GameController(_viewModel);
             _gameController.Awake();
-
         }
     }
 

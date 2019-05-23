@@ -4,6 +4,7 @@ public class RootSystems : Feature
 {
     public RootSystems(Contexts contexts, IServices services)
     {
+        Add(new ConfigEventSystems(contexts));
         Add(new InputSystems(contexts, services));
         Add(new GameStateSystems(contexts, services));
         Add(new GameStateEventSystems(contexts));

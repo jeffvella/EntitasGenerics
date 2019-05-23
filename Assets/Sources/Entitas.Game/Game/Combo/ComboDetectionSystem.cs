@@ -31,7 +31,7 @@ namespace Entitas.MatchLine
         protected override void Execute(List<GameEntity> entities)
         {
             var definitions = _config.GetUnique<ComboDefinitionsComponent>().value;
-            var size = _config.GetUnique<MapSizeComponent>().value;
+            var size = _config.GetUnique<MapSizeComponent>().Value;
             var elementCount = entities.Count;
 
             foreach (var entity in entities)

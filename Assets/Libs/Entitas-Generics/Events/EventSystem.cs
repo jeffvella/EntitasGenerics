@@ -37,14 +37,17 @@ namespace Entitas.Generics
         {
             if (_isAddType && _addedCollector.count > 0)
             {
-                var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
 
-                foreach (var entity in _addedCollector.collectedEntities)
+                TEntity[] array = _addedCollector.collectedEntities.ToArray(); // todo: dont allocate, why is collectedEntities a HashSet?
+
+                bool uniqueEntityProcessed = false;
+
+                for (int i = 0; i < array.Length; i++)
                 {
-                    bool componentFound = false;
-                    TComponent changedComponent = default;
+                    TEntity entity = array[i];
 
-                    // Handle listeners stored on the entity that owns the event.
+                    if (!uniqueEntityProcessed && entity.Equals(_context.UniqueEntity))
+                        uniqueEntityProcessed = true;
 
                     if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
@@ -53,26 +56,27 @@ namespace Entitas.Generics
                         {
                             if (_context.Has<TComponent>(entity))
                             {
-                                changedComponent = _context.Get<TComponent>(entity);
-                                componentFound = true;
-                                addedListenerComponent.Raise((entity, changedComponent));
+                                var component = _context.Get<TComponent>(entity);      
+                                addedListenerComponent.Raise((entity, component));
                             }
                         }
                     }
-
-                    // Handle listeners that should be notified whenever the event occurs on ANY entity.
-                    // These are currently stored on the unique entity.
-
-                    if (notifyUniqueListeners)
-                    {              
-                        if (!componentFound)
-                        {
-                            changedComponent = _context.Get<TComponent>(entity);
-                        }
-                        unqiueListener.Raise((entity, changedComponent));                       
-                    }
                 }
 
+                if(!uniqueEntityProcessed) // todo: review this, unique entity should be being returned by the collector, in what case is it not?
+                {                    
+                    var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
+                    if (notifyUniqueListeners)
+                    {
+                        for (int i = 0; i < array.Length; i++)
+                        {
+                            TEntity entity = array[i];
+                            var component = _context.Get<TComponent>(entity);                          
+                            unqiueListener.Raise((entity, component));
+                        }
+                    }
+                }
+          
                 if (_addedCollector.count > 0)
                 {
                     _addedCollector.ClearCollectedEntities();
@@ -99,10 +103,10 @@ namespace Entitas.Generics
                     // Handle listeners that should be notified whenever the event occurs on ANY entity.
                     // These are currently stored on the unique entity.
 
-                    if (notifyUniqueListeners)
-                    {
-                        unqiueListener.Raise(entity);
-                    }
+                    //if (notifyUniqueListeners)
+                    //{
+                    //    unqiueListener.Raise(entity);
+                    //}
                 }
 
                 if (_removedCollector.count > 0)

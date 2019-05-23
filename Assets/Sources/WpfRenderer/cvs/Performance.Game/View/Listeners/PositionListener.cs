@@ -16,7 +16,7 @@ public class PositionListener : IEntityListener<GameEntity>
 
    // private Vector3 _targetPosition;
 
-    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, GameEntity entity)
+    public void RegisterListeners(MainViewModel model, ElementViewModel element, Contexts contexts, IFactories factories, GameEntity entity)
     {
         _settings = model.Settings;
         _board = model.Board;
@@ -32,13 +32,11 @@ public class PositionListener : IEntityListener<GameEntity>
 
     private void OnPositionChanged((GameEntity Entity, PositionComponent Component) obj)
     {
-        var pos = obj.Component.value;
-
         // Reverse the grid layout so that it matches the orientation in Unity.
         // The original project was designed with blocks flipped because of camera direction.
         // Note this also needs to be reversed in InputService when a selected position is reported.
 
-        _element.GridPosition = obj.Component.value.Reverse(_settings.GridSize);
+        _element.GridPosition = obj.Component.value.Reverse(_settings.BoardSize);
 
         //_targetPosition = obj.Component.value.ToVector3();
     }

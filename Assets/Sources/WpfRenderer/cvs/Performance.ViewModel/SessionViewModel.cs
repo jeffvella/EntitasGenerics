@@ -13,6 +13,15 @@ namespace Performance.ViewModels
         private long _actions;
         private int _maxActions;
         private bool _isGameOver;
+        private int _boardRows;
+        private int _boardColumns;
+
+        public void ApplySettings(SettingsViewModel settings)
+        {
+            MaxActions = settings.MaxActionCount;
+            BoardRows = settings.BoardSize.Y;
+            BoardColumns = settings.BoardSize.X;
+        }
 
         public long Score
         {
@@ -41,6 +50,18 @@ namespace Performance.ViewModels
         {
             get => _isGameOver;
             set => SetField(ref _isGameOver, value);
+        }
+
+        public int BoardRows
+        {
+            get => _boardRows;
+            set => SetField(ref _boardRows, value);
+        }
+
+        public int BoardColumns
+        {
+            get => _boardColumns;
+            set => SetField(ref _boardColumns, value);
         }
     }
 }

@@ -1,0 +1,59 @@
+﻿<Window x:Class="Performance.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"     
+        xmlns:viewModels="clr-namespace:Performance.ViewModels;assembly=Performance.ViewModel"
+        xmlns:views="clr-namespace:Performance.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Performance"
+        xmlns:controls="clr-namespace:Performance.Controls;assembly=Performance.ViewModel"
+        xmlns:converters="clr-namespace:Performance.Converters;assembly=Performance.Common"
+        mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="450"
+        d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=True}"
+        Name="MainWindowControl"
+        Title="Match Line Example" Height="600" Width="800">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        <converters:BoolToVisibilityConverter x:Key="VisibleWhenFalseConverter" TrueValue="Collapsed" FalseValue="Visible" />
+        <converters:BoolConverter x:Key="InverseBooleanConverter" TrueValue="False" FalseValue="True" />
+    </Window.Resources>
+    <Grid>
+
+        <Grid Column="2">
+            <Border Padding="0,0,0,0">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Height="30" >
+                        <Label FontWeight="Bold" FontSize="15" VerticalAlignment="Center" Foreground="White">Bots</Label>
+                    </Grid>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35" />
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="4" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+
+                        <DockPanel Grid.Row="0">
+
+                            <Button Width="80" DockPanel.Dock="Left" Command="{Binding Board.Input.RestartButtonClickedCommand}">Restart</Button>
+                            <Button Width="80" DockPanel.Dock="Left" Command="local:GlobalCommands.OpenSettingsCommand">Settings</Button>
+
+                            <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                <Label>Score:</Label>
+                                <Label Content="{Binding Board.Session.Score}" />
+                                <Label>Actions:</Label>
+                                <Label Content="{Binding Board.Session.ActionsText}" />
+                            </WrapPanel>
+                        </DockPanel>
+                        
+                        <controls:GameBoard Grid.Row="1" DataContext="{Binding}" Background="Aquamarine" />
+                        <GridSplitter Grid.Column="2" Grid.Row="2" BorderThickness="1,0,0,0" BorderBrush="#666" Background="#444" HorizontalAlignment="Stretch"/>
+                        <controls:LogViewer Grid.Row="3" DataContext="{Binding LogViewer}" Background="#434343" />
+                    </Grid>
+                </DockPanel>
+                              
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>
