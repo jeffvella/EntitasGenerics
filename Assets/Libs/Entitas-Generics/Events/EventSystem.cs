@@ -63,10 +63,10 @@ namespace Entitas.Generics
                     }
                 }
 
-                if(!uniqueEntityProcessed) // todo: review this, unique entity should be being returned by the collector, in what case is it not?
+                if(!uniqueEntityProcessed)
                 {                    
-                    var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
-                    if (notifyUniqueListeners)
+                    var uniqueListenerComponentFound = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener);
+                    if (uniqueListenerComponentFound && unqiueListener.ListenerCount > 0)
                     {
                         for (int i = 0; i < array.Length; i++)
                         {
