@@ -2,7 +2,7 @@
 
 An extension for https://github.com/sschmid/Entitas-CSharp that removes the need for code generation.
 
-This project includes a conversion of the example: https://github.com/RomanZhu/Match-Line-Entitas-ECS
+This project includes an adaptation of the example: https://github.com/RomanZhu/Match-Line-Entitas-ECS
 
 # Details #
 
