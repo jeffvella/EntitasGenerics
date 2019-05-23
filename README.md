@@ -80,8 +80,7 @@ Components intended to be searched by value should implement IEquatableT
 
 Components with events are defined in the same way as usual.
 
-    [Event(EventTarget.Any)]
-    public sealed class MaxActionCountComponent : IUniqueComponent
+    public sealed class MaxActionCountComponent : IUniqueComponent, IEventComponent
     {
         public int Value;
     }
