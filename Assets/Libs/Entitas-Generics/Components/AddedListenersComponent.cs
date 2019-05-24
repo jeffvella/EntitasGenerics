@@ -1,4 +1,6 @@
-﻿namespace Entitas.Generics
+﻿using Entitas.CodeGeneration.Attributes;
+
+namespace Entitas.Generics
 {
     /// <summary>
     /// A component that stores event listeners for component 'Added' events. 
@@ -7,6 +9,7 @@
     /// </summary> 
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
+   
     public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>, ICustomDebugInfo
         where TEntity : IEntity where TComponent : IComponent
     {

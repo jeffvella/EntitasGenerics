@@ -42,12 +42,12 @@ namespace Entitas.Generics
     {
         public static bool IsUniqueComponent<T>()
         {
-            return ReflectionHelper.HasAttribute<UniqueAttribute>(typeof(T)) || typeof(IUniqueComponent).IsAssignableFrom(typeof(T));
+            return typeof(IUniqueComponent).IsAssignableFrom(typeof(T)); //ReflectionHelper.HasAttribute<UniqueAttribute>(typeof(T)) || 
         }
 
         public static bool IsEventComponent<T>()
         {
-            return ReflectionHelper.HasAttribute<EventAttribute>(typeof(T)) || typeof(IEventComponent).IsAssignableFrom(typeof(T));
+            return typeof(IEventComponent).IsAssignableFrom(typeof(T));  //ReflectionHelper.HasAttribute<EventAttribute>(typeof(T)) || 
         }
 
         public static bool IsFlagComponent<T>()

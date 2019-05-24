@@ -1,14 +1,16 @@
 {
     "name": "Entitas.Generics",
     "references": [
-        "GUID:ff827d0984da08b41bc78edf18500a4e"
+        "GUID:c6a76ebb629c81b4d8cf6ed6fd29b1be"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        ""
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": []
