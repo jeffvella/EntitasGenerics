@@ -1,14 +1,19 @@
 # EntitasGenerics
 
-An extension for EntitasCSharp that removes the need for code generation.
+An extension for https://github.com/sschmid/Entitas-CSharp that removes the need for code generation.
 
-This project includes a conversion of the example: https://github.com/RomanZhu/Match-Line-Entitas-ECS
+This project includes an adaptation of the example: https://github.com/RomanZhu/Match-Line-Entitas-ECS
 
 # Details #
 
 * Designed to work on top of Entitas, without changes to the existing Entitas core.
-* Currently using Entitas version 1.13.0
 * The Good stuff is located in: "Assets\Libs\Entitas-Generics" folder.
+* Includes a WPF App (Non-Unity) version of the MatchLine game upon the same Entitas-based game core.
+
+# Dependencies #
+
+* Entitas v1.13.0
+* Unity 2019.1
 
 # Differences from Standard Entitas #
 
@@ -278,7 +283,21 @@ which seemed to be the cleanest approach while ensuring that Entitas' procedure 
 
 # Known Issues #
 
-* 'Indexed' Entity searches currently loops through for Equality versus the dictionary-based generated code in default Entitas.
+* 'Indexed' Entity searches currently just loop through checking for Equality versus the dictionary-based approach in the generated code of default Entitas.
 * Event 'priority' is not yet supported.
 * Entitas' inspector debugging display doesn't handle generic names at all.
+
+# The WPF Version of MatchLine?
+
+One of the great things about Entitas (and other ECS solutions) is that the core of your game can run outside of Unity's environment. This gives you a lot more freedom, particularly in optimizing code with Line-By-Line profilers such as 'ANTS Performance Profiler' and 'DotTrace'. 
+
+Included in the project is a functioning WPF application port of the front-end of RomanZhu's MathcLine game (https://github.com/RomanZhu/Match-Line-Entitas-ECS)
+
+Screenshot of WPF version:
+
+<img src="https://i.imgur.com/kr5g9RO.png" />
+
+Analysis:
+
+<img src="https://i.imgur.com/UBgepTY.png" />
 
