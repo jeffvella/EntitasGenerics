@@ -1,4 +1,6 @@
-﻿namespace Entitas.Generics
+﻿using Entitas.VisualDebugging.Unity;
+
+namespace Entitas.Generics
 {
     /// <summary>
     /// A component that stores event listeners for component 'Removed' events. 
@@ -7,9 +9,9 @@
     /// </summary> 
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
-    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>, ICustomDebugInfo
+    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>, ICustomDisplayName
         where TEntity : IEntity where TComponent : IComponent
     {
-        public string DisplayName => GetType().PrettyPrintGenericTypeName();
+        public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }
 }

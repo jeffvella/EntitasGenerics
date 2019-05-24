@@ -1,4 +1,6 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
     public class GameSystems : Feature
     {

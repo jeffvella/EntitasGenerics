@@ -1,4 +1,5 @@
 ﻿using Entitas.CodeGeneration.Attributes;
+using Entitas.VisualDebugging.Unity;
 
 namespace Entitas.Generics
 {
@@ -10,9 +11,10 @@ namespace Entitas.Generics
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
    
-    public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>, ICustomDebugInfo
+    public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>, ICustomDisplayName
         where TEntity : IEntity where TComponent : IComponent
     {
-        public string DisplayName => GetType().PrettyPrintGenericTypeName();
+        public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }
 }
+

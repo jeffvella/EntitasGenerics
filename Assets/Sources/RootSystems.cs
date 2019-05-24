@@ -1,4 +1,5 @@
-﻿using Entitas.MatchLine;
+﻿using Entitas.Generics;
+using Entitas.MatchLine;
 
 public class RootSystems : Feature
 {

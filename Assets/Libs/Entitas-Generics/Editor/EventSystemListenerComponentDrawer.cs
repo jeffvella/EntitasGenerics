@@ -29,11 +29,6 @@ namespace Entitas.Generics {
                 }
             }
 
-            //person.name = EditorGUILayout.TextField("Name", person.name);
-            //var gender = (PersonGender)Enum.Parse(typeof(PersonGender), person.gender);
-            //gender = (PersonGender)EditorGUILayout.EnumPopup("Gender", gender);
-            //person.gender = gender.ToString();
-          
             return listenerComponent;
         }
     }
