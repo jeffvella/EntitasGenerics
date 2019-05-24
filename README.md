@@ -283,7 +283,7 @@ which seemed to be the cleanest approach while ensuring that Entitas' procedure 
 
 # Known Issues #
 
-* 'Indexed' Entity searches currently loops through for Equality versus the dictionary-based generated code in default Entitas.
+* 'Indexed' Entity searches currently just loop through checking for Equality versus the dictionary-based approach in the generated code of default Entitas.
 * Event 'priority' is not yet supported.
 * Entitas' inspector debugging display doesn't handle generic names at all.
 
