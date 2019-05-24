@@ -92,16 +92,5 @@ namespace Performance
             e.Handled = true;            
         }
 
-        //public void ConfigureBindings()
-        //{
-        //    GlobalCommands.Initialize(_viewModel);
-
-        //    var binding = new CommandBinding(GlobalCommands.OpenSettingsCommand,
-        //        GlobalCommands.OpenSettingsCommandExecute,
-        //        GlobalCommands.OpenSettingsCommandCondition);
-
-        //    CommandManager.RegisterClassCommandBinding(typeof(Window), binding);
-        //}
-
     }
 }

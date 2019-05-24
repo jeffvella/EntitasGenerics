@@ -38,7 +38,6 @@ namespace Performance
             _viewModel.Views.Add<UIRestartView>();
             _viewModel.Views.Add<UIGameOverView>();
             _viewModel.Views.Add<UIComboView>();
-
             _viewModel.Views.Add<UISettingsSync>();
 
             _factories = new TestFactories

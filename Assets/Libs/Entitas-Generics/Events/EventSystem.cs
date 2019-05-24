@@ -37,17 +37,14 @@ namespace Entitas.Generics
         {
             if (_isAddType && _addedCollector.count > 0)
             {
+                var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
 
-                TEntity[] array = _addedCollector.collectedEntities.ToArray(); // todo: dont allocate, why is collectedEntities a HashSet?
-
-                bool uniqueEntityProcessed = false;
-
-                for (int i = 0; i < array.Length; i++)
-                {
-                    TEntity entity = array[i];
-
-                    if (!uniqueEntityProcessed && entity.Equals(_context.UniqueEntity))
-                        uniqueEntityProcessed = true;
+                foreach (var entity in _addedCollector.collectedEntities)
+                { 
+                    if (notifyUniqueListeners && entity.Equals(_context.UniqueEntity))
+                    {
+                        notifyUniqueListeners = false;
+                    }
 
                     if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
@@ -63,18 +60,13 @@ namespace Entitas.Generics
                     }
                 }
 
-                if(!uniqueEntityProcessed)
-                {                    
-                    var uniqueListenerComponentFound = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener);
-                    if (uniqueListenerComponentFound && unqiueListener.ListenerCount > 0)
-                    {
-                        for (int i = 0; i < array.Length; i++)
-                        {
-                            TEntity entity = array[i];
-                            var component = _context.Get<TComponent>(entity);                          
-                            unqiueListener.Raise((entity, component));
-                        }
-                    }
+                if (notifyUniqueListeners)
+                {
+                    foreach (var entity in _addedCollector.collectedEntities)
+                    {   
+                        var component = _context.Get<TComponent>(entity);                          
+                        unqiueListener.Raise((entity, component));
+                    }                   
                 }
           
                 if (_addedCollector.count > 0)
@@ -89,7 +81,10 @@ namespace Entitas.Generics
 
                 foreach (var entity in _removedCollector.collectedEntities)
                 {
-                    // Handle listeners stored on the entity that owns the event.
+                    if (notifyUniqueListeners && entity.Equals(_context.UniqueEntity))
+                    {
+                        notifyUniqueListeners = false;
+                    }
 
                     if (_context.Has<RemovedListenersComponent<TEntity, TComponent>>(entity))
                     {
@@ -99,20 +94,21 @@ namespace Entitas.Generics
                             addedListenerComponent.Raise(entity);                         
                         }
                     }
+                }
 
-                    // Handle listeners that should be notified whenever the event occurs on ANY entity.
-                    // These are currently stored on the unique entity.
-
-                    //if (notifyUniqueListeners)
-                    //{
-                    //    unqiueListener.Raise(entity);
-                    //}
+                if (notifyUniqueListeners)
+                {
+                    foreach (var entity in _removedCollector.collectedEntities)
+                    {
+                        unqiueListener.Raise(entity);
+                    }                 
                 }
 
                 if (_removedCollector.count > 0)
                 {
                     _removedCollector.ClearCollectedEntities();
                 }
+
             }            
         }
 

@@ -1,6 +1,7 @@
 {
     "name": "Game",
     "references": [
+        "GUID:ff827d0984da08b41bc78edf18500a4e",
         "GUID:ae2d9e4bcc990bd439f2ed0fb641a5c7"
     ],
     "optionalUnityReferences": [],

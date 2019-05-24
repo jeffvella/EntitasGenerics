@@ -7,9 +7,9 @@
     /// </summary> 
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
-    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity> 
+    public class RemovedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>, ICustomDebugInfo
         where TEntity : IEntity where TComponent : IComponent
     {
-
+        public string DisplayName => GetType().PrettyPrintGenericTypeName();
     }
 }

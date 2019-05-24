@@ -57,25 +57,5 @@ namespace Performance.ViewModels
             
         }
 
-
-
-        //public ICommand DownloadCommand => new RelayCommand(param =>
-        //{
-        //    if (!_context.IsProcessing)
-        //    {
-        //        _context.Reset();
-
-        //        // do stuff
-        //    }
-        //});
-
-        //private void OnDownloadFinished(DownloadManager.DownloadResult result)
-        //{
-        //    if (result.Exception != null)
-        //    {
-        //        Logger.Error(result.Exception.ToString());
-        //    }
-        //    Logger.Log("Download Finished");
-        //}
     }
 }

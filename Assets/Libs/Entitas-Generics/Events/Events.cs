@@ -22,6 +22,12 @@ namespace Entitas.Generics
         void OnEvent(TArg value);
     }
 
+    /// <summary>
+    /// A wrapper to allow event registrations from an Action.
+    /// (Event observers must implement the IEventObserver<typeparamref name="TArg"/> interface).
+    /// It also tracks some debug information to help with understanding events in the inspector.
+    /// </summary>
+    /// <typeparam name="TArg">An arguyment to be passed to event listeners</typeparam>
     public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventListener, ICustomDebugInfo
     {
         private int _invocations;
@@ -43,14 +49,14 @@ namespace Entitas.Generics
     }
 
     /// <summary>
-    /// A <see cref="ScriptableObject"/> based event that can notify event listeners, with one argument.
+    /// A base for an event that can store listeners/observers and foward data to them.
     /// </summary>
     /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
     public class GameEventBase<TArgs> : IListenerComponent<TArgs>
     {
         public int ListenerCount => Observers.Count;
 
-        // Must be public for debug drawer display within Entitas
+        // Must be public for debug drawer display within Entitas (it copies only public members)
         public List<IEventObserver<TArgs>> Observers = new List<IEventObserver<TArgs>>();
 
         public void Register(Action<TArgs> action)

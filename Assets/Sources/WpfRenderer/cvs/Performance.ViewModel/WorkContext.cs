@@ -19,6 +19,7 @@ namespace Performance.ViewModels
         private PauseTokenSource _pts;
 
         public CancellationToken CancellationToken { get; private set; }
+
         public PauseToken PauseToken { get; private set; }
 
         public ICommand CancelCommand => new RelayCommand(param =>
@@ -33,7 +34,6 @@ namespace Performance.ViewModels
 
         public void Cancel()
         {
-            Logger.Log("Cancellation button clicked");
             _cts.Cancel();
         }
 
