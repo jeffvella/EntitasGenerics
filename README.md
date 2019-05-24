@@ -83,7 +83,7 @@ Components intended to be searched by value should implement IEquatableT
         public bool Equals(GridPosition other) => other.Equals(Value);
     }
 
-Components with events are defined in the same way as usual.
+Components with events... are clearly marked with `IEventComponent`
 
     public sealed class MaxActionCountComponent : IUniqueComponent, IEventComponent
     {
@@ -92,7 +92,7 @@ Components with events are defined in the same way as usual.
 
 ##### Defining Systems #####
 
-Systems are setup the same way as usual...
+Systems are set up the same way as usual...
 
     public class RootSystems : Feature
     {
