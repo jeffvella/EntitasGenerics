@@ -287,3 +287,17 @@ which seemed to be the cleanest approach while ensuring that Entitas' procedure 
 * Event 'priority' is not yet supported.
 * Entitas' inspector debugging display doesn't handle generic names at all.
 
+# The WPF Version of MatchLine?
+
+One of the great things about Entitas (and other ECS solutions) is that the core of your game can run outside of Unity's environment. This gives you a lot more freedom, particularly in optimizing code with Line-By-Line profilers such as 'ANTS Performance Profiler' and 'DotTrace'. 
+
+Included in the project is a functioning WPF application port of the front-end of RomanZhu's MathcLine game (https://github.com/RomanZhu/Match-Line-Entitas-ECS)
+
+Screenshot of WPF version:
+
+<img src="https://i.imgur.com/kr5g9RO.png" />
+
+Analysis:
+
+<img src="https://i.imgur.com/UBgepTY.png" />
+
