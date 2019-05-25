@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Entitas.Generics
 {
-    public interface IContextDefinition : ICustomDebugInfo
+    public interface IContextDefinition : ICustomDisplayName
     {
         ContextInfo ContextInfo { get; }
 

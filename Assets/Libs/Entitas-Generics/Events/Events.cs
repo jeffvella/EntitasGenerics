@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entitas.VisualDebugging.Unity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -28,7 +29,7 @@ namespace Entitas.Generics
     /// It also tracks some debug information to help with understanding events in the inspector.
     /// </summary>
     /// <typeparam name="TArg">An arguyment to be passed to event listeners</typeparam>
-    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventListener, ICustomDebugInfo
+    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventListener, ICustomDisplayName
     {
         private int _invocations;
 
@@ -95,7 +96,7 @@ namespace Entitas.Generics
 
         public string[] GetListenersNames() => Observers.Select(observer =>
         {
-            if (observer is ICustomDebugInfo delegator)
+            if (observer is ICustomDisplayName delegator)
             {
                 return delegator.DisplayName;
             }
