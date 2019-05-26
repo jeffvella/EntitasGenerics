@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Entitas.Generics;
+using UnityEngine;
 
 namespace Entitas.MatchLine
 {
@@ -28,13 +29,36 @@ namespace Entitas.MatchLine
         {
             GridSize size = _config.GetUnique<MapSizeComponent>().Value;
 
+            //foreach (var entity in entities)
+            //{
+            //    if (entity.HasComponent<PositionComponent>())
+            //    {
+            //        Debug.Log($"AddElementSystem Collected: Position={entity.Get<PositionComponent>().value}");
+            //    }
+            //}
+
             for (int x = 0; x < size.x; x++)
             {
                 var position = new GridPosition(x, size.y - 1);
-                if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
+
+                if (!_game.TryFindEntity<PositionComponent>(p => p.value = position, out var candidate))
                 {
+                    //Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
+
                     _elementService.CreateRandomElement(position);
                 }
+
+                //if (!_game.TryFindEntity2<PositionComponent>(p => p.value = position, out var candidate))
+                //if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
+                //{
+                //    Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
+
+                //    _elementService.CreateRandomElement(position);
+                //}
+                //else
+                //{
+                //    Debug.Log($"AddElementSystem Index Found: Position={position}");
+                //}
             }
         }
     }

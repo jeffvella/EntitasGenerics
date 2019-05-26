@@ -28,6 +28,7 @@ public sealed class UnityElementService : Service, IElementService
         _game.Set(entity, new ElementTypeComponent { value = randomType });
         _game.Set(entity, new AssetComponent { value = "Element" });
         _game.Set(entity, new ColorComponent { value = new Color(normalizedType, normalizedType, normalizedType) });
+
         entity.Set<PositionComponent>(c => c.value = position);
         _entityCounter++;
     }

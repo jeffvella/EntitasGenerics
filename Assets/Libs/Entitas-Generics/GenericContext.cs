@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Entitas.VisualDebugging.Unity;
-
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Entitas.Generics
 {
@@ -81,6 +83,13 @@ namespace Entitas.Generics
 
         bool TryFindEntity<TComponent, TValue>(TValue searchValue, out TEntity entity) where TComponent : IComponent, IEquatable<TValue>, new();
 
+        //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent<TComponent>, new();
+        //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IComponent, new();
+
+        bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new();
+
+        bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new();
+
         // Entity/Component Searches:
 
         TEntity GetOrCreateEntityWith<TComponent>() where TComponent : IComponent, new();
@@ -129,9 +138,11 @@ namespace Entitas.Generics
         where TContext : IGenericContext<TEntity>
         where TEntity : class, IEntity, new()
     {
-        public IContextDefinition Definition { get; }
- 
-        public GenericContext(IContextDefinition contextDefinition) 
+        public IContextDefinition<TEntity> Definition { get; }
+
+        private IComponentSearchIndex<TEntity>[] _searchIndexes;
+
+        public GenericContext(IContextDefinition<TEntity> contextDefinition) 
             : base(contextDefinition.ComponentCount, 0, contextDefinition.ContextInfo, AercFactory, EntityFactory)
         {
             Definition = contextDefinition;
@@ -141,7 +152,22 @@ namespace Entitas.Generics
                 OnEntityWillBeDestroyed += ClearEventListenersOnDestroyed;
             }
 
-            OnEntityCreated += LinkContextToEntity;
+            if (contextDefinition.SearchableComponentIndices.Count > 0)
+            {
+                OnEntityWillBeDestroyed += ClearIndexedComponentsOnDestroyed;
+            }
+
+            OnEntityCreated += LinkContextToEntity;            
+
+            _searchIndexes = contextDefinition.SearchIndexes.ToArray();
+
+            //_indices = new ComponentIndex<TEntity>[contextDefinition.ComponentCount];
+
+        }
+
+        private void RemoveEntityIndexedComponents(IContext context, IEntity entity)
+        {
+            
         }
 
         private static TEntity EntityFactory()
@@ -167,12 +193,59 @@ namespace Entitas.Generics
             }  
         }
 
+        private void ClearIndexedComponentsOnDestroyed(IContext context, IEntity entity)
+        {
+            for (int i = 0; i < Definition.SearchableComponentIndices.Count; i++)
+            {
+                _searchIndexes[Definition.SearchableComponentIndices[i]].Clear((TEntity)entity);          
+            }            
+        }
+
         private void LinkContextToEntity(IContext context, IEntity entity)
         {
             if (entity is IContextLinkedEntity contextEntity)
             {
-                contextEntity.Context = this;
+                contextEntity.Context = this;                
+            }       
+            entity.OnComponentAdded += OnComponentAdded;
+            entity.OnComponentReplaced += OnComponentReplaced;
+        }
+
+        private void OnComponentReplaced(IEntity entity, int index, IComponent previouscomponent, IComponent newcomponent)
+        {
+            if (newcomponent is IIndexedComponent indexedComponent)
+            {
+                //Debug.Log($"Replaced: {previouscomponent.GetType().Name} ({previouscomponent}) for {newcomponent} on Entity={entity}");
+
+                _searchIndexes[index].Update((TEntity)entity, previouscomponent, newcomponent);
             }
+        }
+
+        private void OnComponentAdded(IEntity entity, int index, IComponent component)
+        {
+            if (component is IIndexedComponent indexedComponent)
+            {
+                //Debug.Log($"Added: {component.GetType().Name} for {entity.GetType().Name} Entity={entity} Component={component}");
+
+                _searchIndexes[index].Add((TEntity)entity, indexedComponent);
+            }
+        }
+
+        public bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            if(_searchIndexes[index].TryFindEntity(componentValueProducer, out entity))
+            {
+                return true;
+            }
+            entity = default;
+            return false;         
+        }
+
+        public bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new()
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            return _searchIndexes[index].Contains(componentValueProducer);
         }
 
         public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
@@ -582,8 +655,10 @@ namespace Entitas.Generics
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
             var newComponent = entity.CreateComponent<TComponent>(index);
-            componentUpdater(newComponent);
+            componentUpdater(newComponent);            
             entity.ReplaceComponent(index, newComponent);
+
+            //Debug.Log($"{typeof(TComponent).Name} updated to {newComponent}");
         }
 
         void IEntityContext.NotifyChanged<TComponent>(IEntity entity)

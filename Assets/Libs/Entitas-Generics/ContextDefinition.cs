@@ -14,11 +14,18 @@ namespace Entitas.Generics
         List<int> EventListenerIndices { get; }
     }
 
+    public interface IContextDefinition<TEntity> : IContextDefinition where TEntity : class, IEntity, new()
+    {
+        List<IComponentSearchIndex<TEntity>> SearchIndexes { get; }
+
+        List<int> SearchableComponentIndices { get; }
+    }
+
     /// <summary>
     /// The <see cref="ContextDefinition{TContext,TEntity}"/> defines the component types for a context,
     /// and produces the contextInfo required by Entitas' Context base constructor.
     /// </summary>
-    public class ContextDefinition<TContext, TEntity> : IContextDefinition where TContext : IContext where TEntity : class, IEntity, new()
+    public class ContextDefinition<TContext, TEntity> : IContextDefinition<TEntity> where TContext : IContext where TEntity : class, IEntity, new()
     {
         private ContextInfo _contextInfo;
 
@@ -38,6 +45,12 @@ namespace Entitas.Generics
 
         public List<int> EventListenerIndices { get; } = new List<int>();
 
+        public List<int> IndexedComponentIndices { get; } = new List<int>();
+
+        public List<int> SearchableComponentIndices { get; } = new List<int>();
+
+        public List<IComponentSearchIndex<TEntity>> SearchIndexes { get; } = new List<IComponentSearchIndex<TEntity>>();
+
         public int ComponentCount { get; private set; }
 
         public ContextInfo ContextInfo
@@ -52,25 +65,44 @@ namespace Entitas.Generics
             }
         }
 
-        public void Add<T>() where T : class, IComponent, new()
-        {            
-            AddComponentType<T>(ComponentTypes.Count);
+        public void Add<TComponent>() where TComponent : class, IComponent, new()
+        {
+            var componentIndex = ComponentTypes.Count;
 
-            if (ComponentHelper.IsEventComponent<T>())
+            AddComponentType<TComponent>(componentIndex);
+
+            CreateSearchComponentIndex<TComponent>(componentIndex);
+
+            if (ComponentHelper.IsEventComponent<TComponent>())
             {
-                AddEventComponentType<AddedListenersComponent<TEntity, T>>();
-                AddEventComponentType<RemovedListenersComponent<TEntity, T>>();
+                AddEventComponentType<AddedListenersComponent<TEntity, TComponent>>();
+                AddEventComponentType<RemovedListenersComponent<TEntity, TComponent>>();
             }
         }
 
-        private void AddEventComponentType<T>() where T : new()
+        private void CreateSearchComponentIndex<TComponent>(int componentIndex) where TComponent : class, IComponent, new()
+        {
+            if (ComponentHelper.IsIndexedComponent<TComponent>() && ComponentHelper<TComponent>.Default is IEqualityComparer<TComponent> comparer)
+            {
+                SearchIndexes.Add(new ComponentIndex<TContext, TEntity, TComponent>(comparer));
+                SearchableComponentIndices.Add(componentIndex);
+            }
+            else
+            {
+                // Storing with the same component index
+                SearchIndexes.Add(null);
+            }
+        }
+
+        private void AddEventComponentType<T>() where T : IComponent, new()
         {
             int index = ComponentTypes.Count;
             EventListenerIndices.Add(index);
+            SearchIndexes.Add(null);
             AddComponentType<T>(index);
         }
 
-        private void AddComponentType<T>(int index) where T : new()
+        private void AddComponentType<T>(int index) where T : IComponent, new()
         {
             ComponentHelper<TContext, T>.Initialize(index);
             ComponentNames.Add(typeof(T).PrettyPrintGenericTypeName());

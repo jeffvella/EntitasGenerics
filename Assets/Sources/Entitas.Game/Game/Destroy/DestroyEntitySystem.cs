@@ -26,7 +26,7 @@ namespace Entitas.MatchLine
                 e.Destroy();
             }
 
-            foreach (var e in _inputGroup.GetEntities(_inputBuffer))
+            foreach (InputEntity e in _inputGroup.GetEntities(_inputBuffer))
             {
                 e.Destroy();
             }
