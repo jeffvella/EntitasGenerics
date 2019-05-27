@@ -15,7 +15,7 @@ namespace Entitas.MatchLine
             Add<GameOverComponent>();
             Add<LastSelectedComponent>();
             Add<MaxSelectedElementComponent>();
-            Add<ScoreComponent>();
+            AddIndexed<ScoreComponent>();
         }
     }
 }

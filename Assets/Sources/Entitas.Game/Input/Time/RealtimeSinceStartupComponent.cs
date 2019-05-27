@@ -2,8 +2,8 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class RealtimeSinceStartupComponent : IUniqueComponent
+    public sealed class RealtimeSinceStartupComponent : ValueComponent<float>, IUniqueComponent
     {
-        public float value;
+
     }
 }

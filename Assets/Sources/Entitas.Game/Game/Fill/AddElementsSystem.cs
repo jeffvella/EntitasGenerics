@@ -41,7 +41,14 @@ namespace Entitas.MatchLine
             {
                 var position = new GridPosition(x, size.y - 1);
 
-                if (!_game.TryFindEntity<PositionComponent>(p => p.value = position, out var candidate))
+                //if (!_game.TryFindEntity<PositionComponent>(p => p.Value = position, out var candidate))
+                //{
+                //    //Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
+
+                //    _elementService.CreateRandomElement(position);
+                //}
+
+                if (!_game.TryFindEntity2<PositionComponent, GridPosition>(position, out var candidate))
                 {
                     //Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
 

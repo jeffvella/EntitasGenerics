@@ -1,14 +1,15 @@
-﻿using Entitas.CodeGeneration.Attributes;
+﻿using System;
+using Entitas.CodeGeneration.Attributes;
 
 namespace Entitas.Generics
 {
     /// <summary>
-    /// Provides info about a Context/Component pair.
+    /// Provides info about a Context/Get pair.
     /// </summary>
     /// <typeparam name="TContext">the context that contains the <see cref="TComponent"/></typeparam>
     /// <typeparam name="TComponent">the component to lookup information for</typeparam>
     /// <remarks>
-    /// Component Index is unique to a context (the same component can have a different index if its used in different contexts)
+    /// Get Index is unique to a context (the same component can have a different index if its used in different contexts)
     /// It could also be unique to an entity type but using the context allows the use of the same entity type for multiple contexts.
     /// Accessing a static generic type field is roughly twice the speed of a constant (so about the same a property / 1 redirection)
     /// </remarks>
@@ -60,6 +61,15 @@ namespace Entitas.Generics
 
     public static class ComponentHelper
     {
+        public static T Cast<T>(IComponent component)
+        {
+            if (!(component is T result))
+            {
+                throw new InvalidCastException();
+            }
+            return result;
+        }
+
         public static bool IsUniqueComponent<T>()
         {
             return typeof(IUniqueComponent).IsAssignableFrom(typeof(T));

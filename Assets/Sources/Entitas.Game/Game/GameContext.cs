@@ -25,7 +25,7 @@ namespace Entitas.MatchLine
             Add<InComboComponent>();
             Add<MatchedComponent>();
             Add<MovableComponent>();
-            Add<PositionComponent>();
+            AddIndexed<PositionComponent>();
             Add<RestartHappenedComponent>();
             Add<RewardComponent>();
             Add<SelectedComponent>();

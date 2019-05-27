@@ -24,12 +24,20 @@ public sealed class UnityElementService : Service, IElementService
         var entity = _game.CreateEntity();
         _game.SetFlag<ElementComponent>(entity, true);
         _game.SetFlag<MovableComponent>(entity, true);
-        _game.Set(entity, new IdComponent { value = _entityCounter });
-        _game.Set(entity, new ElementTypeComponent { value = randomType });
-        _game.Set(entity, new AssetComponent { value = "Element" });
-        _game.Set(entity, new ColorComponent { value = new Color(normalizedType, normalizedType, normalizedType) });
 
-        entity.Set<PositionComponent>(c => c.value = position);
+        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        _game.GetOrCreateComponent<ElementTypeComponent>(entity).value = randomType;
+        _game.GetOrCreateComponent<AssetComponent>(entity).value = "Element";
+        _game.GetOrCreateComponent<ColorComponent>(entity).value = new Color(normalizedType, normalizedType, normalizedType);
+
+        //_game.Set(entity, new IdComponent { value = _entityCounter });
+        //_game.Set(entity, new ElementTypeComponent { value = randomType });
+        //_game.Set(entity, new AssetComponent { value = "Element" });
+        //_game.Set(entity, new ColorComponent { value = new Color(normalizedType, normalizedType, normalizedType) });
+
+        // entity.Set<PositionComponent>(c => c.Value = position);
+
+        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
         _entityCounter++;
     }
 
@@ -39,9 +47,17 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<ElementComponent>(entity, true);
         _game.SetFlag<MovableComponent>(entity, true);
         _game.SetFlag<BlockComponent>(entity, true);
-        _game.Set(entity, new IdComponent { value = _entityCounter });       
-        _game.Set(entity, new AssetComponent { value = "Block" });
-        _game.Set<PositionComponent>(entity, c => c.value = position);
+
+        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        _game.GetOrCreateComponent<AssetComponent>(entity).value = "Block";
+
+
+        //_game.Set(entity, new IdComponent { value = _entityCounter });       
+        //_game.Set(entity, new AssetComponent { value = "Block" });
+        //_game.Set<PositionComponent>(entity, c => c.Value = position);
+
+        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+
         _entityCounter++;
     }
 
@@ -50,9 +66,14 @@ public sealed class UnityElementService : Service, IElementService
         var entity = _game.CreateEntity();
         _game.SetFlag<ElementComponent>(entity, true);
         _game.SetFlag<BlockComponent>(entity, true);
-        _game.Set(entity, new IdComponent { value = _entityCounter });
-        _game.Set(entity, new AssetComponent { value = "NotMovableBlock" });
-        _game.Set<PositionComponent>(entity, c => c.value = position);
+        //_game.Set(entity, new IdComponent { value = _entityCounter });
+        //_game.Set(entity, new AssetComponent { value = "NotMovableBlock" });
+        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        _game.GetOrCreateComponent<AssetComponent>(entity).value = "NotMovableBlock";
+        //_game.Set<PositionComponent>(entity, c => c.Value = position);
+
+        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+
         _entityCounter++;
     }
 
@@ -62,9 +83,16 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<ElementComponent>(entity, true);
         _game.SetFlag<ExplosiveComponent>(entity, true);
         _game.SetFlag<BlockComponent>(entity, true);
-        _game.Set(entity, new IdComponent { value = _entityCounter });
-        _game.Set(entity, new AssetComponent { value = "ExsplosiveBlock" });
-        _game.Set<PositionComponent>(entity, c => c.value = position);
+
+        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        _game.GetOrCreateComponent<AssetComponent>(entity).value = "ExsplosiveBlock";
+
+        //_game.Set(entity, new IdComponent { value = _entityCounter });
+        //_game.Set(entity, new AssetComponent { value = "ExsplosiveBlock" });
+        //_game.Set<PositionComponent>(entity, c => c.Value = position);
+
+        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+
         _entityCounter++;
     }
 

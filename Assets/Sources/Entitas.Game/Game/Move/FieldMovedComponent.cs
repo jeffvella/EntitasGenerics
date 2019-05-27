@@ -3,7 +3,7 @@
 namespace Entitas.MatchLine
 {
 
-    public sealed class FieldMovedComponent : IFlagComponent
+    public sealed class FieldMovedComponent : IUniqueComponent, IFlagComponent
     {
     }
 }

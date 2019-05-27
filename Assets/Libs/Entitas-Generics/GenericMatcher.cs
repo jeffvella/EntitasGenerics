@@ -1,7 +1,7 @@
 ﻿namespace Entitas.Generics
 {
     /// <summary>
-    /// Provides matcher instance for a Context/Entity/Component combination.
+    /// Provides matcher instance for a Context/Entity/Get combination.
     /// </summary>
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
@@ -32,7 +32,7 @@
             where TEntity : class, IEntity, new()
             where TContext : IContext
         {
-            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
+            Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
             matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
             return matcher;
         }
@@ -41,7 +41,7 @@
             where TEntity : class, IEntity, new()
             where TContext : IContext
         {
-            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
+            Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
             matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
             return matcher;
         }

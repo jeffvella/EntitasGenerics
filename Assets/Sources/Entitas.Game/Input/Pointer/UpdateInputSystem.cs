@@ -21,7 +21,7 @@
             }
             else
             {
-                var deltaTime = _contexts.Input.GetUnique<DeltaTimeComponent>().value;
+                var deltaTime = _contexts.Input.GetUnique<DeltaTimeComponent>().Value;
                 _inputService.Update(deltaTime);
 
                 var isHolding = _inputService.IsHolding();
@@ -32,10 +32,15 @@
 
                 var isReleased = _inputService.IsReleased();
                 _contexts.Input.SetFlag<PointerReleasedComponent>(isReleased);
-                _contexts.Input.SetUnique<PointerHoldingPositionComponent>(c => c.value = _inputService.HoldingPosition());
+                _contexts.Input.SetUnique<PointerHoldingPositionComponent>(c => GridPosition(c));
                 _contexts.Input.SetUnique<PointerHoldingTimeComponent>(c => c.value = _inputService.HoldingTime());
 
             }
+        }
+
+        private GridPosition GridPosition(PointerHoldingPositionComponent c)
+        {
+            return c.value = _inputService.HoldingPosition();
         }
     }
 

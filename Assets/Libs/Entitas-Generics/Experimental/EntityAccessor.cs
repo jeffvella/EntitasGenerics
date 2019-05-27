@@ -1,4 +1,9 @@
 ﻿using System;
+using System.CodeDom;
+using Entitas.CodeGeneration.Attributes;
+using TreeEditor;
+using UnityEditorInternal;
+using UnityEngine.Experimental.PlayerLoop;
 
 namespace Entitas.Generics
 {
@@ -33,4 +38,91 @@ namespace Entitas.Generics
             Entity.ReplaceComponent(index, newComponent);
         }
     }
+
+    public interface IEntityLinkedComponent
+    {
+        void Link(IEntity entity, int index);
+
+        IEntity GetEntity();
+
+        int GetIndex();
+    }
+
+    public class ValueComponent<TValue> : IValueComponent<TValue>
+    {
+        public TValue Value { get; set; }
+
+        public int Index { get; set; }
+
+        public IEntity Entity { get; set; }
+    }
+
+    public static class ValueExtensions
+    {
+        public static void Apply<TComponent>(this TComponent component) where TComponent : ILinkedComponent, new()
+        {
+            component.Entity.ReplaceComponent(component.Index, component);
+        }
+
+        public static void Update<TComponent, TValue>(this TComponent component, TValue value) where TComponent : IValueComponent<TValue>, new()
+        {            
+            IEntity entity = component.Entity;
+            int index = component.Index;
+            var newComponent = (IValueComponent<TValue>)entity.CreateComponent<TComponent>(index);
+            newComponent.Value = value;
+            entity.ReplaceComponent(index, newComponent);
+        }
+
+        public static TComponent Get<TEntity, TComponent>(this TEntity entity, TComponent component) where TEntity : ILinkedEntity where TComponent : ILinkedComponent, new()
+        {
+            var index = entity.Context.GetComponentIndex<TComponent>();
+            if (!entity.HasComponent(index))
+            {
+                var newComponent = entity.CreateComponent<TComponent>(index);
+                newComponent.Index = index;
+                newComponent.Entity = entity;
+                return newComponent;
+            }
+            return (TComponent)entity.GetComponent(index);
+        }
+
+        //public static TComponent Update<TEntity, TComponent>(this TEntity entity, TComponent component) where TEntity : IContextLinkedEntity where TComponent : IComponent, new()
+        //{
+        //    return entity.Context.Get<TComponent>(entity);
+        //}
+
+    }
+
+    //public static class ComponentAccessExtensions
+    //{
+    //    public static void Test(this IComponent component)
+    //    {
+    //        if (!(component is IAccessorComponent accessor))
+    //        {
+    //            throw new InvalidCastException();
+    //        }
+
+    //        var x = ComponentTest.GetTest(accessor);
+    //    }
+    //}
+
+    //public interface IAccessorComponent : IComponent
+    //{
+
+    //}
+
+    //public static class ComponentTest
+    //{
+    //    public static bool GetTest<T>(T instance) where T : IComponent
+    //    {
+    //        var x = ComponentTest<T>.value;
+    //    }
+    //}
+
+    //public static class ComponentTest<TComponent>
+    //{
+    //    public static bool value;
+    //}
+
+
 }

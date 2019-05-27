@@ -88,15 +88,30 @@ namespace Entitas.Generics
 
         bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new();
 
-        bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new();
+        bool TryFindEntity2<TComponent,TValue>(TValue value, out TEntity entity) where TComponent : IIndexedComponent, new();
 
-        // Entity/Component Searches:
+        //bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new();
+
+        // Entity/Get Searches:
 
         TEntity GetOrCreateEntityWith<TComponent>() where TComponent : IComponent, new();
 
         bool EntityExistsWithComponent<TComponent>() where TComponent : IComponent, new();
 
+
     }
+
+    public delegate void ActionRef<T>(ref T item);
+
+    public struct ValueHolder<TValue> where TValue : unmanaged
+    {
+        public TValue Component;
+    }
+
+    //public ref struct ComponentAccessor<>
+    //{
+    //    public Get<>
+    //}
 
     /// <summary>
     /// Provides component access for a specific IEntity.
@@ -112,6 +127,8 @@ namespace Entitas.Generics
         TComponent GetOrCreateComponent<TComponent>(IEntity entity) where TComponent : class, IComponent, new();
 
         void Set<TComponent>(IEntity entity, Action<TComponent> componentUpdater) where TComponent : class, IComponent, new();
+
+        //ValueComponent<TComponent,TValue> Get<TComponent,TValue>(IEntity entity) where TComponent : class, IValueComponent<TValue>, new();
 
         void Remove<TComponent>(IEntity entity) where TComponent : IComponent, new();
 
@@ -161,6 +178,10 @@ namespace Entitas.Generics
 
             _searchIndexes = contextDefinition.SearchIndexes.ToArray();
 
+
+           // new Entitas.PrimaryEntityIndex<GameEntity, GridPosition>(Position, game.GetGroup(GenericMatcher<TComponent>.AllOf), (e, c) => ((TComponent)c).value);
+
+
             //_indices = new ComponentIndex<TEntity>[contextDefinition.ComponentCount];
 
         }
@@ -203,10 +224,11 @@ namespace Entitas.Generics
 
         private void LinkContextToEntity(IContext context, IEntity entity)
         {
-            if (entity is IContextLinkedEntity contextEntity)
+            if (entity is ILinkedEntity contextEntity)
             {
                 contextEntity.Context = this;                
             }       
+
             entity.OnComponentAdded += OnComponentAdded;
             entity.OnComponentReplaced += OnComponentReplaced;
         }
@@ -223,18 +245,22 @@ namespace Entitas.Generics
 
         private void OnComponentAdded(IEntity entity, int index, IComponent component)
         {
+            if (component is IEntityLinkedComponent linkedComponent)
+            {
+                linkedComponent.Link(entity, index);
+            }
+
             if (component is IIndexedComponent indexedComponent)
             {
-                //Debug.Log($"Added: {component.GetType().Name} for {entity.GetType().Name} Entity={entity} Component={component}");
+                //Debug.Log($"Added: {component.GetType().Name} for {entity.GetType().Name} Entity={entity} Get={component}");
 
                 _searchIndexes[index].Add((TEntity)entity, indexedComponent);
             }
         }
 
         public bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new()
-        {
-            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
-            if(_searchIndexes[index].TryFindEntity(componentValueProducer, out entity))
+        {  
+            if(((ComponentIndex<TEntity,TComponent>)_searchIndexes[ComponentHelper<TContext, TComponent>.ComponentIndex]).TryFindEntity(componentValueProducer, out entity))
             {
                 return true;
             }
@@ -242,11 +268,28 @@ namespace Entitas.Generics
             return false;         
         }
 
-        public bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new()
+        public bool TryFindEntity2<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IIndexedComponent, new()
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
-            return _searchIndexes[index].Contains(componentValueProducer);
+            if (((ComponentIndex<TEntity, TComponent>)_searchIndexes[index]).TryFindEntity(value, out entity))
+            {
+                return true;
+            }
+            entity = default;
+            return false;
         }
+
+        //public bool TryFindEntity2<TComponent>(ValueHolder<TComponent> valueHolder, out TEntity entity) where TComponent : IIndexedComponent, new()
+        //{
+        //    var component = valueHolder.Get;
+        //    return true;
+        //}
+
+        //public bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new()
+        //{
+        //    var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+        //    return ((ComponentIndex<TEntity,TComponent>)_searchIndexes[index]).Contains(componentValueProducer);
+        //}
 
         public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
         {
@@ -369,14 +412,19 @@ namespace Entitas.Generics
 
         public TEntity FindEntity<TComponent, TValue>(TValue searchValue) where TComponent : IComponent, IEquatable<TValue>, new()
         {
+            var sw = new Stopwatch();
+            TEntity result = default;
             var entities = GetGroup<TComponent>().GetEntities();
             for (var i = 0; i < entities.Length; i++)
             {
                 var entity = entities[i];
                 var component = Get<TComponent>(entity);
                 if (component.Equals(searchValue))
-                    return entity;
+                {
+                    result = entity;
+                }
             }
+            return result;
             throw new InvalidOperationException($"Search for an '{typeof(TEntity).Name}' entity with the specific ''{typeof(TComponent).Name}'' value of type '{searchValue}' found no matches");
         }
 
@@ -660,6 +708,20 @@ namespace Entitas.Generics
 
             //Debug.Log($"{typeof(TComponent).Name} updated to {newComponent}");
         }
+
+        //public static class AccessorFactory
+        //{
+
+        //}
+
+        //private ComponentAccessor<TComponent, TValue>[] _accessors;
+
+        //public ValueComponent<TComponent, TValue> Get<TComponent, TValue>(IEntity entity) where TComponent : class, IValueComponent<TValue>, new()
+        //{
+        //    var index = ComponentHelper<TContext, TComponent>.ComponentIndex; 
+        //    return new ValueComponent<TComponent, TValue>(entity, index);
+        //    //return _accessors[index];
+        //}
 
         void IEntityContext.NotifyChanged<TComponent>(IEntity entity)
         {

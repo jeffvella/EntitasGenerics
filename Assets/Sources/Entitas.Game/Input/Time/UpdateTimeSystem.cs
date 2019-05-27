@@ -18,11 +18,14 @@
 
         public void Execute()
         {
-            var deltaTime = _timeService.DeltaTime();
-            _contexts.Input.SetUnique<DeltaTimeComponent>(c => c.value = deltaTime);
+            //var deltaTime = ;
+            _contexts.Input.GetUnique<DeltaTimeComponent>().Value = _timeService.DeltaTime();
 
-            var timeSinceStartup = _timeService.RealtimeSinceStartup();
-            _contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
+            //_contexts.Input.SetUnique<DeltaTimeComponent>(c => c.value = deltaTime);
+            //var timeSinceStartup = ;
+            //_contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
+
+            _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().Value = _timeService.RealtimeSinceStartup();
 
         }
     }

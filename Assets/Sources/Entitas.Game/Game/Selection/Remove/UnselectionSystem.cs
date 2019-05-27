@@ -31,7 +31,7 @@ namespace Entitas.MatchLine
                 return;
 
             var targetEntity = _game.FindEntity<SelectionIdComponent, int>(targetSelectionId);
-            var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).value;
+            var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
             var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().value;
             if (pointerHoldingPosition.Equals(targetEntityPosition))
             {

@@ -36,7 +36,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
+                var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
                 _buffer.Add(index, entity);
             }
 
@@ -61,7 +61,7 @@ namespace Entitas.MatchLine
                                 foreach (var entity in _currentBuffer)
                                 {
                                     _game.SetFlag<InComboComponent>(entity, true);
-                                    var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
+                                    var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
                                     _buffer.Remove(index);
                                 }
 
@@ -78,7 +78,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).value.ToIndex(size);
+                var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
                 _buffer.Remove(index);
             }
         }

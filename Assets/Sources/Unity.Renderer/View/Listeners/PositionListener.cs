@@ -23,7 +23,7 @@ public class PositionListener : MonoBehaviour, IEventListener
 
     private void OnPositionChanged((GameEntity Entity, PositionComponent Component) obj)
     {
-        _targetPosition = obj.Component.value.ToVector3();
+        _targetPosition = obj.Component.Value.ToVector3();
     }
     
     private void Update()

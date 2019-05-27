@@ -5,7 +5,7 @@ using Entitas.Generics;
 /// <summary>
 /// An entity with access to its creating context.
 /// </summary>
-public interface IContextLinkedEntity : IEntity
+public interface ILinkedEntity : IEntity
 {
     IEntityContext Context { get; set; }
 }
@@ -15,7 +15,7 @@ public interface IContextLinkedEntity : IEntity
 /// GenericEntity is an option instead of deriving from Entitas.Entity.
 /// It allows access to components directly from the entity.
 /// </summary>
-public class GenericEntity : Entitas.Entity, IContextLinkedEntity 
+public class GenericEntity : Entitas.Entity, ILinkedEntity 
 {
     // Entities implementing IContextLinkedEntity are on creation given an IEntity version
     // of their context by GenericContext<TEntity>.LinkContextToEntity();
@@ -47,6 +47,12 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity
         Context.Set(this, componentUpdater);
     }
 
+    public void Replace<TComponent>(TComponent component) where TComponent : class, IComponent, new()
+    {
+        var index = Context.GetComponentIndex<TComponent>();
+        ReplaceComponent(index, component);
+    }
+
     public void RegisterAddedComponentListener<TComponent>(Action<(IEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
     {
         Context.RegisterAddedComponentListener<TComponent>(this, action);
@@ -57,4 +63,5 @@ public class GenericEntity : Entitas.Entity, IContextLinkedEntity
         Context.RegisterRemovedComponentListener<TComponent>(this, action);
     }
 }
+
 

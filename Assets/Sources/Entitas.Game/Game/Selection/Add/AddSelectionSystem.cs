@@ -95,8 +95,8 @@ namespace Entitas.MatchLine
 
                 if (lastElementType == currentElementType)
                 {
-                    var lastPosition = _game.Get<PositionComponent>(lastSelected).value;
-                    var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).value;
+                    var lastPosition = _game.Get<PositionComponent>(lastSelected).Value;
+                    var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).Value;
 
                     if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                     {

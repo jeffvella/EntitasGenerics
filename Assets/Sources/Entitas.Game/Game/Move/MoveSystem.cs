@@ -1,5 +1,7 @@
-﻿using Entitas.Generics;
+﻿using System.Diagnostics;
+using Entitas.Generics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Entitas.MatchLine
 {
@@ -19,51 +21,58 @@ namespace Entitas.MatchLine
 
         public void Execute()
         {
+            UnityEngine.Profiling.Profiler.BeginSample("SomeUniqueName");
+
             int moveCount = 0;
 
             var size = _config.GetUnique<MapSizeComponent>().Value;
+
+            
 
             for (int x = 0; x < size.x; x++)
             {
                 for (int y = 1; y < size.y; y++)
                 {
                     var sourcePosition = new GridPosition(x, y);
+                   
+                    //var sw = new Stopwatch();
+                    //sw.Start();
 
-                    if (!_game.TryFindEntity<PositionComponent>(c => c.value = sourcePosition, out GameEntity element))
+                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(sourcePosition, out var element))
                     {
+                        //sw.Stop();
+                        //Debug.Log($"Index Time: {sw.Elapsed.TotalMilliseconds:N6}");               
                         continue;
                     }
 
-                    //if (!_game.TryFindEntity<PositionComponent, GridPosition>(sourcePosition, out GameEntity element))
-                    //{
-                    //    //if (_game.TryFindEntity2<PositionComponent>(c => c.value = sourcePosition, out GameEntity element2))
-                    //    //{
-                    //    //    Debug.Log($"Index found entity erroneously linked to position: {sourcePosition}, Element={element2}");                    
-                    //    //}
-                    //    continue;
-                    //}
-                    //else
-                    //{
-                    //    if (!_game.TryFindEntity2<PositionComponent>(c => c.value = sourcePosition, out GameEntity element2))
-                    //    {
-                    //        Debug.Log($"Index failed to find element by value, Position={sourcePosition}, Element={element}");
-                    //    }
-                    //}
-                    //if (!_game.TryFindEntity2<PositionComponent>(c => c.value = sourcePosition, out GameEntity element))
-                    //{
-                    //    continue;
-                    //}
+
 
                     if (!_game.IsFlagged<MovableComponent>(element))
+                    {
                         continue;
+                    }
 
                     var targetPosition = new GridPosition(x, y - 1);
 
-                    if (!_game.EntityWithComponentValueExists<PositionComponent>(c => c.value = targetPosition))
+                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(targetPosition, out var result))
                     {
-                        _game.Set<PositionComponent>(element, c => c.value = targetPosition);
+
+                        //element.Get<PositionComponent>().Value = targetPosition;
+
+                        element.Get<PositionComponent>().Update(targetPosition);
+
+                        //var test = element.With<PositionComponent>(); //.Update(targetPosition);                        
+
+                        //_game.Set<PositionComponent>(element, c => c.Value = targetPosition);
+
                         moveCount++;
                     }
+
+                    //if (!_game.TryFindEntity<PositionComponent>(c => c.Value = targetPosition, out var result))
+                    //{
+                    //    _game.Set<PositionComponent>(element, c => c.Value = targetPosition);
+                    //    moveCount++;
+                    //}
 
                     //if (!_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out GameEntity targetEntity))
                     //{
@@ -73,13 +82,17 @@ namespace Entitas.MatchLine
                 }
             }
 
-            if (moveCount > 0)
-            {
-                var e = _game.CreateEntity();
-                _game.SetFlag<FieldMovedComponent>(e);
-                _game.SetFlag<DestroyedComponent>(e);
-            }
+
+            _game.SetFlag<FieldMovedComponent>(moveCount > 0);
+
+            UnityEngine.Profiling.Profiler.EndSample();
+
         }
+
+        //private void Method(ref PositionComponent item)
+        //{            
+        //    item.Value = new GridPosition();
+        //}
     }
 
 }

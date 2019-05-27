@@ -1,6 +1,8 @@
 ﻿using System;
 using Entitas.VisualDebugging.Unity;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine.UIElements;
 
 
 namespace Entitas.Generics
@@ -51,6 +53,7 @@ namespace Entitas.Generics
 
         public List<IComponentSearchIndex<TEntity>> SearchIndexes { get; } = new List<IComponentSearchIndex<TEntity>>();
 
+ 
         public int ComponentCount { get; private set; }
 
         public ContextInfo ContextInfo
@@ -65,13 +68,22 @@ namespace Entitas.Generics
             }
         }
 
-        public void Add<TComponent>() where TComponent : class, IComponent, new()
+        public void AddIndexed<TComponent>() where TComponent : class, IIndexedComponent, new()
         {
             var componentIndex = ComponentTypes.Count;
 
             AddComponentType<TComponent>(componentIndex);
 
-            CreateSearchComponentIndex<TComponent>(componentIndex);
+            //if (ComponentHelper.IsIndexedComponent<TComponent>())
+            //{
+                //IIndexedComponent instance = ComponentHelper.Cast<IIndexedComponent>(ComponentHelper<TComponent>.Default);
+
+                //if (!(ComponentHelper<TComponent>.Default is IIndexedComponent))
+                //{
+                //    throw new InvalidCastException();
+                //}
+                CreateComponentSearchIndex<TComponent>(componentIndex);
+            //}
 
             if (ComponentHelper.IsEventComponent<TComponent>())
             {
@@ -80,19 +92,46 @@ namespace Entitas.Generics
             }
         }
 
-        private void CreateSearchComponentIndex<TComponent>(int componentIndex) where TComponent : class, IComponent, new()
+        public void Add<TComponent>() where TComponent : class, IComponent, new()
+        {
+            var componentIndex = ComponentTypes.Count;
+
+            AddComponentType<TComponent>(componentIndex);
+
+            //if (ComponentHelper.IsIndexedComponent<TComponent>())
+            //{
+            //    //IIndexedComponent instance = ComponentHelper.Cast<IIndexedComponent>(ComponentHelper<TComponent>.Default);
+
+            //    if (!(ComponentHelper<TComponent>.Default is IIndexedComponent indexed))
+            //    {
+            //        throw new InvalidCastException();
+            //    }
+            //    CreateComponentSearchIndex(indexed, componentIndex);
+            //}
+
+            SearchIndexes.Add(null);
+
+            if (ComponentHelper.IsEventComponent<TComponent>())
+            {
+                AddEventComponentType<AddedListenersComponent<TEntity, TComponent>>();
+                AddEventComponentType<RemovedListenersComponent<TEntity, TComponent>>();
+            }
+        }
+
+        private void CreateComponentSearchIndex<TComponent>(int componentIndex) where TComponent : class, IIndexedComponent, new()
         {
             if (ComponentHelper.IsIndexedComponent<TComponent>() && ComponentHelper<TComponent>.Default is IEqualityComparer<TComponent> comparer)
             {
-                SearchIndexes.Add(new ComponentIndex<TContext, TEntity, TComponent>(comparer));
+                SearchIndexes.Add(new ComponentIndex<TEntity, TComponent>(comparer));
+
                 SearchableComponentIndices.Add(componentIndex);
             }
             else
             {
-                // Storing with the same component index
                 SearchIndexes.Add(null);
             }
         }
+
 
         private void AddEventComponentType<T>() where T : IComponent, new()
         {
