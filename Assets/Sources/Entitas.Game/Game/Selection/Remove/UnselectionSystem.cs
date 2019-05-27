@@ -32,7 +32,8 @@ namespace Entitas.MatchLine
 
             var targetEntity = _game.FindEntity<SelectionIdComponent, int>(targetSelectionId);
             var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
-            var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().value;
+            var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().Value;
+
             if (pointerHoldingPosition.Equals(targetEntityPosition))
             {
                 DeselectCurrentEntity();

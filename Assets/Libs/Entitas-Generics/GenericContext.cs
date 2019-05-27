@@ -86,7 +86,7 @@ namespace Entitas.Generics
         //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent<TComponent>, new();
         //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IComponent, new();
 
-        bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new();
+        //bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new();
 
         bool TryFindEntity2<TComponent,TValue>(TValue value, out TEntity entity) where TComponent : IIndexedComponent, new();
 
@@ -177,13 +177,6 @@ namespace Entitas.Generics
             OnEntityCreated += LinkContextToEntity;            
 
             _searchIndexes = contextDefinition.SearchIndexes.ToArray();
-
-
-           // new Entitas.PrimaryEntityIndex<GameEntity, GridPosition>(Position, game.GetGroup(GenericMatcher<TComponent>.AllOf), (e, c) => ((TComponent)c).value);
-
-
-            //_indices = new ComponentIndex<TEntity>[contextDefinition.ComponentCount];
-
         }
 
         private void RemoveEntityIndexedComponents(IContext context, IEntity entity)
@@ -228,7 +221,6 @@ namespace Entitas.Generics
             {
                 contextEntity.Context = this;                
             }       
-
             entity.OnComponentAdded += OnComponentAdded;
             entity.OnComponentReplaced += OnComponentReplaced;
         }
@@ -237,36 +229,33 @@ namespace Entitas.Generics
         {
             if (newcomponent is IIndexedComponent indexedComponent)
             {
-                //Debug.Log($"Replaced: {previouscomponent.GetType().Name} ({previouscomponent}) for {newcomponent} on Entity={entity}");
-
-                _searchIndexes[index].Update((TEntity)entity, previouscomponent, newcomponent);
+                _searchIndexes[index].Update((TEntity)entity, (IIndexedComponent)previouscomponent, indexedComponent);
             }
         }
 
         private void OnComponentAdded(IEntity entity, int index, IComponent component)
         {
-            if (component is IEntityLinkedComponent linkedComponent)
+            if (component is ILinkedComponent linkable)
             {
-                linkedComponent.Link(entity, index);
+                linkable.Entity = entity;
+                linkable.Index = index;
             }
 
             if (component is IIndexedComponent indexedComponent)
             {
-                //Debug.Log($"Added: {component.GetType().Name} for {entity.GetType().Name} Entity={entity} Get={component}");
-
                 _searchIndexes[index].Add((TEntity)entity, indexedComponent);
             }
         }
 
-        public bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new()
-        {  
-            if(((ComponentIndex<TEntity,TComponent>)_searchIndexes[ComponentHelper<TContext, TComponent>.ComponentIndex]).TryFindEntity(componentValueProducer, out entity))
-            {
-                return true;
-            }
-            entity = default;
-            return false;         
-        }
+        //public bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new()
+        //{  
+        //    if(((ComponentIndex<TEntity,TComponent>)_searchIndexes[ComponentHelper<TContext, TComponent>.ComponentIndex]).TryFindEntity(componentValueProducer, out entity))
+        //    {
+        //        return true;
+        //    }
+        //    entity = default;
+        //    return false;         
+        //}
 
         public bool TryFindEntity2<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IIndexedComponent, new()
         {
@@ -425,7 +414,7 @@ namespace Entitas.Generics
                 }
             }
             return result;
-            throw new InvalidOperationException($"Search for an '{typeof(TEntity).Name}' entity with the specific ''{typeof(TComponent).Name}'' value of type '{searchValue}' found no matches");
+            //throw new InvalidOperationException($"Search for an '{typeof(TEntity).Name}' entity with the specific ''{typeof(TComponent).Name}'' value of type '{searchValue}' found no matches");
         }
 
         public bool TryFindEntity<TComponent, TValue>(TValue searchValue, out TEntity entity) where TComponent : IComponent, IEquatable<TValue>, new()

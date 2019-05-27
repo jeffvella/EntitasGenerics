@@ -1,4 +1,6 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
     public sealed class UpdateInputSystem : IExecuteSystem
     {
@@ -21,26 +23,14 @@
             }
             else
             {
-                var deltaTime = _contexts.Input.GetUnique<DeltaTimeComponent>().Value;
-                _inputService.Update(deltaTime);
+                _inputService.Update(_contexts.Input.GetUnique<DeltaTimeComponent>().Value);
+                _contexts.Input.SetFlag<PointerHoldingComponent>(_inputService.IsHolding());
+                _contexts.Input.SetFlag<PointerStartedHoldingComponent>(_inputService.IsStartedHolding());
+                _contexts.Input.SetFlag<PointerReleasedComponent>(_inputService.IsReleased());
 
-                var isHolding = _inputService.IsHolding();
-                _contexts.Input.SetFlag<PointerHoldingComponent>(isHolding);
-
-                var isStartedHolding = _inputService.IsStartedHolding();
-                _contexts.Input.SetFlag<PointerStartedHoldingComponent>(isStartedHolding);
-
-                var isReleased = _inputService.IsReleased();
-                _contexts.Input.SetFlag<PointerReleasedComponent>(isReleased);
-                _contexts.Input.SetUnique<PointerHoldingPositionComponent>(c => GridPosition(c));
-                _contexts.Input.SetUnique<PointerHoldingTimeComponent>(c => c.value = _inputService.HoldingTime());
-
+                _contexts.Input.UniqueEntity.Get2<PointerHoldingPositionComponent>().Update(_inputService.HoldingPosition());
+                _contexts.Input.UniqueEntity.Get2<PointerHoldingTimeComponent>().Update(_inputService.HoldingTime());
             }
-        }
-
-        private GridPosition GridPosition(PointerHoldingPositionComponent c)
-        {
-            return c.value = _inputService.HoldingPosition();
         }
     }
 

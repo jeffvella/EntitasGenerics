@@ -73,17 +73,21 @@ namespace Entitas.Generics
             entity.ReplaceComponent(index, newComponent);
         }
 
-        public static TComponent Get<TEntity, TComponent>(this TEntity entity, TComponent component) where TEntity : ILinkedEntity where TComponent : ILinkedComponent, new()
+        public static TComponent Get2<TComponent>(this ILinkedEntity entity) where TComponent : ILinkedComponent, new()
         {
             var index = entity.Context.GetComponentIndex<TComponent>();
+            TComponent newComponent;
             if (!entity.HasComponent(index))
             {
-                var newComponent = entity.CreateComponent<TComponent>(index);
-                newComponent.Index = index;
-                newComponent.Entity = entity;
-                return newComponent;
+                newComponent = entity.CreateComponent<TComponent>(index);
             }
-            return (TComponent)entity.GetComponent(index);
+            else
+            {
+                newComponent = (TComponent)entity.GetComponent(index);
+            }
+            newComponent.Index = index;
+            newComponent.Entity = entity;
+            return newComponent;
         }
 
         //public static TComponent Update<TEntity, TComponent>(this TEntity entity, TComponent component) where TEntity : IContextLinkedEntity where TComponent : IComponent, new()

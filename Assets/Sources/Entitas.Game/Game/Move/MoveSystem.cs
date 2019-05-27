@@ -21,7 +21,7 @@ namespace Entitas.MatchLine
 
         public void Execute()
         {
-            UnityEngine.Profiling.Profiler.BeginSample("SomeUniqueName");
+            //UnityEngine.Profiling.Profiler.BeginSample("SomeUniqueName");
 
             int moveCount = 0;
 
@@ -45,8 +45,6 @@ namespace Entitas.MatchLine
                         continue;
                     }
 
-
-
                     if (!_game.IsFlagged<MovableComponent>(element))
                     {
                         continue;
@@ -59,7 +57,7 @@ namespace Entitas.MatchLine
 
                         //element.Get<PositionComponent>().Value = targetPosition;
 
-                        element.Get<PositionComponent>().Update(targetPosition);
+                        element.Get2<PositionComponent>().Update(targetPosition);
 
                         //var test = element.With<PositionComponent>(); //.Update(targetPosition);                        
 
@@ -85,7 +83,7 @@ namespace Entitas.MatchLine
 
             _game.SetFlag<FieldMovedComponent>(moveCount > 0);
 
-            UnityEngine.Profiling.Profiler.EndSample();
+            //UnityEngine.Profiling.Profiler.EndSample();
 
         }
 

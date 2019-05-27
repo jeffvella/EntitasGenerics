@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Entitas.MatchLine
 {
-    public sealed class PointerHoldingPositionComponent : IUniqueComponent
+    public sealed class PointerHoldingPositionComponent : ValueComponent<GridPosition>, IUniqueComponent
     {
-        public GridPosition value;
+
     }
 }

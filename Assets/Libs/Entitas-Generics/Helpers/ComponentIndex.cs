@@ -30,13 +30,6 @@ namespace Entitas.Generics
         TValue Value { get; set; }
     }
 
-    //public interface IValueController<TValue> : IEntityLinkedComponent, IComponent
-    //{
-    //    void InternalSet(TValue value);
-
-    //    TValue InternalGet();
-    //}
-
     public class ComponentIndex<TEntity, TComponent> : IComponentSearchIndex<TEntity>
         where TEntity : class, IEntity, new() 
         where TComponent : IIndexedComponent, new()
@@ -50,24 +43,24 @@ namespace Entitas.Generics
             _pool = new Stack<TComponent>();
         }
 
-        public bool TryFindEntity(Action<TComponent> componentValueProducer, out TEntity entity) //where TCom : IIndexedComponent, TComponent, new()
-        {
-            TComponent component = _pool.Count != 0 ? _pool.Pop() : new TComponent();
+        //public bool TryFindEntity(Action<TComponent> componentValueProducer, out TEntity entity)
+        //{
+        //    TComponent component = _pool.Count != 0 ? _pool.Pop() : new TComponent();
 
-            componentValueProducer?.Invoke(component);
+        //    componentValueProducer?.Invoke(component);
 
-            if (_index.TryGetValue(component, out TEntity e))
-            {
-                entity = e;
-                _pool.Push(component);
-                return true;
-            }
-            _pool.Push(component);
-            entity = default;
-            return false;
-        }
+        //    if (_index.TryGetValue(component, out TEntity e))
+        //    {
+        //        entity = e;
+        //        _pool.Push(component);
+        //        return true;
+        //    }
+        //    _pool.Push(component);
+        //    entity = default;
+        //    return false;
+        //}
 
-        public bool TryFindEntity<TValue>(TValue value, out TEntity entity) //where TComponent : IValueComponent<TValue> //where TCom : IIndexedComponent, TComponent, new()
+        public bool TryFindEntity<TValue>(TValue value, out TEntity entity) 
         {
             TComponent component = _pool.Count != 0 ? _pool.Pop() : new TComponent();
 
@@ -85,26 +78,14 @@ namespace Entitas.Generics
             return false;
         }
 
-        public void Update(TEntity entity, IComponent previouscomponent, IComponent newcomponent)
+        public void Update(TEntity entity, IIndexedComponent previouscomponent, IIndexedComponent newcomponent)
         {
-            //if (!(previouscomponent is TComponent tPreviousComponent))
-            //{
-            //    throw new InvalidCastException($"{previouscomponent.GetType()} is not valid for for ComponentIndex {typeof(TComponent)}");
-            //}
-            //if (!(newcomponent is TComponent tNewComponent))
-            //{
-            //    throw new InvalidCastException($"{newcomponent.GetType()} is not valid for for ComponentIndex {typeof(TComponent)}");
-            //}
             _index.TryRemove((TComponent)previouscomponent, out var removed);
             _index.AddOrUpdate((TComponent)newcomponent, entity, UpdateValue);
         }
 
         public void Add(TEntity entity, IIndexedComponent component)
         {
-            //if (!(component is TComponent tComponent))
-            //{
-            //    throw new InvalidCastException($"{component.GetType()} is not valid for for ComponentIndex {typeof(TComponent)}");
-            //}
             _index.AddOrUpdate((TComponent)component, entity, UpdateValue);
         }
 
@@ -115,10 +96,6 @@ namespace Entitas.Generics
 
         public void Remove(IIndexedComponent component)
         {
-            //if (!(component is TComponent tComponent))
-            //{
-            //    throw new InvalidCastException($"{component.GetType()} is not valid for for ComponentIndex {typeof(TComponent)}");
-            //}
             _index.TryRemove((TComponent)component, out var removedEntity);
         }
 
@@ -140,14 +117,13 @@ namespace Entitas.Generics
 
     }
 
-    public interface IComponentSearchIndex<in TEntity> 
-        where TEntity : class, IEntity, new()
+    public interface IComponentSearchIndex<in TEntity> where TEntity : class, IEntity, new()
     {
         void Add(TEntity entity, IIndexedComponent component);
 
         void Remove(IIndexedComponent component);
 
-        void Update(TEntity entity, IComponent previouscomponent, IComponent newcomponent);
+        void Update(TEntity entity, IIndexedComponent previouscomponent, IIndexedComponent newcomponent);
 
         void Clear(TEntity entity = null);
     }

@@ -2,8 +2,8 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class PointerHoldingTimeComponent : IUniqueComponent
+    public sealed class PointerHoldingTimeComponent : ValueComponent<float>, IUniqueComponent
     {
-        public float value;
+
     }
 }

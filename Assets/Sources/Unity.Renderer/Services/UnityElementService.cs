@@ -37,7 +37,10 @@ public sealed class UnityElementService : Service, IElementService
 
         // entity.Set<PositionComponent>(c => c.Value = position);
 
-        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+
+        entity.Get2<PositionComponent>().Update(position);
+
         _entityCounter++;
     }
 
@@ -56,7 +59,8 @@ public sealed class UnityElementService : Service, IElementService
         //_game.Set(entity, new AssetComponent { value = "Block" });
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
-        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        entity.Get2<PositionComponent>().Update(position);
 
         _entityCounter++;
     }
@@ -72,8 +76,8 @@ public sealed class UnityElementService : Service, IElementService
         _game.GetOrCreateComponent<AssetComponent>(entity).value = "NotMovableBlock";
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
-        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
-
+        //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        entity.Get2<PositionComponent>().Update(position);
         _entityCounter++;
     }
 
@@ -91,7 +95,8 @@ public sealed class UnityElementService : Service, IElementService
         //_game.Set(entity, new AssetComponent { value = "ExsplosiveBlock" });
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
-        _game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
+        entity.Get2<PositionComponent>().Update(position);
 
         _entityCounter++;
     }

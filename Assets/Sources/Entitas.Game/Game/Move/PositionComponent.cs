@@ -10,7 +10,7 @@ namespace Entitas.MatchLine
 {
 
 
-    [DebuggerDisplay("{Value} {HashCode}")]
+    [DebuggerDisplay("{Value}")]
     public sealed class PositionComponent : ValueComponent<GridPosition>, IEventComponent, IIndexedComponent<PositionComponent>, IEquatable<GridPosition> 
     {
         public bool Equals(PositionComponent x, PositionComponent y) => x != null && y != null && x.Value.Equals(y.Value);
@@ -19,10 +19,10 @@ namespace Entitas.MatchLine
 
         public bool Equals(GridPosition other) => other.Equals(Value);
 
-        public override string ToString()
-        {
-            return $"{Value}";
-        }
+        //public override string ToString()
+        //{
+        //    return $"{Value}";
+        //}
 
         //public PrimaryEntityIndex<TEntity, GridPosition> CreateIndex<TEntity>(IGenericContext<TEntity> context) where TEntity : class, IEntity, new()
         //{

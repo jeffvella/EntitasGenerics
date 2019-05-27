@@ -44,7 +44,7 @@ namespace Entitas.MatchLine
 
             //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-            var position = _input.GetUnique<PointerHoldingPositionComponent>().value;
+            var position = _input.GetUnique<PointerHoldingPositionComponent>().Value;
             var mapSize = _config.GetUnique<MapSizeComponent>().Value;
 
             var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
