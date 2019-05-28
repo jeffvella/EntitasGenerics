@@ -37,6 +37,8 @@ namespace Entitas.MatchLine
             //    }
             //}
 
+           // _game.CreateIndex<PositionComponent>((e,c) => c.Value);
+
             for (int x = 0; x < size.x; x++)
             {
                 var position = new GridPosition(x, size.y - 1);
@@ -48,7 +50,13 @@ namespace Entitas.MatchLine
                 //    _elementService.CreateRandomElement(position);
                 //}
 
-                if (!_game.TryFindEntity2<PositionComponent, GridPosition>(position, out var candidate))
+                //var entity = _game.GetSearchIndex<PositionComponent>().FindEntity(position);
+
+                //query.Add
+
+                //_game.GetEntityIndex<PositionComponent>().WithValue();
+
+                if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
                 {
                     //Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
 

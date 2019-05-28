@@ -77,7 +77,7 @@ namespace Entitas.Generics
 
         public static bool IsIndexedComponent<T>()
         {
-            return typeof(IIndexedComponent<T>).IsAssignableFrom(typeof(T));
+            return typeof(ISearchableComponent<T>).IsAssignableFrom(typeof(T));
         }
 
         public static bool IsEventComponent<T>()

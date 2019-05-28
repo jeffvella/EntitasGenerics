@@ -5,7 +5,7 @@ using System.Linq;
 namespace Entitas.Generics
 {
     public sealed class EventSystem<TEntity, TComponent> : IReactiveSystem, ICustomDisplayName
-        where TEntity : class, IEntity
+        where TEntity : class, IEntity, new()
         where TComponent : IEventComponent, new()
     {
         private readonly GroupEvent _type;

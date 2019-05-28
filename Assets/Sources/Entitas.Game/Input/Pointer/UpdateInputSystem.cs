@@ -28,8 +28,8 @@ namespace Entitas.MatchLine
                 _contexts.Input.SetFlag<PointerStartedHoldingComponent>(_inputService.IsStartedHolding());
                 _contexts.Input.SetFlag<PointerReleasedComponent>(_inputService.IsReleased());
 
-                _contexts.Input.UniqueEntity.Get2<PointerHoldingPositionComponent>().Update(_inputService.HoldingPosition());
-                _contexts.Input.UniqueEntity.Get2<PointerHoldingTimeComponent>().Update(_inputService.HoldingTime());
+                _contexts.Input.UniqueEntity.Find<PointerHoldingPositionComponent>().UpdateValue(_inputService.HoldingPosition());
+                _contexts.Input.UniqueEntity.Find<PointerHoldingTimeComponent>().UpdateValue(_inputService.HoldingTime());
             }
         }
     }

@@ -38,7 +38,7 @@ namespace Entitas.MatchLine
                     //var sw = new Stopwatch();
                     //sw.Start();
 
-                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(sourcePosition, out var element))
+                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(sourcePosition, out var element))
                     {
                         //sw.Stop();
                         //Debug.Log($"Index Time: {sw.Elapsed.TotalMilliseconds:N6}");               
@@ -52,12 +52,24 @@ namespace Entitas.MatchLine
 
                     var targetPosition = new GridPosition(x, y - 1);
 
-                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(targetPosition, out var result))
+                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out var result))
                     {
 
                         //element.Get<PositionComponent>().Value = targetPosition;
 
-                        element.Get2<PositionComponent>().Update(targetPosition);
+                        //element.Get2<PositionComponent>().Set(targetPosition);
+                        
+                        element.Find<PositionComponent>().UpdateValue(targetPosition);
+
+
+
+                        //var accessor = element.Find<PositionComponent>();
+                        //accessor.Component.Value = targetPosition;
+                        //accessor.Apply();
+
+
+                        //test.Update(targetPosition);
+
 
                         //var test = element.With<PositionComponent>(); //.Update(targetPosition);                        
 

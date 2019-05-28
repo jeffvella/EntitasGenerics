@@ -30,7 +30,10 @@ namespace Entitas.MatchLine
             if (targetSelectionId < 0)
                 return;
 
-            var targetEntity = _game.FindEntity<SelectionIdComponent, int>(targetSelectionId);
+            //var targetEntity = _game.GetSearchIndex<SelectionIdComponent>().FindEntity(targetSelectionId); //.FindEntity<SelectionIdComponent, int>(targetSelectionId);
+
+            _game.TryFindEntity<SelectionIdComponent, int>(targetSelectionId, out var targetEntity);
+
             var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
             var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().Value;
 
@@ -43,7 +46,7 @@ namespace Entitas.MatchLine
 
         private void SelectEntity(GameEntity targetEntity, int targetSelectionId)
         {
-            var targetEntityId = _game.Get<IdComponent>(targetEntity).value;
+            var targetEntityId = _game.Get<IdComponent>(targetEntity).Value;
             _gameState.SetUnique<LastSelectedComponent>(c => c.value = targetEntityId);
             _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = targetSelectionId);
         }
@@ -51,7 +54,10 @@ namespace Entitas.MatchLine
         private void DeselectCurrentEntity()
         {
             var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
-            var lastSelectedEntity = _game.FindEntity<IdComponent, int>(lastSelectedId);
+            //var lastSelectedEntity = _game.GetSearchIndex<IdComponent>().FindEntity(lastSelectedId);
+
+            _game.TryFindEntity<IdComponent, int>(lastSelectedId, out var lastSelectedEntity);
+
             _game.SetFlag<SelectedComponent>(lastSelectedEntity, false);
             _game.Remove<SelectionIdComponent>(lastSelectedEntity);
         }

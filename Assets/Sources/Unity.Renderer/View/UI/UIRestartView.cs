@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Entitas.MatchLine;
+using Entitas.Generics;
 
 public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemovedListener
 {
@@ -37,7 +38,7 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
     public void OnPressed()
     {
         var context = Contexts.Instance.Input;
-        var e = Contexts.Instance.Input.CreateEntity();    
+        InputEntity e = Contexts.Instance.Input.CreateEntity();
         e.SetFlag<RestartComponent>();
         e.SetFlag<DestroyedComponent>();
     }

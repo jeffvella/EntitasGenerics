@@ -68,7 +68,7 @@ namespace Entitas.Generics
             }
         }
 
-        public void AddIndexed<TComponent>() where TComponent : class, IIndexedComponent, new()
+        public void AddIndexed<TComponent>() where TComponent : class, ISearchableComponent<TComponent>, new()
         {
             var componentIndex = ComponentTypes.Count;
 
@@ -118,11 +118,13 @@ namespace Entitas.Generics
             }
         }
 
-        private void CreateComponentSearchIndex<TComponent>(int componentIndex) where TComponent : class, IIndexedComponent, new()
+        private void CreateComponentSearchIndex<TComponent>(int componentIndex) where TComponent : class, ISearchableComponent<TComponent>, new()
         {
+            var debugTest = typeof(TComponent);
+
             if (ComponentHelper.IsIndexedComponent<TComponent>() && ComponentHelper<TComponent>.Default is IEqualityComparer<TComponent> comparer)
             {
-                SearchIndexes.Add(new ComponentIndex<TEntity, TComponent>(comparer));
+                SearchIndexes.Add(new EntityByComponentSearchIndex<TEntity, TComponent>(comparer));
 
                 SearchableComponentIndices.Add(componentIndex);
             }
@@ -131,7 +133,6 @@ namespace Entitas.Generics
                 SearchIndexes.Add(null);
             }
         }
-
 
         private void AddEventComponentType<T>() where T : IComponent, new()
         {

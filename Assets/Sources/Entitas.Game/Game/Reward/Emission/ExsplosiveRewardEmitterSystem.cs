@@ -38,6 +38,7 @@ namespace Entitas.MatchLine
             var reward = table[scoreId];
 
             var e = _game.CreateEntity();
+            //_game.Get<RewardComponent>().
             _game.Set(e, new RewardComponent { value = reward });
         }
     }

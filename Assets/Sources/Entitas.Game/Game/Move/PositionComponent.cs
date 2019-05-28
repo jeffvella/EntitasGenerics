@@ -8,16 +8,23 @@ using Debug = UnityEngine.Debug;
 
 namespace Entitas.MatchLine
 {
-
-
     [DebuggerDisplay("{Value}")]
-    public sealed class PositionComponent : ValueComponent<GridPosition>, IEventComponent, IIndexedComponent<PositionComponent>, IEquatable<GridPosition> 
+    public sealed class PositionComponent : IValueComponent<GridPosition>, IEventComponent, ISearchableComponent<PositionComponent>, IEquatable<GridPosition>, IEquatable<PositionComponent>, ISearchKeyProvider<GridPosition>
     {
+        public GridPosition Value { get; set; }
+
+        //public Func<PositionComponent, GridPosition> IndexKeyRetriever => (e, c) => Value;
+
+        public Func<GridPosition> ValueProducer => () => Value;
+
         public bool Equals(PositionComponent x, PositionComponent y) => x != null && y != null && x.Value.Equals(y.Value);
+
+        public bool Equals(GridPosition other) => other.Equals(Value);
+
+        public bool Equals(PositionComponent other) => other.Value.Equals(Value);
 
         public int GetHashCode(PositionComponent obj) => obj.Value.GetHashCode();
 
-        public bool Equals(GridPosition other) => other.Equals(Value);
 
         //public override string ToString()
         //{

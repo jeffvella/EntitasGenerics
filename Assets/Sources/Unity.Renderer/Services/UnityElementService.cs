@@ -25,10 +25,14 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<ElementComponent>(entity, true);
         _game.SetFlag<MovableComponent>(entity, true);
 
-        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        entity.Find<IdComponent>().UpdateValue(_entityCounter);
+        //_game.GetOrCreateComponent<IdComponent>(entity).Value = _entityCounter;
         _game.GetOrCreateComponent<ElementTypeComponent>(entity).value = randomType;
         _game.GetOrCreateComponent<AssetComponent>(entity).value = "Element";
         _game.GetOrCreateComponent<ColorComponent>(entity).value = new Color(normalizedType, normalizedType, normalizedType);
+
+        
+
 
         //_game.Set(entity, new IdComponent { value = _entityCounter });
         //_game.Set(entity, new ElementTypeComponent { value = randomType });
@@ -39,7 +43,7 @@ public sealed class UnityElementService : Service, IElementService
 
         //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
 
-        entity.Get2<PositionComponent>().Update(position);
+        entity.Find<PositionComponent>().UpdateValue(position);
 
         _entityCounter++;
     }
@@ -51,7 +55,8 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<MovableComponent>(entity, true);
         _game.SetFlag<BlockComponent>(entity, true);
 
-        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        entity.Find<IdComponent>().UpdateValue(_entityCounter);
+        //_game.GetOrCreateComponent<IdComponent>(entity).Value = _entityCounter;
         _game.GetOrCreateComponent<AssetComponent>(entity).value = "Block";
 
 
@@ -60,7 +65,7 @@ public sealed class UnityElementService : Service, IElementService
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
         //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
-        entity.Get2<PositionComponent>().Update(position);
+        entity.Find<PositionComponent>().UpdateValue(position);
 
         _entityCounter++;
     }
@@ -72,12 +77,14 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<BlockComponent>(entity, true);
         //_game.Set(entity, new IdComponent { value = _entityCounter });
         //_game.Set(entity, new AssetComponent { value = "NotMovableBlock" });
-        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        //entity.Get2<IdComponent>().Set(_entityCounter);
+        entity.Find<IdComponent>().UpdateValue(_entityCounter);
+        //_game.GetOrCreateComponent<IdComponent>(entity).Value = _entityCounter;
         _game.GetOrCreateComponent<AssetComponent>(entity).value = "NotMovableBlock";
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
         //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
-        entity.Get2<PositionComponent>().Update(position);
+        entity.Find<PositionComponent>().UpdateValue(position);
         _entityCounter++;
     }
 
@@ -88,7 +95,8 @@ public sealed class UnityElementService : Service, IElementService
         _game.SetFlag<ExplosiveComponent>(entity, true);
         _game.SetFlag<BlockComponent>(entity, true);
 
-        _game.GetOrCreateComponent<IdComponent>(entity).value = _entityCounter;
+        entity.Find<IdComponent>().UpdateValue(_entityCounter);
+        //_game.GetOrCreateComponent<IdComponent>(entity).Value = _entityCounter;
         _game.GetOrCreateComponent<AssetComponent>(entity).value = "ExsplosiveBlock";
 
         //_game.Set(entity, new IdComponent { value = _entityCounter });
@@ -96,7 +104,7 @@ public sealed class UnityElementService : Service, IElementService
         //_game.Set<PositionComponent>(entity, c => c.Value = position);
 
         //_game.GetOrCreateComponent<PositionComponent>(entity).Value = position;
-        entity.Get2<PositionComponent>().Update(position);
+        entity.Find<PositionComponent>().UpdateValue(position);
 
         _entityCounter++;
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Entitas.MatchLine
 {
-    public sealed class ScoreComponent : IUniqueComponent, IEventComponent, IIndexedComponent<ScoreComponent>
+    public sealed class ScoreComponent : IUniqueComponent, IEventComponent, ISearchableComponent<ScoreComponent>
     {
         public int Value;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Entitas.Generics;
 
 namespace Entitas.MatchLine
@@ -61,7 +62,9 @@ namespace Entitas.MatchLine
                 if (_game.IsFlagged<SelectedComponent>(entityUnderPointer))
                     return;
 
-                var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).value;
+                var entityUnderPointerId = entityUnderPointer.Find<IdComponent>().Component.Value;
+                //var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).Value;
+
                 var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
                 if (lastSelectedId == -1)
                 {
@@ -77,14 +80,18 @@ namespace Entitas.MatchLine
         private void StartNewSelection(GameEntity entityUnderPointer, int entityUnderPointerId)
         {
             _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
-            _game.Set(entityUnderPointer, new SelectionIdComponent { value = 0 });
+            _game.Set(entityUnderPointer, new SelectionIdComponent { Value = 0 });
             _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
             _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
         }
 
         private void AddToExistingSelection(int lastSelectedId, GameEntity entityUnderPointer, int entityUnderPointerId)
         {
-            var lastSelected = _game.FindEntity<IdComponent, int>(lastSelectedId);
+            //var lastSelected = _game.FindEntity<IdComponent, int>(lastSelectedId);
+
+            if (!_game.TryFindEntity<IdComponent,int>(lastSelectedId, out var lastSelected))
+                throw new InvalidOperationException();
+
             var isLastElementType = _game.IsFlagged<ElementComponent>(lastSelected);
             var isCurrentElementType = _game.IsFlagged<ElementComponent>(entityUnderPointer);
 
@@ -103,7 +110,7 @@ namespace Entitas.MatchLine
                         var selectionId = _gameState.GetUnique<MaxSelectedElementComponent>().value;
                         selectionId++;
 
-                        _game.Set(entityUnderPointer, new SelectionIdComponent { value = selectionId });
+                        _game.Set(entityUnderPointer, new SelectionIdComponent { Value = selectionId });
                         _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
                         _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
                         _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = selectionId);
