@@ -29,8 +29,8 @@ namespace Entitas.MatchLine
             foreach (var entity in entities)
             {
                 var assetComponent = _contexts.Game.Get<AssetComponent>(entity);
-                var assetName = assetComponent.value;
-                var assetId = assetComponent.id;
+                var assetName = assetComponent.Component.value;
+                var assetId = assetComponent.Component.id;
 
                 _viewService.LoadAsset<GameEntity>(_contexts, entity, assetName, assetId);
             }

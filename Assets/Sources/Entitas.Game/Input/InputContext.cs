@@ -1,4 +1,5 @@
 ﻿using Entitas.Generics;
+using System;
 
 namespace Entitas.MatchLine
 {
@@ -9,6 +10,8 @@ namespace Entitas.MatchLine
 
     public class InputContextDefinition : ContextDefinition<InputContext, InputEntity>
     {
+        public override Func<InputEntity> EntityFactory => () => new InputEntity();
+
         public InputContextDefinition()
         {
             Add<PointerHoldingComponent>();

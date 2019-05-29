@@ -16,5 +16,11 @@ namespace Entitas.Generics
     {
         public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }
+
+    //public class AddedListenersComponent2<TEntity, TComponent> : GameEventBase<EntityAccessor<TEntity>>, ICustomDisplayName
+    //    where TEntity : class, IEntity where TComponent : IComponent
+    //{
+    //    public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
+    //}
 }
 

@@ -5,7 +5,7 @@
     /// </summary>
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity
         where TComponent : IComponent, new()
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
@@ -29,7 +29,7 @@
     public class MatcherFactory
     {
         public static IAnyOfMatcher<TEntity> CreateAnyOfMatcher<TContext, TEntity>(params int[] indices) 
-            where TEntity : class, IEntity, new()
+            where TEntity : class, IEntity
             where TContext : IContext
         {
             Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
@@ -38,7 +38,7 @@
         }
 
         public static IAllOfMatcher<TEntity> CreateAllOfMatcher<TContext, TEntity>(params int[] indices)
-            where TEntity : class, IEntity, new()
+            where TEntity : class, IEntity
             where TContext : IContext
         {
             Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);

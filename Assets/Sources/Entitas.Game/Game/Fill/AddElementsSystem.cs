@@ -24,10 +24,9 @@ namespace Entitas.MatchLine
             return context.CreateCollector(t1, t2);
         }
 
-
         protected override void Execute(List<GameEntity> entities)
         {
-            GridSize size = _config.GetUnique<MapSizeComponent>().Value;
+            GridSize size = _config.GetUnique<MapSizeComponent>().Component.Value;
 
             //foreach (var entity in entities)
             //{
@@ -37,7 +36,7 @@ namespace Entitas.MatchLine
             //    }
             //}
 
-           // _game.CreateIndex<PositionComponent>((e,c) => c.Value);
+            // _game.CreateIndex<PositionComponent>((e,c) => c.Value);
 
             for (int x = 0; x < size.x; x++)
             {

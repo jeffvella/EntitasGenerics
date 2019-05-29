@@ -16,8 +16,10 @@ namespace Entitas.Generics
         List<int> EventListenerIndices { get; }
     }
 
-    public interface IContextDefinition<TEntity> : IContextDefinition where TEntity : class, IEntity, new()
+    public interface IContextDefinition<TEntity> : IContextDefinition where TEntity : class, IEntity
     {
+        Func<TEntity> EntityFactory { get; }
+
         List<IComponentSearchIndex<TEntity>> SearchIndexes { get; }
 
         List<int> SearchableComponentIndices { get; }
@@ -27,7 +29,7 @@ namespace Entitas.Generics
     /// The <see cref="ContextDefinition{TContext,TEntity}"/> defines the component types for a context,
     /// and produces the contextInfo required by Entitas' Context base constructor.
     /// </summary>
-    public class ContextDefinition<TContext, TEntity> : IContextDefinition<TEntity> where TContext : IContext where TEntity : class, IEntity, new()
+    public abstract class ContextDefinition<TContext, TEntity> : IContextDefinition<TEntity> where TContext : IContext where TEntity : class, IEntity
     {
         private ContextInfo _contextInfo;
 
@@ -40,6 +42,8 @@ namespace Entitas.Generics
         {            
             Add<UniqueComponents>();     
         }
+
+        public abstract Func<TEntity> EntityFactory { get; }
 
         private List<string> ComponentNames { get; } = new List<string>();
 

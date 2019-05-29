@@ -26,7 +26,7 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var table = _config.GetUnique<ScoringTableComponent>().value;
+            var table = _config.GetUnique<ScoringTableComponent>().Component.value;
 
             var scoreId = entities.Count;
             scoreId--;

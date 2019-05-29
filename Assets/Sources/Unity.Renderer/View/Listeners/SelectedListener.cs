@@ -2,22 +2,26 @@
 using UnityEngine;
 using Entitas.MatchLine;
 using Entitas.Generics;
+using System;
 
-public class SelectedListener : MonoBehaviour, IEventListener
+public class SelectedListener : MonoBehaviour, IEventListener<GameEntity>
 { 
     [SerializeField] private GameObject _selectedEffect;
 
-    public void RegisterListeners(Contexts contexts, IEntity entity)
-    {       
-        if (entity is GameEntity gameEntity)
-        {
-            gameEntity.RegisterAddedComponentListener<SelectedComponent>(OnSelected);
-            gameEntity.RegisterRemovedComponentListener<SelectedComponent>(OnDeselected);
-            _selectedEffect.SetActive(gameEntity.IsFlagged<SelectedComponent>());
-        }
+    public void RegisterListeners(Contexts contexts, GameEntity entity)
+    {
+        contexts.Game.RegisterAddedComponentListener<SelectedComponent>(entity, OnSelected);
+        contexts.Game.RegisterRemovedComponentListener<SelectedComponent>(entity, OnDeselected);
+
+        //entity.RegisterAddedComponentListener<SelectedComponent>(OnSelected);
+        //entity.RegisterRemovedComponentListener<SelectedComponent>(OnDeselected);
+
+        var isSelected = contexts.Game.IsFlagged<SelectedComponent>(entity);
+
+        _selectedEffect.SetActive(isSelected);
     }
 
-    private void OnSelected((IEntity Entity, SelectedComponent Component) obj)
+    private void OnSelected((GameEntity Entity, SelectedComponent Component) obj)
     {
         _selectedEffect.SetActive(true);
     }
@@ -26,5 +30,4 @@ public class SelectedListener : MonoBehaviour, IEventListener
     {
         _selectedEffect.SetActive(false);
     }
-
 }

@@ -26,7 +26,7 @@ namespace Entitas.MatchLine
             if (!_input.IsFlagged<PointerHoldingComponent>())
                 return;
 
-            var targetSelectionId = _gameState.GetUnique<MaxSelectedElementComponent>().value - 1;
+            var targetSelectionId = _gameState.GetUnique<MaxSelectedElementComponent>().Component.value - 1;
             if (targetSelectionId < 0)
                 return;
 
@@ -34,8 +34,11 @@ namespace Entitas.MatchLine
 
             _game.TryFindEntity<SelectionIdComponent, int>(targetSelectionId, out var targetEntity);
 
-            var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
-            var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().Value;
+            var targetEntityPosition = targetEntity.Get<PositionComponent>().Component.Value;
+
+            //var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
+
+            var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().Component.Value;
 
             if (pointerHoldingPosition.Equals(targetEntityPosition))
             {
@@ -46,14 +49,14 @@ namespace Entitas.MatchLine
 
         private void SelectEntity(GameEntity targetEntity, int targetSelectionId)
         {
-            var targetEntityId = _game.Get<IdComponent>(targetEntity).Value;
+            var targetEntityId = _game.Get<IdComponent>(targetEntity).Component.Value;
             _gameState.SetUnique<LastSelectedComponent>(c => c.value = targetEntityId);
             _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = targetSelectionId);
         }
 
         private void DeselectCurrentEntity()
         {
-            var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
+            var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().Component.value;
             //var lastSelectedEntity = _game.GetSearchIndex<IdComponent>().FindEntity(lastSelectedId);
 
             _game.TryFindEntity<IdComponent, int>(lastSelectedId, out var lastSelectedEntity);

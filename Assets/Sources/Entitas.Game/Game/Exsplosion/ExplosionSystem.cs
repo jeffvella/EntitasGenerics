@@ -29,7 +29,7 @@ namespace Entitas.MatchLine
             {
                 bool found = false;
 
-                GridPosition position = _game.Get<PositionComponent>(entity).Value;
+                GridPosition position = _game.Get<PositionComponent>(entity).Component.Value;
 
                 var neighbourPositions = position.GetNeighbours(_positionBuffer);
 

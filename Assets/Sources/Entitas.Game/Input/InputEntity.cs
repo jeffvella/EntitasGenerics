@@ -1,6 +1,6 @@
 ﻿namespace Entitas.MatchLine
 {
-    public sealed class InputEntity : GenericEntity
+    public sealed class InputEntity : Entity
     {
 
     }

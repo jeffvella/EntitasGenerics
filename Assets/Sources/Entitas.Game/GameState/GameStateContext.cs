@@ -1,4 +1,5 @@
-﻿using Entitas.Generics;
+﻿using System;
+using Entitas.Generics;
 
 namespace Entitas.MatchLine
 {
@@ -9,6 +10,8 @@ namespace Entitas.MatchLine
 
     public class GameStateContextDefinition : ContextDefinition<GameStateContext, GameStateEntity>
     {
+        public override Func<GameStateEntity> EntityFactory => () => new GameStateEntity();
+
         public GameStateContextDefinition()
         {
             Add<ActionCountComponent>();

@@ -57,12 +57,12 @@ namespace Entitas.Generics
                     if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
                     {
                         var listenerComponent = _context.Get<AddedListenersComponent<TEntity, TComponent>>(entity);
-                        if (listenerComponent.ListenerCount > 0)
+                        if (listenerComponent.Component.ListenerCount > 0)
                         {
                             if (_context.Has<TComponent>(entity))
                             {
                                 var component = _context.Get<TComponent>(entity);
-                                listenerComponent.Raise((entity, component));
+                                listenerComponent.Component.Raise((entity, component.Component));
                             }
                         }
                     }
@@ -74,7 +74,7 @@ namespace Entitas.Generics
                     {
                         TEntity entity = _buffer[i];
                         var component = _context.Get<TComponent>(entity);
-                        unqiueListener.Raise((entity, component));
+                        unqiueListener.Raise((entity, component.Component));
                     }
                 }
 
@@ -99,9 +99,9 @@ namespace Entitas.Generics
                     if (_context.Has<RemovedListenersComponent<TEntity, TComponent>>(entity))
                     {
                         var listenerComponent = _context.Get<RemovedListenersComponent<TEntity, TComponent>>(entity);
-                        if (listenerComponent.ListenerCount > 0)
+                        if (listenerComponent.Component.ListenerCount > 0)
                         {
-                            listenerComponent.Raise(entity);
+                            listenerComponent.Component.Raise(entity);
                         }
                     }
                 }

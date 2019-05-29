@@ -20,7 +20,7 @@ public class UIActionCountView : MonoBehaviour
         Contexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
 
         _triggerHash = Animator.StringToHash(_triggerName);
-        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Value;    
+        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Component.Value;    
         
         Apply();
     }

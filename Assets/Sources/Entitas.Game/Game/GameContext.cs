@@ -1,4 +1,5 @@
 ﻿using Entitas.Generics;
+using System;
 
 namespace Entitas.MatchLine
 {
@@ -14,6 +15,8 @@ namespace Entitas.MatchLine
 
     public class GameContextDefinition : ContextDefinition<GameContext, GameEntity>
     {
+        public override Func<GameEntity> EntityFactory => () => new GameEntity();
+
         public GameContextDefinition()
         {
             Add<AssetComponent>();
@@ -27,17 +30,16 @@ namespace Entitas.MatchLine
             Add<ExplosiveComponent>();
             Add<FieldMovedComponent>();
             Add<IdComponent>();
-            //AddIndexed<IdComponent>();
             Add<InComboComponent>();
             Add<MatchedComponent>();
             Add<MovableComponent>();
             Add<PositionComponent>();
-            //AddIndexed<PositionComponent>();
             Add<RestartHappenedComponent>();
             Add<RewardComponent>();
             Add<SelectedComponent>();
-            AddIndexed<SelectionIdComponent>();
-            //AddIndexed<SelectionIdComponent>();
+            Add<SelectionIdComponent>();
         }
+
+
     } 
 }

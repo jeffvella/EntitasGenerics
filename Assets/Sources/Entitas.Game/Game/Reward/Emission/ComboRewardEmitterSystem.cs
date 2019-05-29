@@ -28,11 +28,11 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var definitions = _config.GetUnique<ComboDefinitionsComponent>().value;
+            var definitions = _config.GetUnique<ComboDefinitionsComponent>().Component.value;
 
             foreach (var entity in entities)
             {
-                var combo = _game.Get<ComboComponent>(entity).Value;
+                var combo = _game.Get<ComboComponent>(entity).Component.Value;
                 var definition = definitions.Definitions[combo];
                 var e = _game.CreateEntity();
                 _game.Set(e, new RewardComponent { value = definition.Reward });

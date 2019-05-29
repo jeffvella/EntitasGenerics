@@ -30,13 +30,13 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var definitions = _config.GetUnique<ComboDefinitionsComponent>().value;
-            var size = _config.GetUnique<MapSizeComponent>().Value;
+            var definitions = _config.GetUnique<ComboDefinitionsComponent>().Component.value;
+            var size = _config.GetUnique<MapSizeComponent>().Component.Value;
             var elementCount = entities.Count;
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
+                var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
                 _buffer.Add(index, entity);
             }
 
@@ -61,7 +61,7 @@ namespace Entitas.MatchLine
                                 foreach (var entity in _currentBuffer)
                                 {
                                     _game.SetFlag<InComboComponent>(entity, true);
-                                    var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
+                                    var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
                                     _buffer.Remove(index);
                                 }
 
@@ -78,7 +78,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).Value.ToIndex(size);
+                var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
                 _buffer.Remove(index);
             }
         }
@@ -116,9 +116,15 @@ namespace Entitas.MatchLine
 
         private void EmitCombo(int id)
         {
-            var e = _game.CreateEntity();
-            _game.Set<ComboComponent>(e, c => c.Value = id);
-            _game.SetFlag<DestroyedComponent>(e);
+            var entity = _game.CreateEntity();
+
+            var acc = entity.Get<ComboComponent>();
+            acc.Component.Value = id;
+            acc.Apply();
+    
+
+            //_game.Set<ComboComponent>(e, c => c.Value = id);  
+            _game.SetFlag<DestroyedComponent>(entity);
 
         }
     }

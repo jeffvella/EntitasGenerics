@@ -14,7 +14,7 @@ public class ColorListener : MonoBehaviour, IEventListener
 
         var component = contexts.Game.Get<ColorComponent>(_entity);
 
-        OnColorAdded((_entity, component));
+        OnColorAdded((_entity, component.Component));
 
         contexts.Game.RegisterAddedComponentListener<ColorComponent>(_entity, OnColorAdded);
     }

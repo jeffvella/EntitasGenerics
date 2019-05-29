@@ -28,7 +28,7 @@ namespace Entitas.MatchLine
         {
             foreach (var entity in _selectedGroup.GetEntities(_buffer))
             {
-                Debug.Log($"Drop Selection {_game.Get<SelectionIdComponent>(entity).Value}");
+                Debug.Log($"Drop Selection {_game.Get<SelectionIdComponent>(entity).Component.Value}");
 
                 _game.SetFlag<SelectedComponent>(entity, false);
                 _game.Remove<SelectionIdComponent>(entity);

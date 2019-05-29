@@ -11,8 +11,7 @@ namespace Entitas.MatchLine
         private IGenericContext<InputEntity> _input;
         private IGenericContext<ConfigEntity> _config;
 
-        public AddSelectionSystem(Contexts contexts)
-            : base(contexts.Input, Trigger)
+        public AddSelectionSystem(Contexts contexts) : base(contexts.Input, Trigger)
         {
             _game = contexts.Game;
             _gameState = contexts.GameState;
@@ -45,8 +44,8 @@ namespace Entitas.MatchLine
 
             //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-            var position = _input.GetUnique<PointerHoldingPositionComponent>().Value;
-            var mapSize = _config.GetUnique<MapSizeComponent>().Value;
+            var position = _input.GetUnique<PointerHoldingPositionComponent>().Component.Value;
+            var mapSize = _config.GetUnique<MapSizeComponent>().Component.Value;
 
             var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
             var verticalBounded = position.y >= 0 && position.y < mapSize.y;
@@ -62,10 +61,10 @@ namespace Entitas.MatchLine
                 if (_game.IsFlagged<SelectedComponent>(entityUnderPointer))
                     return;
 
-                var entityUnderPointerId = entityUnderPointer.Find<IdComponent>().Component.Value;
+                var entityUnderPointerId = entityUnderPointer.Get<IdComponent>().Component.Value;
                 //var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).Value;
 
-                var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
+                var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().Component.value;
                 if (lastSelectedId == -1)
                 {
                     StartNewSelection(entityUnderPointer, entityUnderPointerId);
@@ -97,17 +96,17 @@ namespace Entitas.MatchLine
 
             if (isLastElementType && isCurrentElementType)
             {
-                var lastElementType = _game.Get<ElementTypeComponent>(lastSelected).value;
-                var currentElementType = _game.Get<ElementTypeComponent>(entityUnderPointer).value;
+                var lastElementType = _game.Get<ElementTypeComponent>(lastSelected).Component.value;
+                var currentElementType = _game.Get<ElementTypeComponent>(entityUnderPointer).Component.value;
 
                 if (lastElementType == currentElementType)
                 {
-                    var lastPosition = _game.Get<PositionComponent>(lastSelected).Value;
-                    var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).Value;
+                    var lastPosition = _game.Get<PositionComponent>(lastSelected).Component.Value;
+                    var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).Component.Value;
 
                     if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                     {
-                        var selectionId = _gameState.GetUnique<MaxSelectedElementComponent>().value;
+                        var selectionId = _gameState.GetUnique<MaxSelectedElementComponent>().Component.value;
                         selectionId++;
 
                         _game.Set(entityUnderPointer, new SelectionIdComponent { Value = selectionId });

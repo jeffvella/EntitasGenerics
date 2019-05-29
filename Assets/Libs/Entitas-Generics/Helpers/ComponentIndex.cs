@@ -61,7 +61,7 @@ namespace Entitas.Generics
     //}
 
     public class EntityByComponentSearchIndex<TEntity, TComponent> : IComponentSearchIndex<TEntity, TComponent>
-        where TEntity : class, IEntity, new() 
+        where TEntity : class, IEntity 
         where TComponent : ISearchableComponent<TComponent>, IEqualityComparer<TComponent>, new()
     {
         private readonly ConcurrentDictionary<TComponent, TEntity> _index;
@@ -138,7 +138,7 @@ namespace Entitas.Generics
         }
     }
 
-    public interface IComponentSearchIndex<in TEntity> where TEntity : class, IEntity, new()
+    public interface IComponentSearchIndex<in TEntity> where TEntity : class, IEntity
     {
         void Add(TEntity entity, IComponent component);
 
@@ -150,7 +150,7 @@ namespace Entitas.Generics
     }
 
     public interface IComponentSearchIndex<TEntity, out TComponent> : IComponentSearchIndex<TEntity> 
-        where TEntity : class, IEntity, new() 
+        where TEntity : class, IEntity
         where TComponent : IComponent, new()
     {
         bool TryFindEntity<TValue>(TValue value, out TEntity entity);

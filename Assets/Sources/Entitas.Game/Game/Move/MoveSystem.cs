@@ -25,7 +25,7 @@ namespace Entitas.MatchLine
 
             int moveCount = 0;
 
-            var size = _config.GetUnique<MapSizeComponent>().Value;
+            var size = _config.GetUnique<MapSizeComponent>().Component.Value;
 
             
 
@@ -58,9 +58,10 @@ namespace Entitas.MatchLine
                         //element.Get<PositionComponent>().Value = targetPosition;
 
                         //element.Get2<PositionComponent>().Set(targetPosition);
-                        
-                        element.Find<PositionComponent>().UpdateValue(targetPosition);
 
+                        //element.Get<PositionComponent>(_game).Apply(targetPosition);
+
+                        element.Get<PositionComponent>().Apply(targetPosition);
 
 
                         //var accessor = element.Find<PositionComponent>();

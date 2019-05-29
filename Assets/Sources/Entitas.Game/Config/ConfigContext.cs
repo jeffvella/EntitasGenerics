@@ -1,4 +1,5 @@
-﻿using Entitas.Generics;
+﻿using System;
+using Entitas.Generics;
 
 namespace Entitas.MatchLine
 {
@@ -8,6 +9,8 @@ namespace Entitas.MatchLine
 
         public class ConfigContextDefinition : ContextDefinition<ConfigContext, ConfigEntity>
         {
+            public override Func<ConfigEntity> EntityFactory => () => new ConfigEntity();
+
             public ConfigContextDefinition()
             {
                 Add<ExplosiveScoringTableComponent>();
