@@ -31,11 +31,11 @@ namespace Entitas.Generics
             Entity = entity;
             Context = context;
             Index = context.GetComponentIndex<TComponent>();
-            //Component = entity.GetComponent<TComponent>(context);
+            Component = entity.GetComponent<TComponent>(context);
 
-            Component = !entity.HasComponent(Index)
-                ? entity.CreateComponent<TComponent>(Index)
-                : (TComponent)entity.GetComponent(Index);
+            //Component = !entity.HasComponent(Index)
+            //    ? entity.CreateComponent<TComponent>(Index)
+            //    : (TComponent)entity.GetComponent(Index);
         }
 
         public PersistentComponentAccessor<TComponent> ToPersistant()

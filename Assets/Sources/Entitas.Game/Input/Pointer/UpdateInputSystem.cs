@@ -41,7 +41,10 @@ namespace Entitas.MatchLine
 
         public void Execute()
         {
-            if (_contexts.GameState.IsFlagged<GameOverComponent>())    
+
+
+            if (_contexts.GameState.IsFlagged<GameOverComponent>())
+            //if (_gameOver.Exists())
             {
                 _contexts.Input.SetFlag<PointerHoldingComponent>(false);
                 _contexts.Input.SetFlag<PointerStartedHoldingComponent>(false);
@@ -52,18 +55,27 @@ namespace Entitas.MatchLine
                 var delta = _contexts.Input.GetUnique<DeltaTimeComponent>().Component.Value;
                 _inputService.Update(delta);
 
+                //_PointerHoldingComponent.SetFlag(_inputService.IsHolding());
+                //_PointerStartedHoldingComponent.SetFlag(_inputService.IsStartedHolding());
+                //_PointerReleasedComponent.SetFlag(_inputService.IsReleased());
+
                 _contexts.Input.SetFlag<PointerHoldingComponent>(_inputService.IsHolding());
                 _contexts.Input.SetFlag<PointerStartedHoldingComponent>(_inputService.IsStartedHolding());
                 _contexts.Input.SetFlag<PointerReleasedComponent>(_inputService.IsReleased());
 
-                _pointerHoldingPositionComponent.Value = _inputService.HoldingPosition();
-                _pointerHoldingTimeComponent.Value = _inputService.HoldingTime();
+                //_flagsEntity.SetFlag<PointerHoldingComponent>(_inputService.IsReleased());
+                //_flagsEntity.SetFlag<PointerStartedHoldingComponent>(_inputService.IsReleased());
+                //_flagsEntity.SetFlag<PointerReleasedComponent>(_inputService.IsReleased());
+
+                _contexts.Input.GetUnique<PointerHoldingPositionComponent>().Apply(_inputService.HoldingPosition());
+                _contexts.Input.GetUnique<PointerHoldingTimeComponent>().Apply(_inputService.HoldingTime());
+
+                //_pointerHoldingPositionComponent.Value = _inputService.HoldingPosition();
+                //_pointerHoldingTimeComponent.Value = _inputService.HoldingTime();
             }
 
             //var entity = _contexts.Input.UniqueEntity;
             //var context = _contexts.Input;
-            ////var a11 = new ComponentAccessor<PointerStartedHoldingComponent>(entity, context);
-
             //var sw = new Stopwatch();
             //sw.Start();
             //var a1 = new ComponentAccessor<PointerStartedHoldingComponent>(entity, context);
