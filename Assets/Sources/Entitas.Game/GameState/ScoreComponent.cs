@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Entitas.MatchLine
 {
-    public sealed class ScoreComponent : IUniqueComponent, IEventComponent, ISearchableComponent<ScoreComponent>
+    public sealed class ScoreComponent : IUniqueComponent, IEventComponent, Generics.IEqualityComparer<ScoreComponent>
     {
         public int Value;
 
@@ -21,7 +21,7 @@ public static class Comparers
    
 }
 
-public class InlineEqualityComparer<T> : IEqualityComparer<T>
+public class InlineEqualityComparer<T> : System.Collections.Generic.IEqualityComparer<T>
 {
     public Func<T, T, bool> Comparer { get; set; }
 

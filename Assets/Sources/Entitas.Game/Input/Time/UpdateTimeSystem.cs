@@ -7,16 +7,13 @@ namespace Entitas.MatchLine
         private readonly Contexts _contexts;
         private readonly ITimeService _timeService;
 
-        private readonly PersistentComponentAccessor<RealtimeSinceStartupComponent> _realTimeAccessor;
-        private readonly PersistentComponentAccessor<DeltaTimeComponent> _detaTimeAccessor;
-
         public UpdateTimeSystem(Contexts contexts, IServices services)
         {
             _contexts = contexts;
             _timeService = services.TimeService;
 
-            _realTimeAccessor = _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().ToPersistant();
-            _detaTimeAccessor = _contexts.Input.GetUnique<DeltaTimeComponent>().ToPersistant();
+            //_realTimeAccessor = _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().ToPersistant();
+            //_detaTimeAccessor = _contexts.Input.GetUnique<DeltaTimeComponent>().ToPersistant();
         }
 
         public void Initialize()
@@ -33,8 +30,8 @@ namespace Entitas.MatchLine
             //var timeSinceStartup = ;
             //_contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
 
-            _realTimeAccessor.Apply(_timeService.RealtimeSinceStartup());
-            _detaTimeAccessor.Apply(_timeService.DeltaTime());
+            _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
+            _contexts.Input.GetUnique<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
         }
     }
 }

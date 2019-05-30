@@ -7,8 +7,17 @@ namespace Entitas.Generics
         internal readonly int Index;
         internal readonly IEntityContext Context;
         internal readonly IEntity Entity;
-
         public readonly TComponent Component;
+
+        public ComponentAccessor(IEntity entity, IEntityContext context)
+        {
+            Entity = entity;
+            Context = context;
+            Index = context.GetComponentIndex<TComponent>();
+            Component = !entity.HasComponent(Index)
+                ? entity.CreateComponent<TComponent>(Index)
+                : (TComponent)entity.GetComponent(Index);
+        }
 
         public ComponentAccessor(IEntity entity, IEntityContext context, int index, TComponent component)
         {
@@ -18,28 +27,8 @@ namespace Entitas.Generics
             Component = component;
         }
 
-        //public ComponentAccessor(IEntity entity, IEntityContext context, TComponent component)
-        //{
-        //    Entity = entity;
-        //    Context = context;
-        //    Index = context.GetComponentIndex<TComponent>();
-        //    Component = component;
-        //}
-
-        public ComponentAccessor(IEntity entity, IEntityContext context)
-        {
-            Entity = entity;
-            Context = context;
-            Index = context.GetComponentIndex<TComponent>();
-            Component = entity.GetComponent<TComponent>(context);
-
-            //Component = !entity.HasComponent(Index)
-            //    ? entity.CreateComponent<TComponent>(Index)
-            //    : (TComponent)entity.GetComponent(Index);
-        }
-
         public PersistentComponentAccessor<TComponent> ToPersistant()
-            => new PersistentComponentAccessor<TComponent>(Entity, Context, Index);
+            => new PersistentComponentAccessor<TComponent>(Entity, Context, Index, Component);
 
         public static implicit operator TComponent(ComponentAccessor<TComponent> accessor) => accessor.Component;
     }
@@ -48,7 +37,7 @@ namespace Entitas.Generics
     {
         public static void Apply<TComponent>(this ComponentAccessor<TComponent> accessor) where TComponent : class, IComponent, new()
         {
-            var newcomponent = accessor.Entity.CreateComponent<TComponent>(accessor.Index);
+            var newcomponent = accessor.Entity.CreateComponent<TComponent>(accessor.Index);                      
             accessor.Entity.ReplaceComponent(accessor.Index, newcomponent);
         }
 
@@ -115,36 +104,40 @@ namespace Entitas.Generics
         }
     }
 
-    //public interface IComponentAccessor
-    //{
-    //    void CreateComponent();
+    public interface IComponentAccessor
+    {
+        void CreateComponent();
 
-    //    bool Exists();
+        bool Exists();
 
-    //    void Remove();
-    //}
+        void Remove();
+    }
 
     public sealed class PersistentComponentAccessor<TComponent> where TComponent : IComponent, new()
     {
         internal readonly int Index;
         internal readonly IEntity Entity;
         internal readonly IEntityContext Context;
+        private TComponent _component;
 
-        public TComponent Component => (TComponent)Entity.GetComponent(Index);
-
-        public TComponent Create() => Entity.CreateComponent<TComponent>(Index);
-
-        public bool Exists() => Entity.HasComponent(Index);
-
-        public void Remove() => Entity.RemoveComponent(Index);
-
-        public void Add() => Entity.AddComponent(Index, Create());
+        public TComponent Component
+        {
+            get
+            {
+                if (_component == null)
+                {
+                    Refresh();
+                }
+                return _component;
+            }
+        }
 
         public PersistentComponentAccessor(IEntity entity, IEntityContext context)
         {
             Entity = entity;
             Context = context;
             Index = context.GetComponentIndex<TComponent>();
+            Refresh();
         }
 
         public PersistentComponentAccessor(IEntity entity, IEntityContext context, int index)
@@ -152,17 +145,39 @@ namespace Entitas.Generics
             Index = index;
             Entity = entity;
             Context = context;
+            Refresh();
+        }
+
+        public PersistentComponentAccessor(IEntity entity, IEntityContext context, int index, TComponent component)
+        {
+            Index = index;
+            Entity = entity;
+            Context = context;
+            _component = component;
+        }
+
+        public TComponent Create() => Entity.CreateComponent<TComponent>(Index);
+
+        public void Apply() => Entity.ReplaceComponent(Index, Component);
+
+        public bool Exists() => Entity.HasComponent(Index);
+
+        public void Remove() => Entity.RemoveComponent(Index);
+
+        public void Add() => Entity.AddComponent(Index, Create());
+
+        public void Refresh()
+        {
+            if (!Entity.HasComponent(Index))
+            {
+                Add();
+            }
+            _component = (TComponent)Entity.GetComponent(Index);
         }
     }
 
     public static class PersistantComponentAccessorExtensions
     {
-        public static void Apply<TComponent>(this PersistentComponentAccessor<TComponent> accessor) where TComponent : class, IComponent, new()
-        {
-            var newcomponent = accessor.Entity.CreateComponent<TComponent>(accessor.Index);
-            accessor.Entity.ReplaceComponent(accessor.Index, newcomponent);
-        }
-
         public static void Apply<TComponent, TValue>(this PersistentComponentAccessor<TComponent> accessor, TValue value) where TComponent : class, IValueComponent<TValue>, new()
         {
             var newcomponent = accessor.Entity.CreateComponent<TComponent>(accessor.Index);
@@ -179,7 +194,6 @@ namespace Entitas.Generics
         {
             accessor.Context.RegisterAddedComponentListener(accessor.Entity, action);
         }
-
 
         public static void SetFlag<TComponent>(this PersistentComponentAccessor<TComponent> component, bool value = true) where TComponent : class, IFlagComponent, new()
         {

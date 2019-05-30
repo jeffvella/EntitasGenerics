@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 namespace Entitas.MatchLine
 {
     [DebuggerDisplay("{Value}")]
-    public sealed class PositionComponent : IValueComponent<GridPosition>, IEventComponent, ISearchableComponent<PositionComponent>, IEquatable<GridPosition>, IEquatable<PositionComponent>, ISearchKeyProvider<GridPosition>
+    public sealed class PositionComponent : IValueComponent<GridPosition>, IEventComponent, Generics.IEqualityComparer<PositionComponent>, IEquatable<GridPosition>, IEquatable<PositionComponent>, ISearchKeyProvider<GridPosition>
     {
         public GridPosition Value { get; set; }
 

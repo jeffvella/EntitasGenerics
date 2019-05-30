@@ -12,7 +12,7 @@ namespace Entitas.MatchLine
     //}
 
     [DebuggerDisplay("{DebugDisplay}")]
-    public sealed class IdComponent : IValueComponent<int>, ISearchableComponent<IdComponent>, IEquatable<int>
+    public sealed class IdComponent : IValueComponent<int>, IEqualityComparer<IdComponent>, IEquatable<int>
     {
         //public int value;
         //public bool Equals(int other) => value.Equals(other);

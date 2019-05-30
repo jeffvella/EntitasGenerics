@@ -1,8 +1,5 @@
 ﻿namespace Entitas.Generics
 {
-    /// <summary>
-    /// Provides matcher instance for a Context/Entity/Get combination.
-    /// </summary>
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
         where TEntity : class, IEntity
@@ -20,29 +17,39 @@
         }
 
         public static IMatcher<TEntity> AnyOf
-            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(Index));
+            => _anyOf ?? (_anyOf = MatcherFactory.CreateMatcher<TContext, TEntity>(MatcherType.Any, Index));
 
         public static IMatcher<TEntity> AllOf
-            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(Index));
+            => _allOf ?? (_allOf = MatcherFactory.CreateMatcher<TContext, TEntity>(MatcherType.All, Index));
+    }
+
+    public enum MatcherType
+    {
+        None = 0,
+        Any,
+        All,
     }
 
     public class MatcherFactory
     {
-        public static IAnyOfMatcher<TEntity> CreateAnyOfMatcher<TContext, TEntity>(params int[] indices) 
+        public static IAnyOfMatcher<TEntity> CreateMatcher<TContext, TEntity>(MatcherType type, params int[] indices) 
             where TEntity : class, IEntity
             where TContext : IContext
         {
-            Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
-            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
-            return matcher;
-        }
-
-        public static IAllOfMatcher<TEntity> CreateAllOfMatcher<TContext, TEntity>(params int[] indices)
-            where TEntity : class, IEntity
-            where TContext : IContext
-        {
-            Matcher<TEntity> matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
-            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+            Matcher<TEntity> matcher = default;
+            switch (type)
+            {
+                case MatcherType.None:
+                case MatcherType.All:
+                    matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
+                    matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+                    break;
+                    
+                case MatcherType.Any:
+                    matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
+                    matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+                    break;                 
+            }
             return matcher;
         }
     }

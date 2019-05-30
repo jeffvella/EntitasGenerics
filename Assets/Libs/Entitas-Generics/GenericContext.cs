@@ -11,15 +11,11 @@ namespace Entitas.Generics
     /// <summary>
     /// Provides component access for a specific TEntity
     /// </summary>
-    public interface IGenericContext<TEntity> : IContext<TEntity>, IEntityContext<TEntity>, IEntityContext where TEntity : class, IEntity
+    public interface IGenericContext<TEntity> : IContext<TEntity>, IEntityContext<TEntity>, IEntityContext where TEntity : class, IContextLinkedEntity
     {
-        new EntityAccessor<TEntity> CreateEntity();
-
         bool Has<TComponent>(TEntity entity) where TComponent : IComponent, new();
 
         ComponentAccessor<TComponent> Get<TComponent>(TEntity entity) where TComponent : IComponent, new();
-
-        EntityAccessor<TEntity> CreateAccessor(TEntity entity);
 
         bool TryGet<T>(TEntity entity, out T component) where T : IComponent, new();
 
@@ -55,7 +51,7 @@ namespace Entitas.Generics
     /// <summary>
     /// Provides entity search functionality and special entity component access (unique and flag components)
     /// </summary>
-    public interface IEntityContext<TEntity> where TEntity : class, IEntity
+    public interface IEntityContext<TEntity> where TEntity : class, IContextLinkedEntity
     {        
         IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new();
 
@@ -91,32 +87,17 @@ namespace Entitas.Generics
 
         void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new();
 
-        // Entity Searches:
 
-        //TEntity FindEntity<TComponent, TValue>(TValue searchValue) where TComponent : IComponent, IEquatable<TValue>, new();
-
-        //bool TryFindEntity<TComponent, TValue>(TValue searchValue, out TEntity entity) where TComponent : IComponent, IEquatable<TValue>, new();
-
-        //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent<TComponent>, new();
-        //bool TryFindEntity2<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IComponent, new();
-        //bool TryFindEntity<TComponent>(Action<TComponent> componentValueProducer, out TEntity entity) where TComponent : IIndexedComponent, new();
-
-        bool TryFindEntity<TComponent,TValue>(TValue value, out EntityAccessor<TEntity> entity) where TComponent : ISearchableComponent<TComponent>, IValueComponent<TValue>, new();
-
-        //bool EntityWithComponentValueExists<TComponent>(Action<TComponent> componentValueProducer) where TComponent : IIndexedComponent, new();
-
-        // Entity/Get Searches:
+        bool TryFindEntity<TComponent,TValue>(TValue value, out TEntity entity) where TComponent : IEqualityComparer<TComponent>, IValueComponent<TValue>, new();
 
         TEntity GetOrCreateEntityWith<TComponent>() where TComponent : IComponent, new();
 
         bool EntityExistsWithComponent<TComponent>() where TComponent : IComponent, new();
-
-
     }
 
 
     /// <summary>
-    /// Provides functionality for managing entities and their components.
+    /// Component management functions for a specific entity.
     /// </summary>
     public interface IEntityContext
     {
@@ -124,13 +105,15 @@ namespace Entitas.Generics
 
         TComponent Get<TComponent>(IEntity entity) where TComponent : IComponent, new();
 
+        TComponent Create<TComponent>(IEntity entity) where TComponent : IComponent, new();
+
         bool TryGet<T>(IEntity entity, out T component) where T : IComponent, new();
 
-        TComponent GetOrCreateComponent<TComponent>(IEntity entity) where TComponent : class, IComponent, new();
+        TComponent GetOrCreate<TComponent>(IEntity entity) where TComponent : class, IComponent, new();
+
+        void Set<TComponent>(IEntity entity, TComponent component) where TComponent : class, IComponent, new();
 
         void Set<TComponent>(IEntity entity, Action<TComponent> componentUpdater) where TComponent : class, IComponent, new();
-
-        //ValueComponent<TComponent,TValue> Get<TComponent,TValue>(IEntity entity) where TComponent : class, IValueComponent<TValue>, new();
 
         void Remove<TComponent>(IEntity entity) where TComponent : IComponent, new();
 
@@ -142,7 +125,7 @@ namespace Entitas.Generics
 
         // Events
 
-        void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<(IEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new();
+        void RegisterAddedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IEventComponent, new();
  
         void RegisterRemovedComponentListener<TComponent>(IEntity entity, Action<IEntity> action) where TComponent : IEventComponent, new();
 
@@ -153,13 +136,9 @@ namespace Entitas.Generics
         void NotifyChanged<TComponent>(IEntity entity) where TComponent : class, IComponent, new();
     }
 
-    public class GenericContext<TContext, TEntity> : Context<TEntity>, IGenericContext<TEntity>
-        where TContext : IGenericContext<TEntity>
-        where TEntity : class, IEntity
+    public class GenericContext<TContext, TEntity> : Context<TEntity>, IGenericContext<TEntity> where TContext : IGenericContext<TEntity> where TEntity : class, IContextLinkedEntity
     {
         public IContextDefinition<TEntity> Definition { get; }
-
-        private IComponentSearchIndex<TEntity>[] _searchIndexes;
 
         private IEntityIndex[] _primaryIndexes;
 
@@ -173,20 +152,9 @@ namespace Entitas.Generics
                 OnEntityWillBeDestroyed += ClearEventListenersOnDestroyed;
             }
 
-            //if (contextDefinition.SearchableComponentIndices.Count > 0)
-            //{
-            //    OnEntityWillBeDestroyed += ClearIndexedComponentsOnDestroyed;
-            //}
-
-            //OnEntityCreated += LinkContextToEntity;
+            OnEntityCreated += (c,e) => ((IContextLinkedEntity)e).Context = this;
 
             _primaryIndexes = new IEntityIndex[contextDefinition.ComponentCount];
-            //_searchIndexes = contextDefinition.SearchIndexes.ToArray();
-        }
-
-        private void RemoveEntityIndexedComponents(IContext context, IEntity entity)
-        {
-            
         }
 
         private static IAERC AercFactory(IEntity entity)
@@ -207,10 +175,10 @@ namespace Entitas.Generics
             }  
         }
 
-        public new EntityAccessor<TEntity> CreateEntity()
-        {
-            return new EntityAccessor<TEntity>(this, base.CreateEntity());
-        }
+        //public new EntityAccessor<TEntity> CreateEntity()
+        //{
+        //    return new EntityAccessor<TEntity>(this, base.CreateEntity());
+        //}
 
         //private void ClearIndexedComponentsOnDestroyed(IContext context, IEntity entity)
         //{
@@ -221,10 +189,8 @@ namespace Entitas.Generics
         //}
 
         //private void LinkContextToEntity(IContext context, IEntity entity)
-        //{  
-        //    entity.OnComponentAdded += OnComponentAdded;
-        //    entity.OnComponentReplaced += OnComponentReplaced;
-        //    entity.OnComponentRemoved += OnComponentRemoved;
+        //{
+        //    ((ILinkedEntity)IEntity).Context = this;
         //}
 
         //private void OnComponentRemoved(IEntity entity, int index, IComponent component)
@@ -261,19 +227,17 @@ namespace Entitas.Generics
         //    return false;         
         //}
 
-        public bool TryFindEntity<TComponent, TValue>(TValue value, out EntityAccessor<TEntity> entityAccessor) where TComponent : ISearchableComponent<TComponent>, IValueComponent<TValue>, new()
+        public bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IEqualityComparer<TComponent>, IValueComponent<TValue>, new()
         {
             var componentIndex = ComponentHelper<TContext, TComponent>.ComponentIndex;
             var searchIndex = (PrimaryEntityIndex<TEntity, TComponent>)_primaryIndexes[componentIndex];
             var pool = componentPools[componentIndex] ?? new Stack<IComponent>();          
             var testComponent = pool.Count > 0 ? (TComponent)pool.Pop() : new TComponent();
             testComponent.Value = value;
-            var entity = searchIndex.GetEntity(testComponent);
-            entityAccessor = new EntityAccessor<TEntity>(this, entity);
+            entity = searchIndex.GetEntity(testComponent);
             pool.Push(testComponent);
             return entity != null;
         }
-
 
         //public bool TryFindEntity2<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IIndexedComponent, new()
         //{
@@ -317,16 +281,16 @@ namespace Entitas.Generics
         //    return ((ComponentIndex<TEntity,TComponent>)_searchIndexes[index]).Contains(componentValueProducer);
         //}
 
-        public void RegisterAddedComponentListener<TComponent>(Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
-        {
-            RegisterAddedComponentListener(UniqueEntity, action);
-        }
+        //public void RegisterAddedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new()
+        //{
+        //    RegisterAddedComponentListener(UniqueEntity, action);
+        //}
 
-        public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<(TEntity Entity, TComponent Component)> action) where TComponent : IEventComponent, new()
-        {
-            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
-            component.Register(action);
-        }
+        //public void RegisterAddedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new()
+        //{
+        //    var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
+        //    component.Register(action);
+        //}
 
         //public void RegisterAddedComponentListener2<TComponent>(TEntity entity) where TComponent : IEventComponent, new()
         //{
@@ -334,70 +298,77 @@ namespace Entitas.Generics
         //    component.Register(action);
         //}
 
-        public void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
-        {
-            RegisterAddedComponentListener(UniqueEntity, listener);
-        }
+        //public void RegisterAddedComponentListener<TComponent>(IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
+        //{
+        //    RegisterAddedComponentListener(UniqueEntity, listener);
+        //}
 
-        public void RegisterAddedComponentListener<TComponent>(TEntity entity, IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
-        {
-            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
-            component.Register(arg => listener.OnComponentAdded(arg.Entity, arg.Component));
-        }
+        //public void RegisterAddedComponentListener<TComponent>(TEntity entity, IAddedComponentListener<TEntity, TComponent> listener) where TComponent : IEventComponent, new()
+        //{
+        //    var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(entity);
+        //    component.Register(arg => listener.OnComponentAdded(arg.Entity, arg.Component));
+        //}
 
-        public void AddEventListener<TComponent>(IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent, new()
-        {
-            var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(UniqueEntity);
-            component.Register(listener);
-        }
+        //public void AddEventListener<TComponent>(IEventObserver<(TEntity Entity, TComponent Component)> listener) where TComponent : IComponent, new()
+        //{
+        //    var component = GetOrCreateComponent<AddedListenersComponent<TEntity, TComponent>>(UniqueEntity);
+        //    component.Register(listener);
+        //}
 
-        public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new()
-        {
-            RegisterRemovedComponentListener<TComponent>(UniqueEntity, action);                     
-        }
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new()
-        {
-            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
-            component.Register(action);
-        }
+        //public void RegisterRemovedComponentListener<TComponent>(Action<TEntity> action) where TComponent : IEventComponent, new()
+        //{
+        //    RegisterRemovedComponentListener<TComponent>(UniqueEntity, action);                     
+        //}
+        //public void RegisterRemovedComponentListener<TComponent>(TEntity entity, Action<TEntity> action) where TComponent : IEventComponent, new()
+        //{
+        //    var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
+        //    component.Register(action);
+        //}
 
-        public void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
-        {
-            RegisterRemovedComponentListener<TComponent>(UniqueEntity, listener);
-        }
+        //public void RegisterRemovedComponentListener<TComponent>(IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
+        //{
+        //    RegisterRemovedComponentListener<TComponent>(UniqueEntity, listener);
+        //}
 
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
-        {
-            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
-            component.Register(listener.OnComponentRemoved);
-        }
+        //public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IRemovedComponentListener<TEntity> listener) where TComponent : IEventComponent, new()
+        //{
+        //    var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
+        //    component.Register(listener.OnComponentRemoved);
+        //}
 
-        public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity> listener) where TComponent : IEventComponent
-        {
-            var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
-            component.Register(listener.OnEvent);
-        }
+        //public void RegisterRemovedComponentListener<TComponent>(TEntity entity, IEventObserver<TEntity> listener) where TComponent : IEventComponent
+        //{
+        //    var component = GetOrCreateComponent<RemovedListenersComponent<TEntity, TComponent>>(entity);
+        //    component.Register(listener.OnEvent);
+        //}
 
-        public TComponent GetOrCreateComponent<TComponent>(TEntity entity) where TComponent : IComponent, new()
-        {
-            if (!TryGet(entity, out TComponent component))
-            {
-                component = CreateAndAddComponent<TComponent>(entity);
-            }
-            return component;
-        }
+        //public TComponent GetOrCreateComponent<TComponent>(TEntity entity) where TComponent : IComponent, new()
+        //{
+        //    if (!TryGet(entity, out TComponent component))
+        //    {
+        //        component = CreateAndAddComponent<TComponent>(entity);
+        //    }
+        //    return component;
+        //}
 
-        public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
-        {         
-            if (TryGetEntityWith<TComponent>(out var entity))
-            {
-                Set(entity, component);
-            }
-        }
+        //public void Set<TComponent>(TComponent component = default) where TComponent : IComponent, new()
+        //{         
+        //    if (TryGetEntityWith<TComponent>(out var entity))
+        //    {
+        //        Set(entity, component);
+        //    }
+        //}
 
         public IMatcher<TEntity> GetMatcher<T>() where T : IComponent, new()
         {
             return GenericMatcher<TContext, TEntity, T>.AllOf;
+        }
+
+        public IMatcher<TEntity> GetMatcher<T1,T2>(T1 component1, T2 component2) where T1 : IComponent, new() where T2 : IComponent, new()
+        {
+            var i1 = ComponentHelper<TContext, T1>.ComponentIndex;
+            var i2 = ComponentHelper<TContext, T2>.ComponentIndex;
+            return MatcherFactory.CreateMatcher<TContext, TEntity>(MatcherType.All, i1, i2);
         }
 
         public ICollector<TEntity> GetCollector<T>() where T : IComponent, new()
@@ -405,9 +376,14 @@ namespace Entitas.Generics
             return this.CreateCollector(GenericMatcher<TContext, TEntity, T>.AllOf);
         }
 
-        private ICollector<TEntity> GetCollector<T>(TriggerOnEvent<TEntity> triggerOnEvent) where T : IComponent, new()
+        public ICollector<TEntity> GetCollector<T>(params TriggerOnEvent<TEntity>[] triggers) where T : IComponent, new()
         {
-            return this.CreateCollector(triggerOnEvent);
+            return this.CreateCollector(triggers);
+        }
+
+        private ICollector<TEntity> GetCollector<T>(TriggerOnEvent<TEntity> trigger) where T : IComponent, new()
+        {
+            return this.CreateCollector(trigger);
         }
 
         public IGroup<TEntity> GetGroup<T>() where T : IComponent, new()
@@ -425,29 +401,29 @@ namespace Entitas.Generics
             return GetCollector<T>(new TriggerOnEvent<TEntity>(GetMatcher<T>(), eventType));
         }
 
-        public bool Has<T>(TEntity entity) where T : IComponent, new()
-        {
-            var index = ComponentHelper<TContext, T>.ComponentIndex;
-            return entity.HasComponent(index);
-        }
+        //public bool Has<T>(TEntity entity) where T : IComponent, new()
+        //{
+        //    var index = ComponentHelper<TContext, T>.ComponentIndex;
+        //    return entity.HasComponent(index);
+        //}
 
-        public ComponentAccessor<TComponent> Get<TComponent>(TEntity entity) where TComponent : IComponent, new()
-        {
-            return new ComponentAccessor<TComponent>(entity, this);
+        //public ComponentAccessor<TComponent> Get<TComponent>(TEntity entity) where TComponent : IComponent, new()
+        //{
+        //    return new ComponentAccessor<TComponent>(entity, this);
 
-            //var entity = GetOrCreateEntityWith<TComponent>();
-            //return Get<TComponent>(entity);
-        }
+        //    //var entity = GetOrCreateEntityWith<TComponent>();
+        //    //return Get<TComponent>(entity);
+        //}
 
-        public EntityAccessor<TEntity> CreateAccessor(TEntity entity)
-        {
-            return new EntityAccessor<TEntity>(this, entity);
-        }
+        //public EntityAccessor<TEntity> CreateAccessor(TEntity entity)
+        //{
+        //    return new EntityAccessor<TEntity>(this, entity);
+        //}
 
-        public bool HasComponent<T>() where T : IComponent, new()
-        {
-            return EntityExistsWithComponent<T>();
-        }
+        //public bool HasComponent<T>() where T : IComponent, new()
+        //{
+        //    return EntityExistsWithComponent<T>();
+        //}
 
         //public TEntity FindEntity<TComponent, TValue>(TValue searchValue) where TComponent : ISearchableComponent<TComponent>, IValueComponent<TValue>, IEquatable<TValue>, new()
         //{
@@ -695,16 +671,21 @@ namespace Entitas.Generics
             return (TComponent)entity.GetComponent(ComponentHelper<TContext, TComponent>.ComponentIndex);
         }
 
-        TComponent IEntityContext.GetOrCreateComponent<TComponent>(IEntity entity) 
+        TComponent IEntityContext.GetOrCreate<TComponent>(IEntity entity) 
         {
             var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
-            if (entity.HasComponent(index))
-            {
-                return (TComponent)entity.GetComponent(index);
-            }
-            var component = entity.CreateComponent<TComponent>(index);
-            entity.AddComponent(index, component);
+
+            TComponent component = !entity.HasComponent(index)
+                ? entity.CreateComponent<TComponent>(index)
+                : (TComponent)entity.GetComponent(index);
+
             return component;
+        }
+
+        TComponent IEntityContext.Create<TComponent>(IEntity entity)
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            return entity.CreateComponent<TComponent>(index);
         }
 
         bool IEntityContext.TryGet<TComponent>(IEntity entity, out TComponent component)
@@ -767,8 +748,12 @@ namespace Entitas.Generics
             var newComponent = entity.CreateComponent<TComponent>(index);
             componentUpdater(newComponent);            
             entity.ReplaceComponent(index, newComponent);
+        }
 
-            //Debug.Log($"{typeof(TComponent).Name} updated to {newComponent}");
+        void IEntityContext.Set<TComponent>(IEntity entity, TComponent component)
+        {
+            var index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            entity.ReplaceComponent(index, component);
         }
 
         //public IEntityIndex CreateIndex<TComponent, TValue>(TComponent component) where TComponent : class, ISearchKeyProvider<TComponent, TValue>, new()
@@ -778,13 +763,13 @@ namespace Entitas.Generics
         //    return index;
         //}
 
-        public void AddIndex<TComponent>() where TComponent : class, IEqualityComparer<TComponent>, IComponent, new()
+        public void AddIndex<TComponent>() where TComponent : class, System.Collections.Generic.IEqualityComparer<TComponent>, IComponent, new()
         {
             var componentIndex = ComponentHelper<TContext, TComponent>.ComponentIndex;
             _primaryIndexes[componentIndex] = CreateIndex<TComponent>();
         }
 
-        private IEntityIndex CreateIndex<TComponent>() where TComponent : class, IEqualityComparer<TComponent>, IComponent, new()
+        private IEntityIndex CreateIndex<TComponent>() where TComponent : class, System.Collections.Generic.IEqualityComparer<TComponent>, IComponent, new()
         {
             string name = nameof(TComponent);
             IGroup<TEntity> group = GetGroup<TComponent>();

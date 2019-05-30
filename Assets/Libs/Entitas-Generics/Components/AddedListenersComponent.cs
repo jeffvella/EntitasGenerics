@@ -11,8 +11,9 @@ namespace Entitas.Generics
     /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
     /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
    
-    public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>, ICustomDisplayName
-        where TEntity : IEntity where TComponent : IComponent
+    public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<TEntity>, ICustomDisplayName
+        where TEntity : IEntity 
+        where TComponent : IComponent
     {
         public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }

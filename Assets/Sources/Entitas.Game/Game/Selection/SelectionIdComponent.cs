@@ -3,7 +3,7 @@ using Entitas.Generics;
 
 namespace Entitas.MatchLine
 {
-    public sealed class SelectionIdComponent : IValueComponent<int>, ISearchableComponent<SelectionIdComponent>
+    public sealed class SelectionIdComponent : IValueComponent<int>, IEqualityComparer<SelectionIdComponent>
     {
         public int Value { get; set; }
 

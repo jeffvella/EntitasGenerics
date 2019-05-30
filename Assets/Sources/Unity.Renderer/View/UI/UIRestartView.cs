@@ -38,8 +38,10 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
     public void OnPressed()
     {
         var context = Contexts.Instance.Input;
-        var e = Contexts.Instance.Input.CreateEntity();
+        var e = Contexts.Instance.Input.CreateEntity();        
         e.SetFlag<RestartComponent>();
         e.SetFlag<DestroyedComponent>();
+
     }
+
 }

@@ -9,78 +9,78 @@ using UnityEngine.Experimental.PlayerLoop;
 
 namespace Entitas.Generics
 {
-    public readonly ref struct EntityAccessor<TEntity> where TEntity : class, IEntity
-    {
-        public readonly IGenericContext<TEntity> Context;
-        public readonly TEntity Entity;
+    //public readonly ref struct EntityAccessor<TEntity> where TEntity : class, IContextLinkedEntity
+    //{
+    //    public readonly IGenericContext<TEntity> Context;
+    //    public readonly TEntity Entity;
 
-        public EntityAccessor(IGenericContext<TEntity> context, TEntity entity)
-        {
-            Context = context;
-            Entity = entity;
-        }
+    //    public EntityAccessor(IGenericContext<TEntity> context, TEntity entity)
+    //    {
+    //        Context = context;
+    //        Entity = entity;
+    //    }
 
-        public ComponentAccessor<TComponent> Get<TComponent>() where TComponent : class, IComponent, new()
-        {
-            return new ComponentAccessor<TComponent>(Entity, Context);
-        }
+    //    public ComponentAccessor<TComponent> Get<TComponent>() where TComponent : class, IComponent, new()
+    //    {
+    //        return new ComponentAccessor<TComponent>(Entity, Context);
+    //    }
 
-        public void Set<TComponent, TValue>(TValue value) where TComponent : class, IValueComponent<TValue>, new()
-        {
-            Get<TComponent>().Apply(value);
-        }
+    //    public void Set<TComponent, TValue>(TValue value) where TComponent : class, IValueComponent<TValue>, new()
+    //    {
+    //        Get<TComponent>().Apply(value);
+    //    }
 
-        public void SetFlag<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
-        {
-            Get<TComponent>().SetFlag(value);
-        }
+    //    public void SetFlag<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
+    //    {
+    //        Get<TComponent>().SetFlag(value);
+    //    }
 
-        public void IsFlagged<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
-        {
-            Get<TComponent>().IsFlagged(value);
-        }
+    //    public void IsFlagged<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
+    //    {
+    //        Get<TComponent>().IsFlagged(value);
+    //    }
 
-        public static implicit operator TEntity(EntityAccessor<TEntity> accessor) => accessor.Entity;
+    //    public static implicit operator TEntity(EntityAccessor<TEntity> accessor) => accessor.Entity;
 
-        public PersistentEntityAccessor<TEntity> ToPersistent()
-        {
-            return new PersistentEntityAccessor<TEntity>(Context, Entity);
-        }
-    }
+    //    //public PersistentEntityAccessor<TEntity> ToPersistent()
+    //    //{
+    //    //    return new PersistentEntityAccessor<TEntity>(Context, Entity);
+    //    //}
+    //}
 
-    public sealed class PersistentEntityAccessor<TEntity> where TEntity : class, IEntity
-    {
-        public readonly IGenericContext<TEntity> Context;
-        public readonly TEntity Entity;
+    //public sealed class PersistentEntityAccessor<TEntity> where TEntity : class, IEntity
+    //{
+    //    public readonly IGenericContext<TEntity> Context;
+    //    public readonly TEntity Entity;
 
-        public PersistentEntityAccessor(IGenericContext<TEntity> context, TEntity entity)
-        {
-            Context = context;
-            Entity = entity;
-        }
+    //    public PersistentEntityAccessor(IGenericContext<TEntity> context, TEntity entity)
+    //    {
+    //        Context = context;
+    //        Entity = entity;
+    //    }
 
-        public ComponentAccessor<TComponent> Get<TComponent>() where TComponent : class, IComponent, new()
-        {
-            return new ComponentAccessor<TComponent>(Entity, Context);
-        }
+    //    public ComponentAccessor<TComponent> Get<TComponent>() where TComponent : class, IComponent, new()
+    //    {
+    //        return new ComponentAccessor<TComponent>(Entity, Context);
+    //    }
 
-        public void Set<TComponent, TValue>(TValue value) where TComponent : class, IValueComponent<TValue>, new()
-        {
-            Get<TComponent>().Apply(value);
-        }
+    //    public void Set<TComponent, TValue>(TValue value) where TComponent : class, IValueComponent<TValue>, new()
+    //    {
+    //        Get<TComponent>().Apply(value);
+    //    }
 
-        public void SetFlag<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
-        {
-            Get<TComponent>().SetFlag(value);
-        }
+    //    public void SetFlag<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
+    //    {
+    //        Get<TComponent>().SetFlag(value);
+    //    }
 
-        public void IsFlagged<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
-        {
-            Get<TComponent>().IsFlagged(value);
-        }
+    //    public void IsFlagged<TComponent>(bool value = true) where TComponent : class, IFlagComponent, new()
+    //    {
+    //        Get<TComponent>().IsFlagged(value);
+    //    }
 
-        public static implicit operator TEntity(PersistentEntityAccessor<TEntity> accessor) => accessor.Entity;
-    }
+    //    public static implicit operator TEntity(PersistentEntityAccessor<TEntity> accessor) => accessor.Entity;
+    //}
 
     //public class PersistentEntityAccessor<TEntity> where TEntity : class, IEntity
     //{
