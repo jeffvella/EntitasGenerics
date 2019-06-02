@@ -8,28 +8,15 @@ public class ColorListener : MonoBehaviour, IAddedComponentListener<GameEntity, 
 {
     [SerializeField] private Renderer _renderer;
 
-    GameEntity _entity;
-
     public void RegisterListeners(Contexts contexts, GameEntity entity)
     {
-        _entity = entity;
+        OnComponentAdded(entity);
 
-        OnComponentAdded(_entity);
-
-        //_entity.RegisterComponentListener(this);
-
-        _entity.RegisterComponentListener<ColorComponent>(OnColorChanged, GroupEvent.Added);
-    }
-
-    private void OnColorChanged(GameEntity entity)
-    {
-        _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
+        entity.RegisterComponentListener(this);
     }
 
     public void OnComponentAdded(GameEntity entity)
     {
         _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
     }
-
-
 }

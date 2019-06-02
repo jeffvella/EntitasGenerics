@@ -61,7 +61,7 @@ namespace Entitas.MatchLine
 
                 if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
                 {
-                    Debug.Log($"AddElementSystem Index Not Found for position {position} - Adding");
+                    //Debug.Log($"AddElementSystem Index Not Found for position {position} - Adding");
 
                     _elementService.CreateRandomElement(position);
                 }

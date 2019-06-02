@@ -4,22 +4,25 @@ An extension for https://github.com/sschmid/Entitas-CSharp that removes the need
 
 This project includes an adaptation of the example: https://github.com/RomanZhu/Match-Line-Entitas-ECS
 
-# Details #
+# Goals #
 
-* Designed to work on top of Entitas, without changes to the existing Entitas core.
-* The Good stuff is located in: "Assets\Libs\Entitas-Generics" folder.
-* Includes a WPF App (Non-Unity) version of the MatchLine game upon the same Entitas-based game core.
+* Remove all code generation from Entitas.
+* Function on top of the latest official Entitas version without modifications.
+* Maintain no heap allocations (outside of initialization obviously).
+* Maintain performance on par with generated-code.
+* Maintain all Entitas features.
+* Keep usage/syntax as close as possible to the original.
 
 # Dependencies #
 
 * Entitas v1.13.0
 * Unity 2019.1
 
-# Differences from Standard Entitas #
+# Usage #
 
 ##### Defining Contexts #####
 
-A container for contexts should be created.
+A container for contexts needs to be created.
 
     public class Contexts
     {
@@ -32,11 +35,15 @@ A container for contexts should be created.
         public readonly IGenericContext<GameEntity> Game = new GameContext();
     }
 
-Each Context is created from a 'ContextDefinition', which lists the components you want to use.
+Each Context is created with a 'ContextDefinition', which lists the components you want to use. Indexed components for searching by value are
 
     public class GameContext : GenericContext<GameContext, GameEntity>
     {
-        public GameContext() : base(new GameContextDefinition()) { }
+        public GameContext() : base(new GameContextDefinition())
+        {
+            AddIndex<IdComponent>();
+            AddIndex<PositionComponent>();
+        }
     }
 
     public class GameContextDefinition : ContextDefinition<GameContext, GameEntity>
@@ -54,7 +61,7 @@ Each Context is created from a 'ContextDefinition', which lists the components y
 
 ##### Defining Components #####
 
-Components are almost the same, 
+Components are almost the same; defining intended functionality is handled through implementing a few different interfaces.
 
     public sealed class AssetComponent : IComponent
     {
@@ -74,16 +81,25 @@ Components intended to contain no data ('Flags' in entitas) are explicitly marke
     {
     }
 
-Components intended to be searched by value should implement IEquatableT
+Components with values should implement `IValueComponent<T>`.
 
-    public sealed class PositionComponent : IComponent, IEquatable<GridPosition>
+    public sealed class ColorComponent : IValueComponent<Color>, IEventComponent
     {
-        public GridPosition Value;
-
-        public bool Equals(GridPosition other) => other.Equals(Value);
+        public Color Value { get; set; }
     }
 
-Components with events... are clearly marked with `IEventComponent`
+Components intended to be searched/indexed should implement `IEqualityComparer<T>`.
+
+    public sealed class PositionComponent : IValueComponent<GridPosition>, IEqualityComparer<PositionComponent>, IEventComponent
+    {
+        public GridPosition Value { get; set; }
+
+        public bool Equals(PositionComponent x, PositionComponent y) => x != null && y != null && x.Value.Equals(y.Value);
+
+        public int GetHashCode(PositionComponent obj) => obj.Value.GetHashCode();
+    }
+
+Components with events... should be marked with `IEventComponent`.
 
     public sealed class MaxActionCountComponent : IUniqueComponent, IEventComponent
     {
@@ -106,7 +122,7 @@ Systems are set up the same way as usual...
         }
     }
 
-... except for event systems, which need to be created when added to a feature.
+... except for event systems, which need to be created like so:
 
     public sealed class GameStateEventSystems : Feature
     {
@@ -139,14 +155,14 @@ Currently working with systems is pretty much the same.
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return !context.IsFlagged<DestroyedComponent>(entity);
+            return !entity.IsFlagged<DestroyedComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
             foreach (var entity in entities)
             {
-                _game.SetFlag<DestroyedComponent>(entity);    
+                entity.SetFlag<DestroyedComponent>();
             }
         }
     }
@@ -195,13 +211,13 @@ Event listeners can be used in a similar fashion either inline as an action...
 
         public void RegisterListeners(Contexts contexts, GameEntity entity)
         {
-            entity.RegisterAddedComponentListener<SelectedComponent>(OnSelected);
-            entity.RegisterRemovedComponentListener<SelectedComponent>(OnDeselected);
+            entity.RegisterComponentListener<SelectedComponent>(OnSelected, GroupEvent.Added);
+            entity.RegisterComponentListener<SelectedComponent>(OnDeselected, GroupEvent.Removed);
 
             _selectedEffect.SetActive(entity.IsFlagged<SelectedComponent>());
         }
 
-        private void OnSelected((IEntity Entity, SelectedComponent Component) obj)
+        private void OnSelected(GameEntity entity)
         {
             _selectedEffect.SetActive(true);
         }
@@ -214,25 +230,20 @@ Event listeners can be used in a similar fashion either inline as an action...
 
 ... or by implementing an event interface (IAddedComponentListener/IRemovedComponentListener)
 
-    public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntity, ScoreComponent>
+    public class ColorListener : MonoBehaviour, IAddedComponentListener<GameEntity, ColorComponent>, IEventListener<GameEntity>
     {
-        [SerializeField] private Text _label;
-        [SerializeField] private Animator _animator;
-        [SerializeField] private string _triggerName;
+        [SerializeField] private Renderer _renderer;
 
-        private int _triggerHash;
-
-        private void Start()
+        public void RegisterListeners(Contexts contexts, GameEntity entity)
         {
-            Contexts.Instance.GameState.RegisterAddedComponentListener(this);
+            OnComponentAdded(entity);
 
-            _triggerHash = Animator.StringToHash(_triggerName);
+            entity.RegisterComponentListener(this);
         }
 
-        public void OnComponentAdded(GameStateEntity entity, ScoreComponent component)
+        public void OnComponentAdded(GameEntity entity)
         {
-            _label.text = component.Value.ToString();
-            _animator.SetTrigger(_triggerHash);
+            _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
         }
     }
 
@@ -254,50 +265,44 @@ registering via the context delivers your concrete implementation to the event h
 
 ##### Working with Components #####
 
-Components can be retrieved from an entity using `Get<>()` methods via the context:
+Entities have a full generic version of the default CRUD methods that would usually require an index:
 
-    var idComponent = _game.Get<IdComponent>(targetEntity);
+    var size = entity.GetComponent<MapSizeComponent>().Value;
 
-or from the entity itself when deriving your entities from GenericEntity base class:
+    entity.ReplaceComponent<MapSizeComponent>(newSize);
 
-    var idComponent = targetEntity.Get<IdComponent>();
+    var newComponent = entity.CreateComponent<MapSizeComponent>();
+
+    entity.AddComponent<MapSizeComponent>(newComponent);
+
+    entity.RemoveComponent<MapSizeComponent>();
+
+There are a few possible ways to update the values within a component. You can of course work with the aforementioned API to manually `CreateComponent`, set the values and then `ReplaceComponent` (which is the correct procedure to ensure correct pooling and events are handled properly). But there are various helpers to wrap this process to make it easier. Currently the recommended approach is this:
     
-for changing values a lamda is used:
+    element.Get<PositionComponent>().Apply(targetPosition);
 
-    entity.Set<PositionComponent>(c => c.value = position);
-    
-which seemed to be the cleanest approach while ensuring that Entitas' procedure for updates is respected - the component pool is used to avoid allocations and events are properly fired. In many cases the lamda will be compiled to a static method so performance isn't significantly impacted (an additional level of redirection).
+which relys on returning a ref struct component wrapper and the `IValueComponent<T>` interface to expose the value type and enforce error detection at compile time.
 
-`Unique` and `Flags` have their own special methods because they have special behavior and fits with Entitas' mantra of clear intent. But it would be trivial to also use the normal Set/Get methods since these are all simply `IComponent`s
 
-    entity.SetFlag<DestroyedComponent>();
-    entity.IsFlagged<DestroyedComponent>();
+##### Using Indexes / Searchign for Entities by component value #####
 
-`Unique` components are placed on a hardcoded entity in order to get performance similar to the generated code (which also hardcodes an entity under the hood). The main difference is that while debugging in the inspector you'll notice components appear together on the same entity instead each having their own. When using the GetUnique/SetUnique methods from a context you don't have to specify the entity.
+The original Entitas event indexing system is used (`PrimaryEntityIndex`), and can be used through a context like this:
 
-    contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
+    if (_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out var result))
     {
-        c.value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text);
-    });
-    
+        // do something with result
+    }
+
 
 # Known Issues #
 
-* 'Indexed' Entity searches currently just loop through checking for Equality versus the dictionary-based approach in the generated code of default Entitas.
 * Event 'priority' is not yet supported.
-* Entitas' inspector debugging display doesn't handle generic names at all.
 
-# The WPF Version of MatchLine?
+* Only one primary key index per component is allowed.
 
-One of the great things about Entitas (and other ECS solutions) is that the core of your game can run outside of Unity's environment. This gives you a lot more freedom, particularly in optimizing code with Line-By-Line profilers such as 'ANTS Performance Profiler' and 'DotTrace'. 
+* Entitas' inspector debugging display doesn't handle generic names at all. I have a PR with the main repo waiting to be evaluated so in the meantime that code is applied on my included version of the 1.13 source.
 
-Included in the project is a functioning WPF application port of the front-end of RomanZhu's MathcLine game (https://github.com/RomanZhu/Match-Line-Entitas-ECS)
+# What is the incldued WPF based version of MatchLine?
 
-Screenshot of WPF version:
-
-<img src="https://i.imgur.com/kr5g9RO.png" />
-
-Analysis:
-
-<img src="https://i.imgur.com/UBgepTY.png" />
+Ignore it for now; It needs to be updated.
 
