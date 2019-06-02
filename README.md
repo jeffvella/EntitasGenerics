@@ -106,6 +106,16 @@ Components with events... should be marked with `IEventComponent`.
         public int Value;
     }
 
+#### Defining Entities ####
+
+Entities are pretty straight-forward to setup; derive from a new base class `GenericEntity<T>` instead of `Entity`.
+
+    public sealed class GameEntity : GenericEntity<GameEntity>
+    {
+
+    }
+
+
 #### Defining Systems ####
 
 Systems are set up the same way as usual...
@@ -246,22 +256,7 @@ Event listeners can be used in a similar fashion either inline as an action...
             _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
         }
     }
-
-registering via the context delivers your concrete implementation to the event handler instead of IEntity (which might be useful in the case that you have added extra functionality).
-
-    public class UnityView : MonoBehaviour, IView<GameEntity>
-    {
-        public void InitializeView(Contexts contexts, GameEntity entity)
-        {
-            contexts.Game.RegisterAddedComponentListener<DestroyedComponent>(entity, OnEntityDestroyed));
-        }
-
-        private void OnEntityDestroyed((GameEntity Entity, DestroyedComponent Component) obj)
-        {
-            Destroy(gameObject);
-        }
-    }
-
+    
 
 #### Working with Components ####
 
@@ -294,15 +289,18 @@ The original Entitas event indexing system is used (`PrimaryEntityIndex`), and c
     }
 
 
-#### Known Issues ####
+#### Known Limitations ####
 
 * Event 'priority' is not yet supported.
 
 * Only one primary key index per component is allowed.
 
-* Entitas' inspector debugging display doesn't handle generic names at all. I have a PR with the main repo waiting to be evaluated so in the meantime that code is applied on my included version of the 1.13 source.
+* Entitas' inspector debugging display doesn't handle generic names at all. I have a PR submitted and waiting to be evaluated; in the meantime the fix is included in my version of the 1.13 source.
 
-# What is the incldued WPF based version of MatchLine?
+* Each type of Entity object can only be used in one context. GameEntity for GameContext, InputEntity for InputContext, etc.
+
+
+#### What is the incldued WPF based version of MatchLine? ####
 
 Ignore it for now; It needs to be updated.
 
