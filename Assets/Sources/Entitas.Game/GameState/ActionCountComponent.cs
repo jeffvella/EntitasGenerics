@@ -2,9 +2,9 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class ActionCountComponent : IUniqueComponent, IEventComponent
+    public sealed class ActionCountComponent : IValueComponent<int>, IUniqueComponent, IEventComponent
     {
-        public int value;
+        public int Value { get; set; }
     }
 
 }

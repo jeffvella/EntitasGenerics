@@ -3,8 +3,8 @@ using Entitas.Generics;
 
 namespace Entitas.MatchLine
 {
-    public sealed class ExplosiveScoringTableComponent : IUniqueComponent
+    public sealed class ExplosiveScoringTableComponent : IValueComponent<List<int>>, IUniqueComponent
     {
-        public List<int> value;
+        public List<int> Value { get; set; }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Entitas.MatchLine;
+using Entitas;
+using System;
 
-public class UIRewardView : MonoBehaviour //, IScoreListener
+public class UIRewardView : MonoBehaviour
 {
     [SerializeField] private Text _label;
     [SerializeField] private Animator _animator;
@@ -14,13 +16,14 @@ public class UIRewardView : MonoBehaviour //, IScoreListener
 
     private void Start()
     {
-        Contexts.Instance.GameState.RegisterAddedComponentListener<ScoreComponent>(OnScoreAddedEvent);
+        Contexts.Instance.GameState.Unique.RegisterComponentListener<ScoreComponent>(OnScoreAddedEvent, GroupEvent.Added);
+
         _triggerHash = Animator.StringToHash(_triggerName);
     }
 
-    private void OnScoreAddedEvent((GameStateEntity Entity, ScoreComponent Component) obj)
+    private void OnScoreAddedEvent(GameStateEntity entity)
     {
-        OnScore(obj.Entity, obj.Component.Value);
+        OnScore(entity, entity.Get<ScoreComponent>().Component.Value);
     }
 
     public void OnScore(GameStateEntity entity, int value)

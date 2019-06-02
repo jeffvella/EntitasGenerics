@@ -15,9 +15,11 @@ namespace Entitas.Generics
     {
         void Register(Action<T> action);
 
-        void Register(IEventObserver<T> listener);
+        void Deregister(Action<T> action);
 
-        void Deregister(IEventObserver<T> listener);
+        void Register(IEventListener listener);
+
+        void Deregister(IEventListener listener);        
 
         void Raise(T arg);
     }

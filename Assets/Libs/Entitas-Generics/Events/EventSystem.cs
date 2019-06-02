@@ -5,7 +5,7 @@ using System.Linq;
 namespace Entitas.Generics
 {
     public sealed class EventSystem<TEntity, TComponent> : IReactiveSystem, ICustomDisplayName
-        where TEntity : class, IEntity
+        where TEntity : class, IEntity, IGenericEntity, new()
         where TComponent : IEventComponent, new()
     {
         private readonly GroupEvent _type;
@@ -30,7 +30,6 @@ namespace Entitas.Generics
                 _addedCollector = context.GetTriggerCollector<TComponent>(GroupEvent.Added);
 
             }
-
             if(_isRemoveType)
             {
                 _removedCollector = context.GetTriggerCollector<TComponent>(GroupEvent.Removed); 
@@ -39,84 +38,55 @@ namespace Entitas.Generics
 
         public void Execute()
         {
-            if (_isAddType && _addedCollector.count > 0)
+            if (_isAddType)
             {
-                var notifyUniqueListeners = _context.TryGet<AddedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
+                ProcessEvents<AddedListenersComponent<TEntity, TComponent>>(_addedCollector);
+            }
+            if (_isRemoveType)
+            {
+                ProcessEvents<RemovedListenersComponent<TEntity, TComponent>>(_removedCollector);
+            }
+        }
 
-                LoadBuffer(_addedCollector);
+        private void ProcessEvents<TListenerComponent>(ICollector<TEntity> collector) where TListenerComponent : IListenerComponent<TEntity>, new()
+        {
+            if(collector.count == 0)            
+                return;            
 
+            var uniqueExists = _context.Unique.TryGetComponent<TListenerComponent>(out var uniqueComponent);
+            var notifyUniqueListeners = uniqueExists && uniqueComponent != null && uniqueComponent.ListenerCount > 0;
+
+            LoadBuffer(collector);
+
+            for (int i = 0; i < _buffer.Count; i++)
+            {
+                TEntity entity = _buffer[i];
+
+                if (notifyUniqueListeners && entity.Equals(_context.Unique))
+                {
+                    notifyUniqueListeners = false;
+                }
+
+                if (entity.HasComponent<TListenerComponent>())
+                {
+                    var listenerComponent = entity.GetComponent<TListenerComponent>();
+                    if (listenerComponent.ListenerCount > 0)
+                    {
+                        listenerComponent.Raise(entity);
+                    }
+                }
+            }
+
+            if (notifyUniqueListeners)
+            {
                 for (int i = 0; i < _buffer.Count; i++)
                 {
                     TEntity entity = _buffer[i];
-
-                    if (notifyUniqueListeners && entity.Equals(_context.UniqueEntity))
-                    {
-                        notifyUniqueListeners = false;
-                    }
-
-                    if (_context.Has<AddedListenersComponent<TEntity, TComponent>>(entity))
-                    {
-                        var listenerComponent = _context.Get<AddedListenersComponent<TEntity, TComponent>>(entity);
-                        if (listenerComponent.ListenerCount > 0)
-                        {
-                            if (_context.Has<TComponent>(entity))
-                            {
-                                var component = _context.Get<TComponent>(entity);
-                                listenerComponent.Raise((entity, component));
-                            }
-                        }
-                    }
+                    uniqueComponent.Raise(entity);
                 }
-
-                if (notifyUniqueListeners)
-                {
-                    for (int i = 0; i < _buffer.Count; i++)
-                    {
-                        TEntity entity = _buffer[i];
-                        var component = _context.Get<TComponent>(entity);
-                        unqiueListener.Raise((entity, component));
-                    }
-                }
-
-                ClearBuffer();
             }
 
-            if (_isRemoveType && _removedCollector.count > 0)
-            {
-                var notifyUniqueListeners = _context.TryGet<RemovedListenersComponent<TEntity, TComponent>>(_context.UniqueEntity, out var unqiueListener) && unqiueListener.ListenerCount > 0;
-
-                LoadBuffer(_removedCollector);
-
-                for (int i = 0; i < _buffer.Count; i++)
-                {
-                    TEntity entity = _buffer[i];
-
-                    if (notifyUniqueListeners && entity.Equals(_context.UniqueEntity))
-                    {
-                        notifyUniqueListeners = false;
-                    }
-
-                    if (_context.Has<RemovedListenersComponent<TEntity, TComponent>>(entity))
-                    {
-                        var listenerComponent = _context.Get<RemovedListenersComponent<TEntity, TComponent>>(entity);
-                        if (listenerComponent.ListenerCount > 0)
-                        {
-                            listenerComponent.Raise(entity);
-                        }
-                    }
-                }
-
-                if (notifyUniqueListeners)
-                {
-                    for (int i = 0; i < _buffer.Count; i++)
-                    {
-                        TEntity entity = _buffer[i];
-                        unqiueListener.Raise(entity);
-                    }
-                }
-
-                ClearBuffer();
-            }
+            ClearBuffer();
         }
 
         private void LoadBuffer(ICollector<TEntity> collector)

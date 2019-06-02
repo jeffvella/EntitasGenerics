@@ -1,7 +1,9 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
-    public sealed class RewardComponent : IComponent
+    public sealed class RewardComponent : IValueComponent<int>
     {
-        public int value;
+        public int Value { get;set; }
     }
 }

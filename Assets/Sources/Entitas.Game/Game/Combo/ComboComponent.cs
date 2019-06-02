@@ -2,8 +2,8 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class ComboComponent : IEventComponent, IUniqueComponent
+    public sealed class ComboComponent : IValueComponent<int>, IEventComponent, IUniqueComponent
     {
-        public int Value;
+        public int Value { get; set; }
     }
 }

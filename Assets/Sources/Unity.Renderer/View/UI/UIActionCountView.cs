@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Entitas.MatchLine;
+using Entitas;
 
-public class UIActionCountView : MonoBehaviour 
-    //IEventObserver<ActionCountComponent>, IEventObserver<MaxActionCountComponent>
-//, IActionCountListener, IMaxActionCountListener, 
+public class UIActionCountView : MonoBehaviour
 {
     [SerializeField] private Text _label;
     [SerializeField] private Animator _animator;
@@ -16,25 +15,25 @@ public class UIActionCountView : MonoBehaviour
 
     private void Start()
     {
-        Contexts.Instance.GameState.RegisterAddedComponentListener<ActionCountComponent>(OnActionCountChanged);
-        Contexts.Instance.Config.RegisterAddedComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged);
+        Contexts.Instance.GameState.Unique.RegisterComponentListener<ActionCountComponent>(OnActionCountChanged, GroupEvent.Added);
+        Contexts.Instance.Config.Unique.RegisterComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged, GroupEvent.Added);
 
         _triggerHash = Animator.StringToHash(_triggerName);
-        _maxActionCount = Contexts.Instance.Config.GetUnique<MaxActionCountComponent>().Value;    
+        _maxActionCount = Contexts.Instance.Config.Unique.Get<MaxActionCountComponent>().Component.Value;    
         
         Apply();
     }
 
-    private void OnActionCountChanged((GameStateEntity Entity, ActionCountComponent Component) obj)
+    private void OnActionCountChanged(GameStateEntity entity)
     {
-        _actionCount = obj.Component.value;
+        _actionCount = entity.GetComponent<ActionCountComponent>().Value;
         Apply();
     }
 
 
-    private void OnMaxActionCountChanged((ConfigEntity Entity, MaxActionCountComponent Component) obj)
+    private void OnMaxActionCountChanged(ConfigEntity entity)
     {
-        _maxActionCount = obj.Component.Value;
+        _maxActionCount = entity.GetComponent<MaxActionCountComponent>().Value;
         Apply();
     }
 

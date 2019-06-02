@@ -1,20 +1,74 @@
 ﻿using Entitas.CodeGeneration.Attributes;
 using Entitas.VisualDebugging.Unity;
+using System;
+using System.Collections.Generic;
 
 namespace Entitas.Generics
 {
-    /// <summary>
-    /// A component that stores event listeners for component 'Added' events. 
-    /// This component type is automatically registered when a component with an event attribute
-    /// (or implementing IEventComponent) is added to a <see cref="ContextDefinition{TContext,TEntity}"/>
-    /// </summary> 
-    /// <typeparam name="TEntity">an implementation of IEntity</typeparam>
-    /// <typeparam name="TComponent">the component to monitor for changes</typeparam>
-   
-    public class AddedListenersComponent<TEntity, TComponent> : GameEventBase<(TEntity Entity, TComponent Component)>, ICustomDisplayName
-        where TEntity : IEntity where TComponent : IComponent
+  
+    public class AddedListenersComponent<TEntity, TComponent> : AbstractGameEvent<TEntity>, ICustomDisplayName
+        where TEntity : IEntity, IGenericEntity 
+        where TComponent : IComponent
     {
+        public override void Raise(TEntity arg)
+        {          
+            for (int i = Listeners.Count - 1; i >= 0; i--)
+            {
+                ((IAddedComponentListener<TEntity>)Listeners[i])?.OnComponentAdded(arg);
+            }           
+        }
+
+        public override void Register(Action<TEntity> action)
+        {
+            var listener = new AddedActionEventDelegator<TEntity>(action);
+            if (!Listeners.Contains(listener))
+            {
+                Listeners.Add(listener);
+            }
+        }
+
+        public override void Deregister(Action<TEntity> action)
+        {
+            var listener = new AddedActionEventDelegator<TEntity>(action);
+            if (!Listeners.Contains(listener))
+            {
+                Listeners.Remove(listener);
+            }
+        }
+
         public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }
+
+    public class AddedActionEventDelegator<TEntity> : IAddedComponentListener<TEntity>, IEqualityComparer<AddedActionEventDelegator<TEntity>>, IEventListener, ICustomDisplayName 
+        where TEntity : IEntity, IGenericEntity
+    {
+        private int _invocations;
+
+        public AddedActionEventDelegator(Action<TEntity> action)
+        {
+            _action = action;
+        }
+
+        private readonly Action<TEntity> _action;
+
+        public void OnComponentAdded(TEntity entity)
+        {
+            _invocations++;
+            _action.Invoke(entity);
+        }
+
+        public bool Equals(AddedActionEventDelegator<TEntity> x, AddedActionEventDelegator<TEntity> y)
+        {
+            return x._action == y._action;
+        }
+
+        public int GetHashCode(AddedActionEventDelegator<TEntity> obj)
+        {
+            return _action.GetHashCode();
+        }
+
+        public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
+    }
+
 }
 

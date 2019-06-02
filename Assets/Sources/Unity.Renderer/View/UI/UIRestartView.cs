@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using Entitas;
 using Entitas.MatchLine;
+using Entitas.Generics;
 
-public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemovedListener
+public class UIRestartView : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private string _boolName;
@@ -11,15 +13,15 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
     private void Start()
     {
         var state = Contexts.Instance.GameState;
-        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
+        state.Unique.RegisterComponentListener<GameOverComponent>(OnGameOverAdded, GroupEvent.Added);
+        state.Unique.RegisterComponentListener<GameOverComponent>(OnGameOverRemoved, GroupEvent.Added);
 
         _boolHash = Animator.StringToHash(_boolName);
 
-        SetGameOver(state.IsFlagged<GameOverComponent>());
+        SetGameOver(state.Unique.IsFlagged<GameOverComponent>());
     }
 
-    private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
+    private void OnGameOverAdded(GameStateEntity Entity)
     {
         SetGameOver(true);
     }
@@ -37,8 +39,10 @@ public class UIRestartView : MonoBehaviour //, IGameOverListener, IGameOverRemov
     public void OnPressed()
     {
         var context = Contexts.Instance.Input;
-        var e = Contexts.Instance.Input.CreateEntity();    
+        var e = Contexts.Instance.Input.CreateEntity();        
         e.SetFlag<RestartComponent>();
         e.SetFlag<DestroyedComponent>();
+
     }
+
 }

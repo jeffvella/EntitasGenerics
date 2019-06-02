@@ -48,24 +48,24 @@ public class GameController : MonoBehaviour
 
     private void Configure(Contexts contexts)
     {
-        contexts.Config.SetUnique<MapSizeComponent>(c => c.Value = new GridSize(6, 6));
-        contexts.Config.SetUnique<TypeCountComponent>(c => c.Value = 4); 
-        contexts.Config.SetUnique<MaxActionCountComponent>(c => c.Value = 20);
-        contexts.Config.SetUnique<MinMatchCountComponent>(c => c.Value = 3);
+        contexts.Config.Unique.Get<MapSizeComponent>().Set(c => c.Value = new GridSize(6, 6));
+        contexts.Config.Unique.Get<TypeCountComponent>().Set(c => c.Value = 4);
+        contexts.Config.Unique.Get<MaxActionCountComponent>().Set(c => c.Value = 20);
+        contexts.Config.Unique.Get<MinMatchCountComponent>().Set(c => c.Value = 3);
 
-        contexts.Config.SetUnique<ScoringTableComponent>(c =>
+        contexts.Config.Unique.Get<ScoringTableComponent>().Set(c =>
         {
-            c.value = new List<int> {0, 10, 30, 90, 200, 500, 1200, 2500};
+            c.Value = new List<int> {0, 10, 30, 90, 200, 500, 1200, 2500};
         });
 
-        contexts.Config.SetUnique<ExplosiveScoringTableComponent>(c =>
+        contexts.Config.Unique.Get<ScoringTableComponent>().Set(c =>
         {
-            c.value = new List<int> {300, 900, 1200, 2000};
+            c.Value = new List<int> { 300, 900, 1200, 2000 };
         });
 
-        contexts.Config.SetUnique<ComboDefinitionsComponent>(c =>
+        contexts.Config.Unique.Get<ComboDefinitionsComponent>().Set(c =>
         {
-            c.value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text);
+            c.Value = JsonUtility.FromJson<ComboDefinitions>(ComboDefinitions.text);
         });
     }
 }

@@ -23,16 +23,23 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<InputEntity> entities)
         {
-            if (!_input.IsFlagged<PointerHoldingComponent>())
+            if (!_input.Unique.IsFlagged<PointerHoldingComponent>())
                 return;
 
-            var targetSelectionId = _gameState.GetUnique<MaxSelectedElementComponent>().value - 1;
+            var targetSelectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Component.Value - 1;
             if (targetSelectionId < 0)
                 return;
 
-            var targetEntity = _game.FindEntity<SelectionIdComponent, int>(targetSelectionId);
-            var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).value;
-            var pointerHoldingPosition = _input.GetUnique<PointerHoldingPositionComponent>().value;
+            //var targetEntity = _game.GetSearchIndex<SelectionIdComponent>().FindEntity(targetSelectionId); //.FindEntity<SelectionIdComponent, int>(targetSelectionId);
+
+            _game.TryFindEntity<SelectionIdComponent, int>(targetSelectionId, out var targetEntity);
+
+            var targetEntityPosition = targetEntity.Get<PositionComponent>().Component.Value;
+
+            //var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
+
+            var pointerHoldingPosition = _input.Unique.Get<PointerHoldingPositionComponent>().Component.Value;
+
             if (pointerHoldingPosition.Equals(targetEntityPosition))
             {
                 DeselectCurrentEntity();
@@ -42,17 +49,20 @@ namespace Entitas.MatchLine
 
         private void SelectEntity(GameEntity targetEntity, int targetSelectionId)
         {
-            var targetEntityId = _game.Get<IdComponent>(targetEntity).value;
-            _gameState.SetUnique<LastSelectedComponent>(c => c.value = targetEntityId);
-            _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = targetSelectionId);
+            var targetEntityId = targetEntity.GetComponent<IdComponent>().Value;
+            _gameState.Unique.Get<LastSelectedComponent>().Apply(targetEntityId);
+            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(targetSelectionId);
         }
 
         private void DeselectCurrentEntity()
         {
-            var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().value;
-            var lastSelectedEntity = _game.FindEntity<IdComponent, int>(lastSelectedId);
-            _game.SetFlag<SelectedComponent>(lastSelectedEntity, false);
-            _game.Remove<SelectionIdComponent>(lastSelectedEntity);
+            var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Component.Value;
+            //var lastSelectedEntity = _game.GetSearchIndex<IdComponent>().FindEntity(lastSelectedId);
+
+            _game.TryFindEntity<IdComponent, int>(lastSelectedId, out var lastSelectedEntity);
+
+            lastSelectedEntity.SetFlag<SelectedComponent>(false);
+            lastSelectedEntity.RemoveComponent<SelectionIdComponent>();
         }
     }
 

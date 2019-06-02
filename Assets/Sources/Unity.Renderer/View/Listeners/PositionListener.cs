@@ -1,29 +1,24 @@
 ﻿using Entitas;
 using UnityEngine;
 using Entitas.MatchLine;
+using System;
 
-public class PositionListener : MonoBehaviour, IEventListener
+public class PositionListener : MonoBehaviour, IEventListener<GameEntity>
 {
     [SerializeField] private float _lerpSpeed = 1f;
-
     private GameEntity _entity;
-
     private Vector3 _targetPosition;
     
-    public void RegisterListeners(Contexts contexts, IEntity entity)
+    public void RegisterListeners(Contexts contexts, GameEntity entity)
     {
-        _entity = (GameEntity) entity;
+        entity.RegisterComponentListener<PositionComponent>(OnPositionChanged, GroupEvent.Added);
 
-        contexts.Game.RegisterAddedComponentListener<PositionComponent>(_entity, OnPositionChanged);
-
-        var position = contexts.Game.Get<PositionComponent>(_entity);
-
-        OnPositionChanged((_entity, position));
+        OnPositionChanged(entity);
     }
 
-    private void OnPositionChanged((GameEntity Entity, PositionComponent Component) obj)
-    {
-        _targetPosition = obj.Component.value.ToVector3();
+    private void OnPositionChanged(GameEntity entity)
+    {        
+        _targetPosition = entity.Get<PositionComponent>().Component.Value.ToVector3();
     }
     
     private void Update()

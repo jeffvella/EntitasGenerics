@@ -1,6 +1,8 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
-    public sealed class InputEntity : GenericEntity
+    public sealed class InputEntity : GenericEntity<InputEntity>
     {
 
     }

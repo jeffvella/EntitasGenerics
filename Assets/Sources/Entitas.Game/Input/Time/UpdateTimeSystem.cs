@@ -1,4 +1,6 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
     public sealed class UpdateTimeSystem : IExecuteSystem, IInitializeSystem
     {
@@ -9,6 +11,9 @@
         {
             _contexts = contexts;
             _timeService = services.TimeService;
+
+            //_realTimeAccessor = _contexts.Input.Unique.Get<RealtimeSinceStartupComponent>().ToPersistant();
+            //_detaTimeAccessor = _contexts.Input.Unique.Get<DeltaTimeComponent>().ToPersistant();
         }
 
         public void Initialize()
@@ -18,12 +23,15 @@
 
         public void Execute()
         {
-            var deltaTime = _timeService.DeltaTime();
-            _contexts.Input.SetUnique<DeltaTimeComponent>(c => c.value = deltaTime);
+            //var deltaTime = ;
+            //_contexts.Input.Unique.Get<DeltaTimeComponent>().Component.Value = _timeService.DeltaTime();
 
-            var timeSinceStartup = _timeService.RealtimeSinceStartup();
-            _contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
+            //_contexts.Input.SetUnique<DeltaTimeComponent>(c => c.value = deltaTime);
+            //var timeSinceStartup = ;
+            //_contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
 
+            _contexts.Input.Unique.Get<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
+            _contexts.Input.Unique.Get<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
         }
     }
 }

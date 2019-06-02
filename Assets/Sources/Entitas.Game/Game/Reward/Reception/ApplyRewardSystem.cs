@@ -24,15 +24,22 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var score = _gameState.GetUnique<ScoreComponent>().Value;
+            var score = _gameState.Unique.GetComponent<ScoreComponent>().Value;
+
             var totalReward = 0;
 
             foreach (var entity in entities)
             {
-                totalReward += _game.Get<RewardComponent>(entity).value;
-                _game.SetFlag<DestroyedComponent>(entity);
+                totalReward += entity.GetComponent<RewardComponent>().Value;
+
+                entity.SetFlag<DestroyedComponent>();
             }
-            _gameState.SetUnique<ScoreComponent>(c => c.Value = score + totalReward);
+
+            //_gameState.SetUnique<ScoreComponent>(c => c.Value = score + totalReward);
+
+            _gameState.Unique.Get<ScoreComponent>().Apply(score + totalReward);
+
+
         }
     }
 }

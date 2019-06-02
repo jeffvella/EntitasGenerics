@@ -1,11 +1,8 @@
 ﻿namespace Entitas.Generics
 {
-    /// <summary>
-    /// Provides matcher instance for a Context/Entity/Component combination.
-    /// </summary>
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity, IGenericEntity
         where TComponent : IComponent, new()
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
@@ -16,33 +13,43 @@
 
         static GenericMatcher()
         {
-            Index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            Index = ComponentHelper<TEntity, TComponent>.Index;
         }
 
         public static IMatcher<TEntity> AnyOf
-            => _anyOf ?? (_anyOf = MatcherFactory.CreateAnyOfMatcher<TContext, TEntity>(Index));
+            => _anyOf ?? (_anyOf = MatcherFactory.CreateMatcher<TContext, TEntity>(MatcherType.Any, Index));
 
         public static IMatcher<TEntity> AllOf
-            => _allOf ?? (_allOf = MatcherFactory.CreateAllOfMatcher<TContext, TEntity>(Index));
+            => _allOf ?? (_allOf = MatcherFactory.CreateMatcher<TContext, TEntity>(MatcherType.All, Index));
+    }
+
+    public enum MatcherType
+    {
+        None = 0,
+        Any,
+        All,
     }
 
     public class MatcherFactory
     {
-        public static IAnyOfMatcher<TEntity> CreateAnyOfMatcher<TContext, TEntity>(params int[] indices) 
-            where TEntity : class, IEntity, new()
+        public static IAnyOfMatcher<TEntity> CreateMatcher<TContext, TEntity>(MatcherType type, params int[] indices) 
+            where TEntity : class, IEntity, IGenericEntity
             where TContext : IContext
         {
-            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
-            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
-            return matcher;
-        }
-
-        public static IAllOfMatcher<TEntity> CreateAllOfMatcher<TContext, TEntity>(params int[] indices)
-            where TEntity : class, IEntity, new()
-            where TContext : IContext
-        {
-            var matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
-            matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+            Matcher<TEntity> matcher = default;
+            switch (type)
+            {
+                case MatcherType.None:
+                case MatcherType.All:
+                    matcher = (Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
+                    matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+                    break;
+                    
+                case MatcherType.Any:
+                    matcher = (Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
+                    matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
+                    break;                 
+            }
             return matcher;
         }
     }

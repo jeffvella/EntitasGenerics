@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using Entitas.MatchLine;
+using Entitas;
 
 public class UnityView : MonoBehaviour, IView<GameEntity>
 {
     public void InitializeView(Contexts contexts, GameEntity entity)
     {
-        contexts.Game.RegisterAddedComponentListener<DestroyedComponent>(entity, OnEntityDestroyed);
+        entity.RegisterComponentListener<DestroyedComponent>(OnEntityDestroyed, GroupEvent.Added);
     }
 
-    private void OnEntityDestroyed((GameEntity Entity, DestroyedComponent Component) obj)
+    private void OnEntityDestroyed(GameEntity entity)
     {
         Destroy(gameObject);
     }

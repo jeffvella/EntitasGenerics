@@ -28,7 +28,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                _game.SetFlag<DestroyedComponent>(entity, true);
+                entity.SetFlag<DestroyedComponent>(true);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Entitas.MatchLine
 
         private void Fill()
         {
-            var size = _config.GetUnique<MapSizeComponent>().Value;
+            var size = _config.Unique.Get<MapSizeComponent>().Component.Value;
 
             for (int row = 0; row < size.y; row++)
             {

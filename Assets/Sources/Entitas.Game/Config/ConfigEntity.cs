@@ -1,6 +1,8 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
-    public sealed class ConfigEntity : Entity
+    public sealed class ConfigEntity : GenericEntity<ConfigEntity>
     {
 
     }

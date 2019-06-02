@@ -2,8 +2,8 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class DeltaTimeComponent : IUniqueComponent
+    public sealed class DeltaTimeComponent : IValueComponent<float>, IUniqueComponent
     {
-        public float value;
+        public float Value { get; set; }
     }
 }

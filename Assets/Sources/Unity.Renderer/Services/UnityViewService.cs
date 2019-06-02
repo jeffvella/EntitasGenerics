@@ -37,7 +37,7 @@ public sealed class UnityViewService : Service, IViewService
 
         foreach (var listener in viewObject.GetComponents<IEventListener>())
             listener.RegisterListeners(contexts, entity);
-
+       
         foreach (var listener in viewObject.GetComponents<IEventListener<TEntity>>())
             listener.RegisterListeners(contexts, entity);
     }
