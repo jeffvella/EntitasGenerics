@@ -20,7 +20,7 @@ This project includes an adaptation of the example: https://github.com/RomanZhu/
 
 # Usage #
 
-##### Defining Contexts #####
+#### Defining Contexts ####
 
 A container for contexts needs to be created.
 
@@ -59,7 +59,7 @@ Each Context is created with a 'ContextDefinition', which lists the components y
         }
     }
 
-##### Defining Components #####
+#### Defining Components ####
 
 Components are almost the same; defining intended functionality through implementing a few different interfaces.
 
@@ -106,7 +106,7 @@ Components with events... should be marked with `IEventComponent`.
         public int Value;
     }
 
-##### Defining Systems #####
+#### Defining Systems ####
 
 Systems are set up the same way as usual...
 
@@ -135,7 +135,7 @@ Systems are set up the same way as usual...
         }
     }
 
-##### Implementing Reactive Systems #####
+#### Implementing Reactive Systems ####
 
 Currently working with systems is pretty much the same.
 
@@ -201,7 +201,7 @@ You can still work with groups, triggers, collectors and partial systems using j
     }
 
 
-##### Events #####
+#### Events ####
 
 Event listeners can be used in a similar fashion either inline as an action...
 
@@ -263,7 +263,7 @@ registering via the context delivers your concrete implementation to the event h
     }
 
 
-##### Working with Components #####
+#### Working with Components ####
 
 Entities have a full generic version of the default CRUD methods that would usually require an index:
 
@@ -284,7 +284,7 @@ There are a few possible ways to update the values within a component. You can o
 which relys on returning a ref struct component wrapper and the `IValueComponent<T>` interface to expose the value type and enforce error detection at compile time.
 
 
-##### Using Indexes / Searchign for Entities by component value #####
+#### Using Indexes / Searchign for Entities by component value ####
 
 The original Entitas event indexing system is used (`PrimaryEntityIndex`), and can be used through a context like this:
 
@@ -294,7 +294,7 @@ The original Entitas event indexing system is used (`PrimaryEntityIndex`), and c
     }
 
 
-# Known Issues #
+#### Known Issues ####
 
 * Event 'priority' is not yet supported.
 
