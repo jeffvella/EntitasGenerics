@@ -272,7 +272,7 @@ Entities have a full generic version of the default CRUD methods that would usua
 
     entity.RemoveComponent<MapSizeComponent>();
 
-There are a few possible ways to update the values within a component. You can of course work with the aforementioned API to manually `CreateComponent`, set the values and then `ReplaceComponent` (which is the correct procedure to ensure correct pooling and events are handled properly). But there are various helpers to wrap this process to make it easier. Currently the recommended approach is this:
+There are a few possible ways to update the values within a component. You can of course work with the aforementioned API to manually `CreateComponent`, set the values and then `ReplaceComponent` (which is the correct procedure to ensure pooling and events are handled properly). But there are various helpers to wrap this process to make it easier. Currently the recommended approach is this:
     
     element.Get<PositionComponent>().Apply(targetPosition);
 
