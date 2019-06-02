@@ -61,7 +61,7 @@ Each Context is created with a 'ContextDefinition', which lists the components y
 
 ##### Defining Components #####
 
-Components are almost the same; defining intended functionality is handled through implementing a few different interfaces.
+Components are almost the same; defining intended functionality through implementing a few different interfaces.
 
     public sealed class AssetComponent : IComponent
     {
