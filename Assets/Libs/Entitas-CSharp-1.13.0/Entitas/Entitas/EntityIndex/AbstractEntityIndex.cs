@@ -71,6 +71,7 @@ namespace Entitas {
             } else {
                 var keys = _getKeys(entity, component);
                 for (int i = 0; i < keys.Length; i++) {
+                    UnityEngine.Debug.Log($"Removed component {component.GetType().Name} from entity {entity.GetType().Name} from index {_name}");
                     removeEntity(keys[i], entity);
                 }
             }

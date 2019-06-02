@@ -10,18 +10,13 @@ public class SelectedListener : MonoBehaviour, IEventListener<GameEntity>
 
     public void RegisterListeners(Contexts contexts, GameEntity entity)
     {
-        contexts.Game.RegisterAddedComponentListener<SelectedComponent>(entity, OnSelected);
-        contexts.Game.RegisterRemovedComponentListener<SelectedComponent>(entity, OnDeselected);
+        entity.RegisterComponentListener<SelectedComponent>(OnSelected, GroupEvent.Added);
+        entity.RegisterComponentListener<SelectedComponent>(OnDeselected, GroupEvent.Removed);
 
-        //entity.RegisterAddedComponentListener<SelectedComponent>(OnSelected);
-        //entity.RegisterRemovedComponentListener<SelectedComponent>(OnDeselected);
-
-        var isSelected = contexts.Game.IsFlagged<SelectedComponent>(entity);
-
-        _selectedEffect.SetActive(isSelected);
+        _selectedEffect.SetActive(entity.IsFlagged<SelectedComponent>());
     }
 
-    private void OnSelected((GameEntity Entity, SelectedComponent Component) obj)
+    private void OnSelected(GameEntity entity)
     {
         _selectedEffect.SetActive(true);
     }

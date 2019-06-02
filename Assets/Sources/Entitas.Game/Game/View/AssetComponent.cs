@@ -1,8 +1,11 @@
-﻿namespace Entitas.MatchLine
+﻿using Entitas.Generics;
+
+namespace Entitas.MatchLine
 {
-    public sealed class AssetComponent : IComponent
+    public sealed class AssetComponent : IValueComponent<string>
     {
-        public string value;
+        public string Value { get; set; }
+
         public int id;
     }
 }

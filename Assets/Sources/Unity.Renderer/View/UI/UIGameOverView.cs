@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Entitas;
+using UnityEngine;
 using Entitas.MatchLine;
 
 public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemovedListener, 
@@ -12,14 +13,14 @@ public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemov
     private void Start()
     {
         var state = Contexts.Instance.GameState;
-        state.RegisterAddedComponentListener<GameOverComponent>(OnGameOverAdded);
-        state.RegisterRemovedComponentListener<GameOverComponent>(OnGameOverRemoved);
+        state.Unique.RegisterComponentListener<GameOverComponent>(OnGameOverAdded, GroupEvent.Added);
+        state.Unique.RegisterComponentListener<GameOverComponent>(OnGameOverRemoved, GroupEvent.Removed);
 
         _boolHash = Animator.StringToHash(_boolName);
-        SetGameOver(state.IsFlagged<GameOverComponent>());
+        SetGameOver(state.Unique.IsFlagged<GameOverComponent>());
     }
 
-    private void OnGameOverAdded((GameStateEntity Entity, GameOverComponent Component) obj)
+    private void OnGameOverAdded(GameStateEntity entity)
     {
         SetGameOver(true);
     }

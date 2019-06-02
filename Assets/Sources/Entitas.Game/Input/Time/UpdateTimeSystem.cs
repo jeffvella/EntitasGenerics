@@ -12,8 +12,8 @@ namespace Entitas.MatchLine
             _contexts = contexts;
             _timeService = services.TimeService;
 
-            //_realTimeAccessor = _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().ToPersistant();
-            //_detaTimeAccessor = _contexts.Input.GetUnique<DeltaTimeComponent>().ToPersistant();
+            //_realTimeAccessor = _contexts.Input.Unique.Get<RealtimeSinceStartupComponent>().ToPersistant();
+            //_detaTimeAccessor = _contexts.Input.Unique.Get<DeltaTimeComponent>().ToPersistant();
         }
 
         public void Initialize()
@@ -24,14 +24,14 @@ namespace Entitas.MatchLine
         public void Execute()
         {
             //var deltaTime = ;
-            //_contexts.Input.GetUnique<DeltaTimeComponent>().Component.Value = _timeService.DeltaTime();
+            //_contexts.Input.Unique.Get<DeltaTimeComponent>().Component.Value = _timeService.DeltaTime();
 
             //_contexts.Input.SetUnique<DeltaTimeComponent>(c => c.value = deltaTime);
             //var timeSinceStartup = ;
             //_contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
 
-            _contexts.Input.GetUnique<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
-            _contexts.Input.GetUnique<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
+            _contexts.Input.Unique.Get<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
+            _contexts.Input.Unique.Get<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
         }
     }
 }

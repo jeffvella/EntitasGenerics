@@ -25,11 +25,12 @@ namespace Entitas.MatchLine
         {
             foreach (var entity in _elementGroup.GetEntities(_buffer))
             {
-                _game.SetFlag<DestroyedComponent>(entity, true);
+                entity.SetFlag<DestroyedComponent>();
             }
 
             var e = _game.CreateEntity();
-            _game.SetFlag<RestartHappenedComponent>(e, true);
+            e.SetFlag<RestartHappenedComponent>();
         }
+
     }
 }

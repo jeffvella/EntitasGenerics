@@ -19,25 +19,24 @@ namespace Entitas.MatchLine
             return context.GetTriggerCollector<AssetComponent>();
         }
 
-        private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
+        private static bool Filter(IGenericContext<GameEntity> gameContext, GameEntity entity)
         {
-            return context.Has<AssetComponent>(entity) && !context.IsFlagged<AssetLoadedComponent>();
+            return entity.HasComponent<AssetComponent>() && !gameContext.Unique.IsFlagged<AssetLoadedComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
             foreach (var entity in entities)
             {
-                var assetComponent = _contexts.Game.Get<AssetComponent>(entity);
-                var assetName = assetComponent.Component.value;
-                var assetId = assetComponent.Component.id;
-
-                _viewService.LoadAsset<GameEntity>(_contexts, entity, assetName, assetId);
+                var assetComponent = entity.GetComponent<AssetComponent>();
+                var assetName = assetComponent.Value;
+                var assetId = assetComponent.id;
+                _viewService.LoadAsset(_contexts, entity, assetName, assetId);
             }
 
             foreach (var entity in entities)
             {
-                _contexts.Game.SetFlag<AssetLoadedComponent>(entity, true);
+                entity.SetFlag<AssetLoadedComponent>(true);
             }
         }
     }

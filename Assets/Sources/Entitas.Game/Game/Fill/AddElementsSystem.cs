@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Entitas.MatchLine
 {
+    /// <summary>
+    /// When a position on the board becomes empty, this system creates a new element to fill that spot.
+    /// </summary>
     public sealed class AddElementsSystem : GenericReactiveSystem<GameEntity>
     {
         private readonly IElementService _elementService;
@@ -21,12 +24,13 @@ namespace Entitas.MatchLine
         {
             var t1 = context.GetTrigger<ElementComponent>(GroupEvent.Removed);
             var t2 = context.GetTrigger<PositionComponent>(GroupEvent.AddedOrRemoved);
+            //var t2 = context.GetTrigger<PositionComponent>(GroupEvent.Removed);
             return context.CreateCollector(t1, t2);
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
-            GridSize size = _config.GetUnique<MapSizeComponent>().Component.Value;
+            GridSize size = _config.Unique.Get<MapSizeComponent>().Component.Value;
 
             //foreach (var entity in entities)
             //{
@@ -57,7 +61,7 @@ namespace Entitas.MatchLine
 
                 if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
                 {
-                    //Debug.Log($"AddElementSystem Index Not Found for position {position}, Adding");
+                    Debug.Log($"AddElementSystem Index Not Found for position {position} - Adding");
 
                     _elementService.CreateRandomElement(position);
                 }

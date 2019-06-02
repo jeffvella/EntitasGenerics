@@ -25,18 +25,18 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return context.IsFlagged<MatchedComponent>(entity) && context.Has<PositionComponent>(entity);
+            return entity.IsFlagged<MatchedComponent>() && entity.HasComponent<PositionComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var definitions = _config.GetUnique<ComboDefinitionsComponent>().Component.value;
-            var size = _config.GetUnique<MapSizeComponent>().Component.Value;
+            var definitions = _config.Unique.Get<ComboDefinitionsComponent>().Component.Value;
+            var size = _config.Unique.Get<MapSizeComponent>().Component.Value;
             var elementCount = entities.Count;
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
+                var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
                 _buffer.Add(index, entity);
             }
 
@@ -60,8 +60,8 @@ namespace Entitas.MatchLine
                             {
                                 foreach (var entity in _currentBuffer)
                                 {
-                                    _game.SetFlag<InComboComponent>(entity, true);
-                                    var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
+                                    entity.SetFlag<InComboComponent>(true);
+                                    var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
                                     _buffer.Remove(index);
                                 }
 
@@ -69,7 +69,6 @@ namespace Entitas.MatchLine
 
                                 elementCount -= _currentBuffer.Count;
                             }
-
                             _currentBuffer.Clear();
                         }
                     }
@@ -78,7 +77,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = _game.Get<PositionComponent>(entity).Component.Value.ToIndex(size);
+                var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
                 _buffer.Remove(index);
             }
         }
@@ -117,15 +116,8 @@ namespace Entitas.MatchLine
         private void EmitCombo(int id)
         {
             var entity = _game.CreateEntity();
-
-            var acc = entity.Get<ComboComponent>();
-            acc.Component.Value = id;
-            acc.Apply();
-    
-
-            //_game.Set<ComboComponent>(e, c => c.Value = id);  
-            _game.SetFlag<DestroyedComponent>(entity);
-
+            entity.Get<ComboComponent>().Apply(id);
+            entity.SetFlag<DestroyedComponent>();
         }
     }
 }

@@ -27,17 +27,17 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<InputEntity> entities)
         {
-            if (_input.IsFlagged<PointerHoldingComponent>())
+            if (_input.Unique.IsFlagged<PointerHoldingComponent>())
                 return;
 
             var selectedEntities = _selectedGroup.GetEntities(_buffer);
-            var minMatchCount = _config.GetUnique<MinMatchCountComponent>().Component.Value;
+            var minMatchCount = _config.Unique.Get<MinMatchCountComponent>().Component.Value;
 
             if (selectedEntities.Count >= minMatchCount)
             {
                 foreach (var entity in selectedEntities)
                 {
-                    _game.SetFlag<MatchedComponent>(entity, true);
+                    entity.SetFlag<MatchedComponent>(true);
                 }
             }
         }

@@ -39,13 +39,13 @@ namespace Entitas.MatchLine
             //if (!_contexts.input.isPointerHolding)
             //    return;
 
-            if (!_input.IsFlagged<PointerHoldingComponent>())
+            if (!_input.Unique.IsFlagged<PointerHoldingComponent>())
                 return;
 
             //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-            var position = _input.GetUnique<PointerHoldingPositionComponent>().Component.Value;
-            var mapSize = _config.GetUnique<MapSizeComponent>().Component.Value;
+            var position = _input.Unique.Get<PointerHoldingPositionComponent>().Component.Value;
+            var mapSize = _config.Unique.Get<MapSizeComponent>().Component.Value;
 
             var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
             var verticalBounded = position.y >= 0 && position.y < mapSize.y;
@@ -55,16 +55,16 @@ namespace Entitas.MatchLine
                 if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var entityUnderPointer))
                     return;
 
-                if (_game.IsFlagged<BlockComponent>(entityUnderPointer))
+                if (entityUnderPointer.IsFlagged<BlockComponent>())
                     return;
 
-                if (_game.IsFlagged<SelectedComponent>(entityUnderPointer))
+                if (entityUnderPointer.IsFlagged<SelectedComponent>())
                     return;
 
                 var entityUnderPointerId = entityUnderPointer.Get<IdComponent>().Component.Value;
                 //var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).Value;
 
-                var lastSelectedId = _gameState.GetUnique<LastSelectedComponent>().Component.value;
+                var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Component.Value;
                 if (lastSelectedId == -1)
                 {
                     StartNewSelection(entityUnderPointer, entityUnderPointerId);
@@ -78,41 +78,47 @@ namespace Entitas.MatchLine
 
         private void StartNewSelection(GameEntity entityUnderPointer, int entityUnderPointerId)
         {
-            _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
-            _game.Set(entityUnderPointer, new SelectionIdComponent { Value = 0 });
-            _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
-            _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
+            //_game.SetFlag<SelectedComponent>(entityUnderPointer, true);
+            //_game.Set(entityUnderPointer, new SelectionIdComponent { Value = 0 });
+            //_gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
+            //_gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
+
+            entityUnderPointer.SetFlag<SelectedComponent>(true);
+            entityUnderPointer.Get<SelectionIdComponent>().Apply(0);
+            _gameState.Unique.Get<LastSelectedComponent>().Apply(entityUnderPointerId);
+            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(0);
         }
 
         private void AddToExistingSelection(int lastSelectedId, GameEntity entityUnderPointer, int entityUnderPointerId)
         {
             //var lastSelected = _game.FindEntity<IdComponent, int>(lastSelectedId);
 
-            if (!_game.TryFindEntity<IdComponent,int>(lastSelectedId, out var lastSelected))
+            if (!_game.TryFindEntity<IdComponent,int>(lastSelectedId, out var lastSelectedEntity))
                 throw new InvalidOperationException();
 
-            var isLastElementType = _game.IsFlagged<ElementComponent>(lastSelected);
-            var isCurrentElementType = _game.IsFlagged<ElementComponent>(entityUnderPointer);
+            var isLastElementType = lastSelectedEntity.IsFlagged<ElementComponent>();
+            var isCurrentElementType = entityUnderPointer.IsFlagged<ElementComponent>();
 
             if (isLastElementType && isCurrentElementType)
             {
-                var lastElementType = _game.Get<ElementTypeComponent>(lastSelected).Component.value;
-                var currentElementType = _game.Get<ElementTypeComponent>(entityUnderPointer).Component.value;
+                var lastElementType = lastSelectedEntity.Get<ElementTypeComponent>().Component.Value;
+                var currentElementType = entityUnderPointer.Get<ElementTypeComponent>().Component.Value;
 
                 if (lastElementType == currentElementType)
                 {
-                    var lastPosition = _game.Get<PositionComponent>(lastSelected).Component.Value;
-                    var currentPosition = _game.Get<PositionComponent>(entityUnderPointer).Component.Value;
+                    var lastPosition = lastSelectedEntity.Get<PositionComponent>().Component.Value;
+                    var currentPosition = entityUnderPointer.Get<PositionComponent>().Component.Value;
 
                     if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                     {
-                        var selectionId = _gameState.GetUnique<MaxSelectedElementComponent>().Component.value;
+                        var selectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Component.Value;
                         selectionId++;
 
-                        _game.Set(entityUnderPointer, new SelectionIdComponent { Value = selectionId });
-                        _game.SetFlag<SelectedComponent>(entityUnderPointer, true);
-                        _gameState.SetUnique<LastSelectedComponent>(c => c.value = entityUnderPointerId);
-                        _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = selectionId);
+                        entityUnderPointer.Get<SelectionIdComponent>().Apply(selectionId);
+                        entityUnderPointer.SetFlag<SelectedComponent>(true);
+
+                        _gameState.Unique.Get<LastSelectedComponent>().Apply(entityUnderPointerId);
+                        _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(selectionId);
                     }
                 }
             }

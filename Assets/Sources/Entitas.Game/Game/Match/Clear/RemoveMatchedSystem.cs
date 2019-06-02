@@ -19,14 +19,14 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return !context.IsFlagged<DestroyedComponent>(entity);
+            return !entity.IsFlagged<DestroyedComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
             foreach (var entity in entities)
             {
-                _game.SetFlag<DestroyedComponent>(entity);
+                entity.SetFlag<DestroyedComponent>();
             }
         }
     }

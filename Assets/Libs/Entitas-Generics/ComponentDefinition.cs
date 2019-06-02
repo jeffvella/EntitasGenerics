@@ -20,18 +20,18 @@
         int ComponentIndex { get; }        
     }
 
-    public class ComponentDefinition<TContext, TEntity, TComponent> : IComponentDefinition<TComponent>  
-        where TComponent : class, IComponent, new()
-        where TContext : IContext
-        where TEntity : class, IEntity, new()
-    {
-        public bool IsUnique => ComponentHelper<TContext, TComponent>.IsUnique;
+    //public class ComponentDefinition<TContext, TEntity, TComponent> : IComponentDefinition<TComponent>  
+    //    where TComponent : class, IComponent, new()
+    //    where TContext : IContext
+    //    where TEntity : class, IEntity, new()
+    //{
+    //    public bool IsUnique => ComponentHelper<TEntity, TComponent>.IsUnique;
 
-        public bool IsEvent => ComponentHelper<TContext, TComponent>.IsEvent;
+    //    public bool IsEvent => ComponentHelper<TEntity, TComponent>.IsEvent;
 
-        public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)GenericMatcher<TContext, TEntity, TComponent>.AllOf;
+    //    public IMatcher<IEntity> Matcher => (IMatcher<IEntity>)GenericMatcher<TContext, TEntity, TComponent>.AllOf;
 
-        public int ComponentIndex => ComponentHelper<TContext, TComponent>.ComponentIndex;
+    //    public int ComponentIndex => ComponentHelper<TEntity, TComponent>.ComponentIndex;
 
-    }
+    //}
 }

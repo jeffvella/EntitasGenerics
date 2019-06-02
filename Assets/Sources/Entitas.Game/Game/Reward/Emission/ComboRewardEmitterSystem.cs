@@ -22,20 +22,20 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return context.Has<ComboComponent>(entity);
+            return entity.HasComponent<ComboComponent>();
         }
 
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var definitions = _config.GetUnique<ComboDefinitionsComponent>().Component.value;
+            var definitions = _config.Unique.Get<ComboDefinitionsComponent>().Component.Value;
 
             foreach (var entity in entities)
             {
-                var combo = _game.Get<ComboComponent>(entity).Component.Value;
+                var combo = entity.GetComponent<ComboComponent>().Value;
                 var definition = definitions.Definitions[combo];
                 var e = _game.CreateEntity();
-                _game.Set(e, new RewardComponent { value = definition.Reward });
+                e.Get<RewardComponent>().Apply(definition.Reward);
             }
         }
     }

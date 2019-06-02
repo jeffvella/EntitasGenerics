@@ -29,7 +29,7 @@ namespace Entitas.MatchLine
             {
                 bool found = false;
 
-                GridPosition position = _game.Get<PositionComponent>(entity).Component.Value;
+                GridPosition position = entity.Get<PositionComponent>().Component.Value;
 
                 var neighbourPositions = position.GetNeighbours(_positionBuffer);
 
@@ -37,15 +37,23 @@ namespace Entitas.MatchLine
                 {
                     foreach (var matchedEntity in entities)
                     {
-                        if (_game.TryGet(matchedEntity, out PositionComponent component))
+                        var pos = matchedEntity.GetComponent<PositionComponent>().Value;
+                        if (pos.Equals(neighbourPosition))
                         {
-                            if (neighbourPosition.Equals(component.Value))
-                            {
-                                found = true;
-                                _game.SetFlag<MatchedComponent>(entity, true);
-                                break;
-                            }
+                            found = true;
+                            entity.SetFlag<MatchedComponent>(true);
+                            break;
                         }
+
+                        //if (_game.TryGet(matchedEntity, out PositionComponent component))
+                        //{
+                        //    if (neighbourPosition.Equals(component.Value))
+                        //    {
+                        //        found = true;
+                        //        entity.SetFlag<MatchedComponent>(true);
+                        //        break;
+                        //    }
+                        //}
                     }
 
                     if (found)

@@ -2,8 +2,8 @@
 
 namespace Entitas.MatchLine
 {
-    public sealed class MaxSelectedElementComponent : IUniqueComponent
+    public sealed class MaxSelectedElementComponent : IValueComponent<int>, IUniqueComponent
     {
-        public int value;
+        public int Value { get; set; }
     }
 }

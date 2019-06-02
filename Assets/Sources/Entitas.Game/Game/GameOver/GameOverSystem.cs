@@ -22,14 +22,15 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameStateEntity> entities)
         {
-            var maxActions = _config.GetUnique<MaxActionCountComponent>().Component.Value;
-            var actionCount = _gameState.GetUnique<ActionCountComponent>().Component.value;
+            var maxActions = _config.Unique.Get<MaxActionCountComponent>().Component.Value;
+            var actionCount = _gameState.Unique.Get<ActionCountComponent>().Component.Value;
 
             if (actionCount >= maxActions)
             {
-                _gameState.SetFlag<GameOverComponent>();
+                _gameState.Unique.SetFlag<GameOverComponent>();
             }
-
         }
+
+
     }
 }

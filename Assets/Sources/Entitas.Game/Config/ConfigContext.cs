@@ -13,13 +13,13 @@ namespace Entitas.MatchLine
 
             public ConfigContextDefinition()
             {
-                Add<ExplosiveScoringTableComponent>();
-                Add<MaxActionCountComponent>();
-                Add<MinMatchCountComponent>();
-                Add<ScoringTableComponent>();
-                Add<TypeCountComponent>();
-                Add<MapSizeComponent>();
-                Add<ComboDefinitionsComponent>();
+                AddComponent<ExplosiveScoringTableComponent>();
+                AddComponent<MaxActionCountComponent>();
+                AddComponent<MinMatchCountComponent>();
+                AddComponent<ScoringTableComponent>();
+                AddComponent<TypeCountComponent>();
+                AddComponent<MapSizeComponent>();
+                AddComponent<ComboDefinitionsComponent>();
             }
         }        
     }

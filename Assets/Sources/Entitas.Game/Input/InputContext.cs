@@ -14,15 +14,15 @@ namespace Entitas.MatchLine
 
         public InputContextDefinition()
         {
-            Add<PointerHoldingComponent>();
-            Add<PointerHoldingPositionComponent>();
-            Add<PointerHoldingTimeComponent>();
-            Add<PointerReleasedComponent>();
-            Add<PointerStartedHoldingComponent>();
-            Add<RestartComponent>();
-            Add<DeltaTimeComponent>();
-            Add<RealtimeSinceStartupComponent>();
-            Add<DestroyedComponent>();
+            AddComponent<PointerHoldingComponent>();
+            AddComponent<PointerHoldingPositionComponent>();
+            AddComponent<PointerHoldingTimeComponent>();
+            AddComponent<PointerReleasedComponent>();
+            AddComponent<PointerStartedHoldingComponent>();
+            AddComponent<RestartComponent>();
+            AddComponent<DeltaTimeComponent>();
+            AddComponent<RealtimeSinceStartupComponent>();
+            AddComponent<DestroyedComponent>();
         }
     }
 }

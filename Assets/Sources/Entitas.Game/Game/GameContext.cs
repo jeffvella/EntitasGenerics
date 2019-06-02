@@ -19,25 +19,25 @@ namespace Entitas.MatchLine
 
         public GameContextDefinition()
         {
-            Add<AssetComponent>();
-            Add<AssetLoadedComponent>();
-            Add<BlockComponent>();
-            Add<ColorComponent>();
-            Add<ComboComponent>();
-            Add<DestroyedComponent>();
-            Add<ElementComponent>();
-            Add<ElementTypeComponent>();
-            Add<ExplosiveComponent>();
-            Add<FieldMovedComponent>();
-            Add<IdComponent>();
-            Add<InComboComponent>();
-            Add<MatchedComponent>();
-            Add<MovableComponent>();
-            Add<PositionComponent>();
-            Add<RestartHappenedComponent>();
-            Add<RewardComponent>();
-            Add<SelectedComponent>();
-            Add<SelectionIdComponent>();
+            AddComponent<AssetComponent>();
+            AddComponent<AssetLoadedComponent>();
+            AddComponent<BlockComponent>();
+            AddComponent<ColorComponent>();
+            AddComponent<ComboComponent>();
+            AddComponent<DestroyedComponent>();
+            AddComponent<ElementComponent>();
+            AddComponent<ElementTypeComponent>();
+            AddComponent<ExplosiveComponent>();
+            AddComponent<FieldMovedComponent>();
+            AddComponent<IdComponent>();
+            AddComponent<InComboComponent>();
+            AddComponent<MatchedComponent>();
+            AddComponent<MovableComponent>();
+            AddComponent<PositionComponent>();
+            AddComponent<RestartHappenedComponent>();
+            AddComponent<RewardComponent>();
+            AddComponent<SelectedComponent>();
+            AddComponent<SelectionIdComponent>();
         }
 
 

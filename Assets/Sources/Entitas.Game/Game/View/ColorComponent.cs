@@ -3,8 +3,8 @@ using Entitas.Generics;
 
 namespace Entitas.MatchLine
 {
-    public sealed class ColorComponent : IComponent, IEventComponent
+    public sealed class ColorComponent : IValueComponent<Color>, IEventComponent
     {
-        public Color value;
+        public Color Value { get; set; }
     }
 }

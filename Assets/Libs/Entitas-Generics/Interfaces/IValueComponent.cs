@@ -8,7 +8,7 @@ namespace Entitas.Generics
 {
     public interface IValueComponent : IComponent
     {
-
+        
     }
 
     public interface IValueComponent<TValue> : IValueComponent

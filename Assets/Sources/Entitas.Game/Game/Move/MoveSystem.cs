@@ -25,32 +25,29 @@ namespace Entitas.MatchLine
 
             int moveCount = 0;
 
-            var size = _config.GetUnique<MapSizeComponent>().Component.Value;
-
+            var size = _config.Unique.Get<MapSizeComponent>().Component.Value;
             
-
             for (int x = 0; x < size.x; x++)
             {
                 for (int y = 1; y < size.y; y++)
                 {
                     var sourcePosition = new GridPosition(x, y);
-                   
-                    //var sw = new Stopwatch();
-                    //sw.Start();
+                     
+                    // If the spot is empty ignore it.
 
                     if (!_game.TryFindEntity<PositionComponent, GridPosition>(sourcePosition, out var element))
-                    {
-                        //sw.Stop();
-                        //Debug.Log($"Index Time: {sw.Elapsed.TotalMilliseconds:N6}");               
+                    {          
                         continue;
                     }
 
-                    if (!_game.IsFlagged<MovableComponent>(element))
+                    if (!element.IsFlagged<MovableComponent>())
                     {
                         continue;
                     }
 
                     var targetPosition = new GridPosition(x, y - 1);
+
+                    // Check if it can be moved to the target position 1 below its current position.
 
                     if (!_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out var result))
                     {
@@ -60,6 +57,8 @@ namespace Entitas.MatchLine
                         //element.Get2<PositionComponent>().Set(targetPosition);
 
                         //element.Get<PositionComponent>(_game).Apply(targetPosition);
+
+                        Debug.Log($"Moved {sourcePosition} => {targetPosition}");
 
                         element.Get<PositionComponent>().Apply(targetPosition);
 
@@ -94,7 +93,7 @@ namespace Entitas.MatchLine
             }
 
 
-            _game.SetFlag<FieldMovedComponent>(moveCount > 0);
+            _game.Unique.SetFlag<FieldMovedComponent>(moveCount > 0);
 
             //UnityEngine.Profiling.Profiler.EndSample();
 

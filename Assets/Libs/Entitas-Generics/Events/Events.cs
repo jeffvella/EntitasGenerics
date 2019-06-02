@@ -8,93 +8,157 @@ namespace Entitas.Generics
 {
     public interface IEventListener { }
 
-    public interface IAddedComponentListener<in TEntity, in TComponent> : IEventListener
+    //public interface IAddedComponentListener<in TEntity, in TComponent> : IEventListener
+    //{
+    //    void OnComponentAdded(TEntity entity, TComponent component);
+    //}
+
+    public interface IAddedComponentListener<in TEntity> : IEventListener where TEntity : IGenericEntity
     {
-        void OnComponentAdded(TEntity entity, TComponent component);
+        void OnComponentAdded(TEntity entity);
     }
 
-    public interface IRemovedComponentListener<in TEntity> : IEventListener
+    public interface IAddedComponentListener<in TEntity, TComponent> : IAddedComponentListener<TEntity> where TEntity : IGenericEntity
+    {
+
+    }
+
+    public interface IRemovedComponentListener<in TEntity> : IEventListener where TEntity : IGenericEntity
     {
         void OnComponentRemoved(TEntity entity);
     }
 
-    public interface IEventObserver<in TArg>
+    public interface IRemovedComponentListener<in TEntity, TComponent> : IRemovedComponentListener<TEntity> where TEntity : IGenericEntity
     {
-        void OnEvent(TArg value);
+
     }
 
-    /// <summary>
-    /// A wrapper to allow event registrations from an Action.
-    /// (Event observers must implement the IEventObserver<typeparamref name="TArg"/> interface).
-    /// It also tracks some debug information to help with understanding events in the inspector.
-    /// </summary>
-    /// <typeparam name="TArg">An arguyment to be passed to event listeners</typeparam>
-    public class ActionEventDelegator<TArg> : IEventObserver<TArg>, IEventListener, ICustomDisplayName
-    {
-        private int _invocations;
+    //public interface IRemovedComponentListener<in TEntity> : IEventListener
+    //{
+    //    void OnComponentRemoved(TEntity entity);
+    //}
 
-        public ActionEventDelegator(Action<TArg> action)
-        {
-            _action = action;
-        }
+    //public interface IEventObserver<in TArg>
+    //{
+    //    void OnEvent(TEntity entity);
+    //}
 
-        private readonly Action<TArg> _action;
+    ///// <summary>
+    ///// A wrapper to allow event registrations from an Action.
+    ///// </summary>
+    ///// <typeparam name="TArg">An arguyment to be passed to event listeners</typeparam>
+    //public class AddedActionEventDelegator<TArg> : ActionEventDelegator
+    //{        public void OnEvent(TArg value)
+    //    {
+    //        _invocations++;
+    //        _action.Invoke(value);
+    //    }
 
-        public void OnEvent(TArg value)
-        {
-            _invocations++;
-            _action.Invoke(value);
-        }
+    //}
 
-        public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
-    }
+    //public class AddedActionEventDelegator<TEntity> : IAddedComponentListener<TEntity>, IEventListener, ICustomDisplayName where TEntity : IEntity, IGenericEntity
+    //{
+    //    private int _invocations;
+
+    //    public AddedActionEventDelegator(Action<TEntity> action)
+    //    {
+    //        _action = action;
+    //    }
+
+    //    private readonly Action<TEntity> _action;
+
+    //    public void OnComponentAdded(TEntity entity)
+    //    {
+    //        _invocations++;
+    //        _action.Invoke(entity);
+    //    }
+
+    //    public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
+    //}
+
+    //public class RemovedActionEventDelegator<TEntity> : IRemovedComponentListener<TEntity>, IEventListener, ICustomDisplayName where TEntity : IEntity, IGenericEntity
+    //{
+    //    private int _invocations;
+
+    //    public RemovedActionEventDelegator(Action<TEntity> action)
+    //    {
+    //        _action = action;
+    //    }
+
+    //    private readonly Action<TEntity> _action;
+
+    //    public void OnComponentRemoved(TEntity entity)
+    //    {
+    //        _invocations++;
+    //        _action.Invoke(entity);
+    //    }
+
+    //    public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
+    //}
+
+    ///// <summary>
+    ///// A wrapper to allow event registrations from an Action.
+    ///// </summary>
+    ///// <typeparam name="TArg">An arguyment to be passed to event listeners</typeparam>
+    //public class ActionEventDelegator<TArg> : IEventObserver<TArgs>, IEventListener, ICustomDisplayName
+    //{
+    //    private int _invocations;
+
+    //    public ActionEventDelegator(Action<TArg> action)
+    //    {
+    //        _action = action;
+    //    }
+
+    //    private readonly Action<TArg> _action;
+
+    //    public void OnEvent(TArg value)
+    //    {
+    //        _invocations++;
+    //        _action.Invoke(value);
+    //    }
+
+    //    public string DisplayName => $"{_action.Target} InvokeCount={_invocations}";
+    //}
 
     /// <summary>
     /// A base for an event that can store listeners/observers and foward data to them.
     /// </summary>
     /// <typeparam name="TArgs">Dynamic info specific to the each occurence of the event</typeparam>
-    public class GameEventBase<TArgs> : IListenerComponent<TArgs>
+    public abstract class AbstractGameEvent<TArgs> : IListenerComponent<TArgs>
     {
-        public int ListenerCount => Observers.Count;
+        public int ListenerCount => Listeners.Count;
 
         // Must be public for debug drawer display within Entitas (it copies only public members)
-        public List<IEventObserver<TArgs>> Observers = new List<IEventObserver<TArgs>>();
+        public List<IEventListener> Listeners = new List<IEventListener>();
 
-        public void Register(Action<TArgs> action)
+        public void Register(IEventListener listener)
         {
-            Register(new ActionEventDelegator<TArgs>(action));
-        }
-
-        public void Register(IEventObserver<TArgs> observer)
-        {
-            if (!Observers.Contains(observer))
+            if (!Listeners.Contains(listener))
             {
-                Observers.Add(observer);
+                Listeners.Add(listener);
             }
         }
 
-        public void Deregister(IEventObserver<TArgs> observer)
+        public void Deregister(IEventListener observer)
         {
-            if (Observers.Contains(observer))
+            if (Listeners.Contains(observer))
             {
-                Observers.Remove(observer);
+                Listeners.Remove(observer);
             }
         }
 
-        public void Raise(TArgs arg)
-        {
-            for (int i = Observers.Count - 1; i >= 0; i--)
-            {
-                Observers[i]?.OnEvent(arg);
-            }
-        }
+        public abstract void Register(Action<TArgs> action);
+
+        public abstract void Deregister(Action<TArgs> action);
+
+        public abstract void Raise(TArgs arg);
 
         public void ClearListeners()
         {
-            Observers.Clear();
+            Listeners.Clear();
         }
 
-        public string[] GetListenersNames() => Observers.Select(observer =>
+        public string[] GetListenersNames() => Listeners.Select(observer =>
         {
             if (observer is ICustomDisplayName delegator)
             {
@@ -103,8 +167,9 @@ namespace Entitas.Generics
             return observer.GetType().PrettyPrintGenericTypeName();
 
         }).ToArray();
-    }
 
+
+    }
 
 }
 

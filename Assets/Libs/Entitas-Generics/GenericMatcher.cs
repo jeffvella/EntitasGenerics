@@ -2,7 +2,7 @@
 {
     public class GenericMatcher<TContext, TEntity, TComponent>
         where TContext : IContext
-        where TEntity : class, IEntity
+        where TEntity : class, IEntity, IGenericEntity
         where TComponent : IComponent, new()
     {
         private static IAnyOfMatcher<TEntity> _anyOf;
@@ -13,7 +13,7 @@
 
         static GenericMatcher()
         {
-            Index = ComponentHelper<TContext, TComponent>.ComponentIndex;
+            Index = ComponentHelper<TEntity, TComponent>.Index;
         }
 
         public static IMatcher<TEntity> AnyOf
@@ -33,7 +33,7 @@
     public class MatcherFactory
     {
         public static IAnyOfMatcher<TEntity> CreateMatcher<TContext, TEntity>(MatcherType type, params int[] indices) 
-            where TEntity : class, IEntity
+            where TEntity : class, IEntity, IGenericEntity
             where TContext : IContext
         {
             Matcher<TEntity> matcher = default;
@@ -41,12 +41,12 @@
             {
                 case MatcherType.None:
                 case MatcherType.All:
-                    matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
+                    matcher = (Matcher<TEntity>)Entitas.Matcher<TEntity>.AllOf(indices);
                     matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
                     break;
                     
                 case MatcherType.Any:
-                    matcher = (Entitas.Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
+                    matcher = (Matcher<TEntity>)Entitas.Matcher<TEntity>.AnyOf(indices);
                     matcher.componentNames = ContextHelper<TContext>.ContextInfo.componentNames;
                     break;                 
             }

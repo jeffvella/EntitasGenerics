@@ -21,13 +21,13 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return context.IsFlagged<MatchedComponent>(entity) && context.IsFlagged<ExplosiveComponent>();
+            return entity.IsFlagged<MatchedComponent>() && context.Unique.IsFlagged<ExplosiveComponent>();
         }
 
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var table = _config.GetUnique<ExplosiveScoringTableComponent>().Component.value;
+            var table = _config.Unique.Get<ExplosiveScoringTableComponent>().Component.Value;
 
             var scoreId = entities.Count;
             scoreId--;
@@ -36,10 +36,11 @@ namespace Entitas.MatchLine
                 scoreId = table.Count - 1;
 
             var reward = table[scoreId];
+  
+            _game.CreateEntity().Get<RewardComponent>().Apply(reward);
 
-            var e = _game.CreateEntity();
             //_game.Get<RewardComponent>().
-            _game.Set(e, new RewardComponent { value = reward });
+            //_game.Set(e, new RewardComponent { Value = reward });
         }
     }
 }

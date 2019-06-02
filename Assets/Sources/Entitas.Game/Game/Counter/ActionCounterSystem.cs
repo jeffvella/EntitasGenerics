@@ -21,8 +21,10 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var currentActionCount = _gameState.GetUnique<ActionCountComponent>().Component;
-            _gameState.SetUnique<ActionCountComponent>(c => c.value = currentActionCount.value + 1);
+            //var currentActionCount = _gameState.Unique.Get<ActionCountComponent>().Component;
+            //_gameState.SetUnique<ActionCountComponent>(c => c.value = currentActionCount.value + 1);
+
+            _gameState.Unique.Get<ActionCountComponent>().Apply(c => c.Value + 1);
         }
     }
 

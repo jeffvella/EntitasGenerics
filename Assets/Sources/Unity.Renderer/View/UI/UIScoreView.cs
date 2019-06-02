@@ -13,14 +13,20 @@ public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntit
 
     private void Start()
     {
-        Contexts.Instance.GameState.RegisterAddedComponentListener(this);
+        Contexts.Instance.GameState.Unique.RegisterComponentListener<ScoreComponent>(this);
 
         _triggerHash = Animator.StringToHash(_triggerName);
     }
 
-    public void OnComponentAdded(GameStateEntity entity, ScoreComponent component)
+    //public void OnComponentAdded(GameStateEntity entity, ScoreComponent component)
+    //{
+    //    _label.text = component.Value.ToString();
+    //    _animator.SetTrigger(_triggerHash);
+    //}
+
+    public void OnComponentAdded(GameStateEntity entity)
     {
-        _label.text = component.Value.ToString();
+        _label.text = entity.Get<ScoreComponent>().Component.Value.ToString();
         _animator.SetTrigger(_triggerHash);
     }
 }

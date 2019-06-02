@@ -16,7 +16,7 @@ namespace Entitas.Generics
         List<int> EventListenerIndices { get; }
     }
 
-    public interface IContextDefinition<TEntity> : IContextDefinition where TEntity : class, IEntity
+    public interface IContextDefinition<TEntity> : IContextDefinition where TEntity : class, IEntity, IGenericEntity
     {
         Func<TEntity> EntityFactory { get; }
 
@@ -29,7 +29,9 @@ namespace Entitas.Generics
     /// The <see cref="ContextDefinition{TContext,TEntity}"/> defines the component types for a context,
     /// and produces the contextInfo required by Entitas' Context base constructor.
     /// </summary>
-    public abstract class ContextDefinition<TContext, TEntity> : IContextDefinition<TEntity> where TContext : IContext where TEntity : class, IEntity
+    public abstract class ContextDefinition<TContext, TEntity> : IContextDefinition<TEntity> 
+        where TContext : IContext 
+        where TEntity : class, IEntity, IGenericEntity
     {
         private ContextInfo _contextInfo;
 
@@ -40,7 +42,7 @@ namespace Entitas.Generics
 
         public void AddDefaultComponents()
         {            
-            Add<UniqueComponents>();     
+            AddComponent<UniqueComponentsHolder>();     
         }
 
         public abstract Func<TEntity> EntityFactory { get; }
@@ -96,7 +98,7 @@ namespace Entitas.Generics
         //    }
         //}
 
-        public void Add<TComponent>() where TComponent : class, IComponent, new()
+        public void AddComponent<TComponent>() where TComponent : class, IComponent, new()
         {
             var componentIndex = ComponentTypes.Count;
 
@@ -142,13 +144,13 @@ namespace Entitas.Generics
         {
             int index = ComponentTypes.Count;
             EventListenerIndices.Add(index);
-            SearchIndexes.Add(null);
+            //SearchIndexes.Add(null);
             AddComponentType<T>(index);
         }
 
         private void AddComponentType<T>(int index) where T : IComponent, new()
         {
-            ComponentHelper<TContext, T>.Initialize(index);
+            ComponentHelper<TEntity, T>.Initialize(index);
             ComponentNames.Add(typeof(T).PrettyPrintGenericTypeName());
             ComponentTypes.Add(typeof(T));
             ComponentCount++;

@@ -1,26 +1,35 @@
 ﻿using Entitas;
 using UnityEngine;
 using Entitas.MatchLine;
+using Entitas.Generics;
+using System;
 
-public class ColorListener : MonoBehaviour, IEventListener
+public class ColorListener : MonoBehaviour, IAddedComponentListener<GameEntity, ColorComponent>, IEventListener<GameEntity>
 {
     [SerializeField] private Renderer _renderer;
 
-    private GameEntity _entity;
+    GameEntity _entity;
 
-    public void RegisterListeners(Contexts contexts, IEntity entity)
+    public void RegisterListeners(Contexts contexts, GameEntity entity)
     {
-        _entity = (GameEntity)entity;
+        _entity = entity;
 
-        var component = contexts.Game.Get<ColorComponent>(_entity);
+        OnComponentAdded(_entity);
 
-        OnColorAdded((_entity, component.Component));
+        //_entity.RegisterComponentListener(this);
 
-        contexts.Game.RegisterAddedComponentListener<ColorComponent>(_entity, OnColorAdded);
+        _entity.RegisterComponentListener<ColorComponent>(OnColorChanged, GroupEvent.Added);
     }
 
-    private void OnColorAdded((GameEntity Entity, ColorComponent Component) obj)
+    private void OnColorChanged(GameEntity entity)
     {
-        _renderer.material.color = obj.Component.value;
+        _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
     }
+
+    public void OnComponentAdded(GameEntity entity)
+    {
+        _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
+    }
+
+
 }

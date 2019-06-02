@@ -28,17 +28,17 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<InputEntity> entities)
         {
-            if (_input.IsFlagged<PointerHoldingComponent>())
+            if (_input.Unique.IsFlagged<PointerHoldingComponent>())
                 return;
 
             foreach (var entity in _selectedGroup.GetEntities(_buffer))
             {
-                _game.SetFlag<SelectedComponent>(entity, false);
-                _game.Remove<SelectionIdComponent>(entity);
+                entity.SetFlag<SelectedComponent>(false);
+                entity.RemoveComponent<SelectionIdComponent>();
             }
 
-            _gameState.SetUnique<LastSelectedComponent>(c => c.value = -1);
-            _gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
+            _gameState.Unique.Get<LastSelectedComponent>().Apply(-1);
+            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(0);
         }
     }
 }

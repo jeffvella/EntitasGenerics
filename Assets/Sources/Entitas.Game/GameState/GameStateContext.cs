@@ -5,7 +5,10 @@ namespace Entitas.MatchLine
 {
     public class GameStateContext : GenericContext<GameStateContext, GameStateEntity>
     {
-        public GameStateContext() : base(new GameStateContextDefinition()) { }
+        public GameStateContext() : base(new GameStateContextDefinition())
+        {
+            AddIndex<ScoreComponent>();
+        }
     }
 
     public class GameStateContextDefinition : ContextDefinition<GameStateContext, GameStateEntity>
@@ -14,11 +17,11 @@ namespace Entitas.MatchLine
 
         public GameStateContextDefinition()
         {
-            Add<ActionCountComponent>();
-            Add<GameOverComponent>();
-            Add<LastSelectedComponent>();
-            Add<MaxSelectedElementComponent>();
-            AddIndexed<ScoreComponent>();
+            AddComponent<ActionCountComponent>();
+            AddComponent<GameOverComponent>();
+            AddComponent<LastSelectedComponent>();
+            AddComponent<MaxSelectedElementComponent>();
+            AddComponent<ScoreComponent>();
         }
     }
 }
