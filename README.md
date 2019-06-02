@@ -35,7 +35,7 @@ A container for contexts needs to be created.
         public readonly IGenericContext<GameEntity> Game = new GameContext();
     }
 
-Each Context is created with a 'ContextDefinition', which lists the components you want to use. Indexed components for searching by value are
+Each Context is created with a 'ContextDefinition', which lists the components you want to use. Indexed components for searching by value are also defined here.
 
     public class GameContext : GenericContext<GameContext, GameEntity>
     {
