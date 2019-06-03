@@ -11,6 +11,9 @@ namespace Entitas.Generics
         
     }
 
+    /// <summary>
+    /// A component with a single value.
+    /// </summary>
     public interface IValueComponent<TValue> : IValueComponent
     {
         TValue Value { get; set; }

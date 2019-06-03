@@ -4,15 +4,18 @@ using Entitas.Generics;
 
 namespace Entitas
 {
+    // A modified version of the original default Reactive system
+    // which doesn't call the filter method when its not nessesary.
 
-    /// A ReactiveSystem calls Execute(entities) if there were changes based on
-    /// the specified Collector and will only pass in changed entities.
-    /// A common use-case is to react to changes, e.g. a change of the position
-    /// of an entity to update the gameObject.transform.position
-    /// of the related gameObject.
     public abstract class GenericReactiveSystem<TEntity> : IReactiveSystem 
         where TEntity : class, IEntity, IGenericEntity, new()
     {
+        /// A ReactiveSystem calls Execute(entities) if there were changes based on
+        /// the specified Collector and will only pass in changed entities.
+        /// A common use-case is to react to changes, e.g. a change of the position
+        /// of an entity to update the gameObject.transform.position
+        /// of the related gameObject.
+        /// 
         string _toStringCache;
         readonly ICollector<TEntity> _collector;
         readonly List<TEntity> _buffer;
@@ -26,7 +29,6 @@ namespace Entitas
             _collector = triggerProducer(context);
             _buffer = new List<TEntity>();
         }
-
 
         protected GenericReactiveSystem(IGenericContext<TEntity> context,
             Func<IGenericContext<TEntity>, ICollector<TEntity>> triggerProducer,

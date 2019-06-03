@@ -1,5 +1,4 @@
-﻿using Entitas.CodeGeneration.Attributes;
-using Entitas.VisualDebugging.Unity;
+﻿using Entitas.VisualDebugging.Unity;
 using System;
 using System.Collections.Generic;
 
@@ -39,6 +38,9 @@ namespace Entitas.Generics
         public string DisplayName => $"Added Event Listener ({typeof(TComponent).Name})";
     }
 
+    /// <summary>
+    /// A wrapper to allow registering event listeners with an Action.
+    /// </summary>
     public class AddedActionEventDelegator<TEntity> : IAddedComponentListener<TEntity>, IEqualityComparer<AddedActionEventDelegator<TEntity>>, IEventListener, ICustomDisplayName 
         where TEntity : IEntity, IGenericEntity
     {

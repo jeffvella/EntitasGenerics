@@ -2,6 +2,9 @@
 
 namespace Entitas.Generics
 {
+    /// <summary>
+    /// A component that houses an invocation list for events.
+    /// </summary>
     public interface IListenerComponent : IComponent
     {
         void ClearListeners();
@@ -11,6 +14,9 @@ namespace Entitas.Generics
         int ListenerCount { get; }
     }
 
+    /// <summary>
+    /// A component that houses an invocation list for <typeparamref name="T"/>
+    /// <typeparam name="T"></typeparam>
     public interface IListenerComponent<T> : IListenerComponent
     {
         void Register(Action<T> action);

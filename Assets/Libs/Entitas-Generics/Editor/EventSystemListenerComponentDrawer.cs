@@ -2,7 +2,13 @@
 using Entitas.VisualDebugging.Unity.Editor;
 using UnityEditor;
 
-namespace Entitas.Generics {
+namespace Entitas.Generics
+{
+    /// <summary>
+    /// An inspector drawer for <see cref="AddedListenersComponent{TEntity, TComponent}"/>/
+    /// <see cref="RemovedListenersComponent{TEntity, TComponent}"/>; 
+    /// Shows information about the event subscribers.
+    /// </summary>
     public class EventSystemListenerComponentDrawer : IComponentDrawer
     { 
         public bool HandlesType(Type type)
@@ -28,7 +34,6 @@ namespace Entitas.Generics {
                     EditorGUILayout.LabelField($"- {listenerNames[i]}");
                 }
             }
-
             return listenerComponent;
         }
     }

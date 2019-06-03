@@ -48,16 +48,21 @@ Each Context is created with a 'ContextDefinition', which lists the components y
 
     public class GameContextDefinition : ContextDefinition<GameContext, GameEntity>
     {
+        public override Func<GameEntity> EntityFactory => () => new GameEntity();
+
         public GameContextDefinition()
         {
-            Add<AssetComponent>();
-            Add<AssetLoadedComponent>();
-            Add<BlockComponent>();
-            Add<ColorComponent>();
-            Add<ComboComponent>();
+            AddComponent<AssetComponent>();
+            AddComponent<AssetLoadedComponent>();
+            AddComponent<BlockComponent>();
+            AddComponent<ColorComponent>();
+            AddComponent<IdComponent>();
+            AddComponent<InComboComponent>();
+            AddComponent<MatchedComponent>();
+            AddComponent<MovableComponent>();
+            AddComponent<PositionComponent>();
             ...
         }
-    }
 
 #### Defining Components ####
 

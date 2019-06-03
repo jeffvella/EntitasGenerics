@@ -4,6 +4,9 @@ using Entitas.VisualDebugging.Unity;
 
 namespace Entitas.Generics
 {
+    /// <summary>
+    /// A component that stores 'Component Removed' event listeners / the invocation list for an associated entity.
+    /// </summary>
     public class RemovedListenersComponent<TEntity, TComponent> : AbstractGameEvent<TEntity>, ICustomDisplayName
         where TEntity : IEntity, IGenericEntity
         where TComponent : IComponent
@@ -37,6 +40,9 @@ namespace Entitas.Generics
         }
     }
 
+    /// <summary>
+    /// A wrapper to allow registering event listeners with an Action.
+    /// </summary>
     public class RemovedActionEventDelegator<TEntity> : IRemovedComponentListener<TEntity>, IEqualityComparer<RemovedActionEventDelegator<TEntity>>, IEventListener, ICustomDisplayName 
         where TEntity : IEntity, IGenericEntity
     {

@@ -1,8 +1,7 @@
 ﻿using Entitas;
 
 /// <summary>
-/// A marker to identify the Entity which holds Unique Components
-/// This is automatically added to all <see cref="ContextDefinition{TContext,TEntity}"/>s
+/// A marker to identify the Entity within each context that holds Unique Components
 /// </summary>
 public class UniqueComponentsHolder : IComponent
 {
