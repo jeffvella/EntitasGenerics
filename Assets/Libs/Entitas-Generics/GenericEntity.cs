@@ -59,26 +59,26 @@ namespace Entitas.Generics
 
     }
 
-    public class StructComponentWrapper<TData> : IComponent, IEqualityComparer<StructComponentWrapper<TData>>, IEquatable<StructComponentWrapper<TData>>, ICustomDisplayName
+    public class StructComponentWrapper<TData> : IComponent, ICustomDisplayName //IEqualityComparer<StructComponentWrapper<TData>>, IEquatable<StructComponentWrapper<TData>>, 
     {
         public TData Data;
 
         public string DisplayName => typeof(TData).Name;
 
-        public bool Equals(StructComponentWrapper<TData> other)
-        {
-            return other.Data.Equals(Data);
-        }
+        //public bool Equals(StructComponentWrapper<TData> other)
+        //{
+        //    return other.Data.Equals(Data);
+        //}
 
-        public bool Equals(StructComponentWrapper<TData> x, StructComponentWrapper<TData> y)
-        {
-            return x.Data.Equals(y.Data);
-        }
+        //public bool Equals(StructComponentWrapper<TData> x, StructComponentWrapper<TData> y)
+        //{
+        //    return x.Data.Equals(y.Data);
+        //}
 
-        public int GetHashCode(StructComponentWrapper<TData> obj)
-        {
-            return obj.Data.GetHashCode();
-        }
+        //public int GetHashCode(StructComponentWrapper<TData> obj)
+        //{
+        //    return obj.Data.GetHashCode();
+        //}
     }
 
 

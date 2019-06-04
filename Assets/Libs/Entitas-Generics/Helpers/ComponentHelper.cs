@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Entitas.Generics
 {
@@ -22,12 +23,27 @@ namespace Entitas.Generics
     {
         public static TComponent Default { get; } = new TComponent();
 
+        //public static EqualityComparer<TComponent> Default { get; } = new EqualityComparer<TComponent>();
+
         public static bool IsEvent { get; } = ComponentHelper.IsEventComponent<TComponent>();
 
         public static bool IsUnique { get; } = ComponentHelper.IsUniqueComponent<TComponent>();
 
         public static bool IsFlag { get; } = ComponentHelper.IsFlagComponent<TComponent>();
     }
+
+    //public class ValueComaprers<TComponentData> : IEqualityComparer<TComponentData>
+    //{
+    //    public bool Equals(TComponentData x, TComponentData y)
+    //    {
+    //        x.
+    //    }
+
+    //    public int GetHashCode(TComponentData obj)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
     public static class ComponentHelper
     {
