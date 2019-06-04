@@ -37,7 +37,7 @@ namespace Entitas.MatchLine
                      
                     // If the spot is empty ignore it.
 
-                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(sourcePosition, out var element))
+                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(sourcePosition, out var element))
                     {          
                         continue;
                     }
@@ -51,7 +51,7 @@ namespace Entitas.MatchLine
 
                     // Check if it can be moved to the target position 1 below its current position.
 
-                    if (!_game.TryFindEntity<PositionComponent, GridPosition>(targetPosition, out var result))
+                    if (!_game.TryFindEntity2<PositionComponent, GridPosition>(targetPosition, out var result))
                     {
 
                         //element.Get<PositionComponent>().Value = targetPosition;
@@ -62,7 +62,9 @@ namespace Entitas.MatchLine
 
                         //Debug.Log($"Moved {sourcePosition} => {targetPosition}");
 
-                        element.Get<PositionComponent>().Apply(targetPosition);
+                        //element.Get<PositionComponent>().Apply(targetPosition);
+
+                        element.Set(new PositionComponent { Value = targetPosition });
 
 
                         //var accessor = element.Find<PositionComponent>();

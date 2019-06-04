@@ -34,7 +34,7 @@ namespace Entitas.MatchLine
 
             _game.TryFindEntity<SelectionIdComponent, int>(targetSelectionId, out var targetEntity);
 
-            var targetEntityPosition = targetEntity.Get<PositionComponent>().Component.Value;
+            var targetEntityPosition = targetEntity.Get2<PositionComponent>().Value;
 
             //var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
 

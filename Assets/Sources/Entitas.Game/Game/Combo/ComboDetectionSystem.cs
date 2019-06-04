@@ -25,7 +25,7 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> context, GameEntity entity)
         {
-            return entity.IsFlagged<MatchedComponent>() && entity.HasComponent<PositionComponent>();
+            return entity.IsFlagged<MatchedComponent>() && entity.Has<PositionComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
@@ -36,7 +36,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
+                var index = entity.Get2<PositionComponent>().Value.ToIndex(size);
                 _buffer.Add(index, entity);
             }
 
@@ -61,7 +61,7 @@ namespace Entitas.MatchLine
                                 foreach (var entity in _currentBuffer)
                                 {
                                     entity.SetFlag<InComboComponent>(true);
-                                    var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
+                                    var index = entity.Get2<PositionComponent>().Value.ToIndex(size);
                                     _buffer.Remove(index);
                                 }
 
@@ -77,7 +77,7 @@ namespace Entitas.MatchLine
 
             foreach (var entity in entities)
             {
-                var index = entity.Get<PositionComponent>().Component.Value.ToIndex(size);
+                var index = entity.Get2<PositionComponent>().Value.ToIndex(size);
                 _buffer.Remove(index);
             }
         }

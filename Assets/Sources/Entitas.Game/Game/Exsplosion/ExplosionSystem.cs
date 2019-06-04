@@ -29,7 +29,7 @@ namespace Entitas.MatchLine
             {
                 bool found = false;
 
-                GridPosition position = entity.Get<PositionComponent>().Component.Value;
+                GridPosition position = entity.Get2<PositionComponent>().Value;
 
                 var neighbourPositions = position.GetNeighbours(_positionBuffer);
 
@@ -37,7 +37,7 @@ namespace Entitas.MatchLine
                 {
                     foreach (var matchedEntity in entities)
                     {
-                        var pos = matchedEntity.GetComponent<PositionComponent>().Value;
+                        var pos = matchedEntity.Get2<PositionComponent>().Value;
                         if (pos.Equals(neighbourPosition))
                         {
                             found = true;

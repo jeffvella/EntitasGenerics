@@ -23,7 +23,7 @@ namespace Entitas.MatchLine
         private static ICollector<GameEntity> Trigger(IGenericContext<GameEntity> context)
         {
             var t1 = context.GetTrigger<ElementComponent>(GroupEvent.Removed);
-            var t2 = context.GetTrigger<PositionComponent>(GroupEvent.AddedOrRemoved);
+            var t2 = context.GetTrigger2<PositionComponent>(GroupEvent.AddedOrRemoved);
             //var t2 = context.GetTrigger<PositionComponent>(GroupEvent.Removed);
             return context.CreateCollector(t1, t2);
         }
@@ -59,7 +59,7 @@ namespace Entitas.MatchLine
 
                 //_game.GetEntityIndex<PositionComponent>().WithValue();
 
-                if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var candidate))
+                if (!_game.TryFindEntity2<PositionComponent, GridPosition>(position, out var candidate))
                 {
                     //Debug.Log($"AddElementSystem Index Not Found for position {position} - Adding");
 

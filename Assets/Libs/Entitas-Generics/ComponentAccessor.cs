@@ -2,7 +2,7 @@
 
 namespace Entitas.Generics
 {    
-    public readonly ref struct ComponentAccessor<TComponent> where TComponent : IComponent, new()
+    public readonly ref struct ComponentAccessor<TComponent> where TComponent : class, IComponent, new()
     {
         internal readonly IGenericEntity Entity;
         internal readonly int Index;
@@ -56,7 +56,7 @@ namespace Entitas.Generics
         }
     }
 
-    public sealed class PersistentComponentAccessor<TComponent> where TComponent : IComponent, new()
+    public sealed class PersistentComponentAccessor<TComponent> where TComponent : class, IComponent, new()
     {
         internal readonly int Index;
         internal readonly IGenericEntity Entity;

@@ -63,6 +63,19 @@ namespace Entitas.Generics
             }
         }
 
+        public void AddComponentStruct<TComponent>() where TComponent : struct, IComponent
+        {
+            var componentIndex = ComponentTypes.Count;
+
+            AddComponentType<StructComponentWrapper<TComponent>>(componentIndex);
+
+            if (ComponentHelper.IsEventComponent<TComponent>())
+            {
+                AddEventComponentType<AddedListenersComponent<TEntity, StructComponentWrapper<TComponent>>>();
+                AddEventComponentType<RemovedListenersComponent<TEntity, StructComponentWrapper<TComponent>>>();
+            }
+        }
+
         public void AddComponent<TComponent>() where TComponent : class, IComponent, new()
         {
             var componentIndex = ComponentTypes.Count;

@@ -24,11 +24,19 @@ namespace Entitas.Generics
 
         IGroup<TEntity> GetGroup<T>() where T : IComponent, new();
 
-        TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : IComponent, new();
+        TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : class, IComponent, new();
 
-        ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : IComponent, new();
+        TriggerOnEvent<TEntity> GetTrigger2<T>(GroupEvent eventType = default) where T : struct, IComponent;
 
-        bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IEqualityComparer<TComponent>, IValueComponent<TValue>, new();
+        ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : class, IComponent, new();
+
+        ICollector<TEntity> GetTriggerCollector2<T>(GroupEvent eventType = default) where T : struct, IComponent;
+
+        bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : class, IEqualityComparer<TComponent>, IValueComponent<TValue>, new();
+
+        bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>;
+
+        bool TryFindEntity3<TComponentData>(TComponentData value, out TEntity entity) where TComponentData : struct, IComponent;
 
     }
 
@@ -81,7 +89,7 @@ namespace Entitas.Generics
             }  
         }
 
-        public bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : IEqualityComparer<TComponent>, IValueComponent<TValue>, new()
+        public bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : class, IEqualityComparer<TComponent>, IValueComponent<TValue>, new()
         {
             var componentIndex = ComponentHelper<TEntity, TComponent>.Index;
             var searchIndex = (PrimaryEntityIndex<TEntity, TComponent>)_primaryIndexes[componentIndex];
@@ -93,10 +101,40 @@ namespace Entitas.Generics
             return entity != null;
         }
 
+        public bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>
+        {
+            var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
+            var searchIndex = (PrimaryEntityIndex<TEntity, StructComponentWrapper<TComponentData>>)_primaryIndexes[componentIndex];
+            var pool = componentPools[componentIndex] ?? new Stack<IComponent>();
+            var testComponent = pool.Count > 0 ? (StructComponentWrapper<TComponentData>)pool.Pop() : new StructComponentWrapper<TComponentData>();
+            testComponent.Data.Value = value;
+            entity = searchIndex.GetEntity(testComponent);
+            pool.Push(testComponent);
+            return entity != null;
+        }
+
+        public bool TryFindEntity3<TComponentData>(TComponentData data, out TEntity entity) where TComponentData : struct, IComponent
+        {
+            var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
+            var searchIndex = (PrimaryEntityIndex<TEntity, StructComponentWrapper<TComponentData>>)_primaryIndexes[componentIndex];
+            var pool = componentPools[componentIndex] ?? new Stack<IComponent>();
+            var testComponent = pool.Count > 0 ? (StructComponentWrapper<TComponentData>)pool.Pop() : new StructComponentWrapper<TComponentData>();
+            testComponent.Data = data;
+            entity = searchIndex.GetEntity(testComponent);
+            pool.Push(testComponent);
+            return entity != null;
+        }
+
         public void AddIndex<TComponent>() where TComponent : class, IEqualityComparer<TComponent>, IComponent, new()
         {
             var componentIndex = ComponentHelper<TEntity, TComponent>.Index;
             _primaryIndexes[componentIndex] = CreateIndex<TComponent>();
+        }
+
+        public void AddIndexStruct<TComponent>() where TComponent : struct, IEqualityComparer<TComponent>, IComponent
+        {
+            var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponent>>.Index;
+            _primaryIndexes[componentIndex] = CreateIndex<StructComponentWrapper<TComponent>>();
         }
 
         private IEntityIndex CreateIndex<TComponent>() where TComponent : class, IEqualityComparer<TComponent>, IComponent, new()
@@ -133,15 +171,24 @@ namespace Entitas.Generics
             return GetGroup(GenericMatcher<TContext, TEntity, T>.AllOf);
         }
 
-        public TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : IComponent, new()
+        public TriggerOnEvent<TEntity> GetTrigger<T>(GroupEvent eventType = default) where T : class, IComponent, new()
         {
             return new TriggerOnEvent<TEntity>(GetMatcher<T>(), eventType);
         }
 
-        public ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : IComponent, new()
+        public ICollector<TEntity> GetTriggerCollector<T>(GroupEvent eventType = default) where T : class, IComponent, new()
         {
             return GetCollector<T>(new TriggerOnEvent<TEntity>(GetMatcher<T>(), eventType));
         }
 
+        public TriggerOnEvent<TEntity> GetTrigger2<TComponentData>(GroupEvent eventType = GroupEvent.Added) where TComponentData : struct, IComponent
+        {
+            return new TriggerOnEvent<TEntity>(GetMatcher<StructComponentWrapper<TComponentData>>(), eventType);
+        }
+
+        public ICollector<TEntity> GetTriggerCollector2<TComponentData>(GroupEvent eventType = GroupEvent.Added) where TComponentData : struct, IComponent
+        {
+            return GetCollector<StructComponentWrapper<TComponentData>>(new TriggerOnEvent<TEntity>(GetMatcher<StructComponentWrapper<TComponentData>>(), eventType));
+        }
     }
 }

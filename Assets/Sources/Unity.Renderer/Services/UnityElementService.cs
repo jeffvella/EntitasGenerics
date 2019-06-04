@@ -28,7 +28,8 @@ public sealed class UnityElementService : Service, IElementService
         entity.Get<ElementTypeComponent>().Apply(randomType);
         entity.Get<AssetComponent>().Apply("Element");
         entity.Get<ColorComponent>().Apply(new Color(normalizedType, normalizedType, normalizedType));
-        entity.Get<PositionComponent>().Apply(position);
+        //entity.Get<PositionComponent>().Apply(position);
+        entity.Set(new PositionComponent { Value = position });
         _entityCounter++;
     }
 
@@ -40,7 +41,8 @@ public sealed class UnityElementService : Service, IElementService
         entity.SetFlag<BlockComponent>();
         entity.Get<IdComponent>().Apply(_entityCounter);
         entity.Get<AssetComponent>().Apply("Block");
-        entity.Get<PositionComponent>().Apply(position);
+        //entity.Get<PositionComponent>().Apply(position);
+        entity.Set(new PositionComponent { Value = position });
         _entityCounter++;
     }
 
@@ -51,7 +53,8 @@ public sealed class UnityElementService : Service, IElementService
         entity.SetFlag<BlockComponent>();
         entity.Get<IdComponent>().Apply(_entityCounter);
         entity.Get<AssetComponent>().Apply("NotMovableBlock");
-        entity.Get<PositionComponent>().Apply(position);
+        //entity.Get<PositionComponent>().Apply(position);
+        entity.Set(new PositionComponent { Value = position });
         _entityCounter++;
     }
 

@@ -52,7 +52,7 @@ namespace Entitas.MatchLine
 
             if (horizontalBounded && verticalBounded)
             {
-                if (!_game.TryFindEntity<PositionComponent, GridPosition>(position, out var entityUnderPointer))
+                if (!_game.TryFindEntity2<PositionComponent, GridPosition>(position, out var entityUnderPointer))
                     return;
 
                 if (entityUnderPointer.IsFlagged<BlockComponent>())
@@ -106,8 +106,8 @@ namespace Entitas.MatchLine
 
                 if (lastElementType == currentElementType)
                 {
-                    var lastPosition = lastSelectedEntity.Get<PositionComponent>().Component.Value;
-                    var currentPosition = entityUnderPointer.Get<PositionComponent>().Component.Value;
+                    var lastPosition = lastSelectedEntity.Get2<PositionComponent>().Value;
+                    var currentPosition = entityUnderPointer.Get2<PositionComponent>().Value;
 
                     if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                     {

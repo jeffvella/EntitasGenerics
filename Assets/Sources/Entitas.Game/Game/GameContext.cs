@@ -8,7 +8,7 @@ namespace Entitas.MatchLine
         public GameContext() : base(new GameContextDefinition())
         {
             AddIndex<IdComponent>();
-            AddIndex<PositionComponent>();
+            AddIndexStruct<PositionComponent>();
             AddIndex<SelectionIdComponent>();
         }
     }
@@ -33,7 +33,7 @@ namespace Entitas.MatchLine
             AddComponent<InComboComponent>();
             AddComponent<MatchedComponent>();
             AddComponent<MovableComponent>();
-            AddComponent<PositionComponent>();
+            AddComponentStruct<PositionComponent>();
             AddComponent<RestartHappenedComponent>();
             AddComponent<RewardComponent>();
             AddComponent<SelectedComponent>();
