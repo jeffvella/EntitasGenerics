@@ -2,7 +2,9 @@
     "name": "Game",
     "references": [
         "GUID:ae2d9e4bcc990bd439f2ed0fb641a5c7",
-        "GUID:c6a76ebb629c81b4d8cf6ed6fd29b1be"
+        "GUID:c6a76ebb629c81b4d8cf6ed6fd29b1be",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:b92ff8b696eb46a4b90382b319e963fe"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

@@ -13,7 +13,7 @@ public class PositionListener : MonoBehaviour, IEventListener<GameEntity>
     {
         entity.RegisterComponentListener2<PositionComponent>(OnPositionChanged, GroupEvent.Added);
 
-        OnPositionChanged(entity);
+        //OnPositionChanged(entity);
     }
 
     private void OnPositionChanged(GameEntity entity)

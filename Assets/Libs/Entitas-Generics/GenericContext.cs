@@ -37,14 +37,16 @@ namespace Entitas.Generics
 
         IGroup<TEntity> GetGroup2<T>() where T : struct, IComponent;
 
-        bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>;
+        bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>, IComparable<TComponentData>;
 
-        bool TryFindEntity3<TComponentData>(TComponentData value, out TEntity entity) where TComponentData : struct, IComponent;
+        bool TryFindEntity3<TComponentData>(TComponentData data, out TEntity entity) where TComponentData : struct, IComponent, IComparable<TComponentData>;
+
+        NativePrimaryEntityIndex<TEntity, TComponentData> GetEntityIndex<TComponentData>() where TComponentData : struct, IComponent, IComparable<TComponentData>;
 
     }
 
-    public class GenericContext<TContext, TEntity> : Context<TEntity>, IGenericContext<TEntity> 
-        where TContext : IGenericContext<TEntity> 
+    public class GenericContext<TContext, TEntity> : Context<TEntity>, IGenericContext<TEntity>
+        where TContext : IGenericContext<TEntity>
         where TEntity : class, IEntity, IGenericEntity
     {
         private TEntity _unique;
@@ -54,7 +56,7 @@ namespace Entitas.Generics
 
         public TEntity Unique => _unique ?? (_unique = CreateUniqueEntity());
 
-        public GenericContext(IContextDefinition<TEntity> contextDefinition) 
+        public GenericContext(IContextDefinition<TEntity> contextDefinition)
             : base(contextDefinition.ComponentCount, 0, contextDefinition.ContextInfo, AercFactory, contextDefinition.EntityFactory)
         {
             Definition = contextDefinition;
@@ -89,7 +91,7 @@ namespace Entitas.Generics
                     var component = (IListenerComponent)entity.GetComponent(index);
                     component.ClearListeners();
                 }
-            }  
+            }
         }
 
         public bool TryFindEntity<TComponent, TValue>(TValue value, out TEntity entity) where TComponent : class, IEqualityComparer<TComponent>, IValueComponent<TValue>, new()
@@ -104,10 +106,10 @@ namespace Entitas.Generics
             return entity != null;
         }
 
-        public bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>
+        public bool TryFindEntity2<TComponentData, TValue>(TValue value, out TEntity entity) where TComponentData : struct, IComponent, IValueComponent<TValue>, IComparable<TComponentData>
         {
             var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
-            var searchIndex = (PrimaryEntityIndex<TEntity, TComponentData>)_primaryIndexes[componentIndex];
+            var searchIndex = (NativePrimaryEntityIndex<TEntity, TComponentData>)_primaryIndexes[componentIndex];
             var pool = componentPools[componentIndex] ?? new Stack<IComponent>();
             var testComponent = pool.Count > 0 ? (StructComponentWrapper<TComponentData>)pool.Pop() : new StructComponentWrapper<TComponentData>();
             testComponent.Data.Value = value;
@@ -116,10 +118,16 @@ namespace Entitas.Generics
             return entity != null;
         }
 
-        public bool TryFindEntity3<TComponentData>(TComponentData data, out TEntity entity) where TComponentData : struct, IComponent
+        public NativePrimaryEntityIndex<TEntity, TComponentData> GetEntityIndex<TComponentData>() where TComponentData : struct, IComponent, IComparable<TComponentData>
         {
             var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
-            var searchIndex = (PrimaryEntityIndex<TEntity, TComponentData>)_primaryIndexes[componentIndex];
+            return (NativePrimaryEntityIndex<TEntity, TComponentData>)_primaryIndexes[componentIndex];
+        }
+
+        public bool TryFindEntity3<TComponentData>(TComponentData data, out TEntity entity) where TComponentData : struct, IComponent, IComparable<TComponentData>
+        {
+            var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
+            var searchIndex = (NativePrimaryEntityIndex<TEntity, TComponentData>)_primaryIndexes[componentIndex];
             entity = searchIndex.GetEntity(data);
             return entity != null;
         }
@@ -130,14 +138,14 @@ namespace Entitas.Generics
             _primaryIndexes[componentIndex] = CreateIndex<TComponent>();
         }
 
-        public void AddIndexStruct<TComponentData>() where TComponentData : struct, IComponent //, IEqualityComparer<TComponentData>
+        public void AddIndexStruct<TComponentData>() where TComponentData : struct, IComponent, IComparable<TComponentData> //, IEqualityComparer<TComponentData>
         {
             var name = nameof(TComponentData);
             var group = GetGroup2<TComponentData>();
             var componentIndex = ComponentHelper<TEntity, StructComponentWrapper<TComponentData>>.Index;
             var comparer = EqualityComparer<TComponentData>.Default;
             Func<TEntity, IComponent, TComponentData> getKey = (e, c) => ((StructComponentWrapper<TComponentData>)c).Data;
-            _primaryIndexes[componentIndex] = new PrimaryEntityIndex<TEntity, TComponentData>(name, group, getKey, comparer); 
+            _primaryIndexes[componentIndex] = new NativePrimaryEntityIndex<TEntity, TComponentData>(name, group, getKey, comparer); 
         }
 
         private IEntityIndex CreateIndex<TComponent>() where TComponent : class, IEqualityComparer<TComponent>, IComponent, new()
