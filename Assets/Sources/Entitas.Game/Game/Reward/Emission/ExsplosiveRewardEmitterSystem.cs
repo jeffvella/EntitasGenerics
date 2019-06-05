@@ -27,7 +27,7 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            var table = _config.Unique.Get<ExplosiveScoringTableComponent>().Component.Value;
+            var table = _config.Unique.Get<ExplosiveScoringTableComponent>().Value;
 
             var scoreId = entities.Count;
             scoreId--;
@@ -37,7 +37,7 @@ namespace Entitas.MatchLine
 
             var reward = table[scoreId];
   
-            _game.CreateEntity().Get<RewardComponent>().Apply(reward);
+            _game.CreateEntity().GetAccessor<RewardComponent>().Apply(reward);
 
             //_game.Get<RewardComponent>().
             //_game.Set(e, new RewardComponent { Value = reward });

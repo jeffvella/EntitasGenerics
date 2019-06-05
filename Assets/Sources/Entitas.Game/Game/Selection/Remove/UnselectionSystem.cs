@@ -26,7 +26,7 @@ namespace Entitas.MatchLine
             if (!_input.Unique.IsFlagged<PointerHoldingComponent>())
                 return;
 
-            var targetSelectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Component.Value - 1;
+            var targetSelectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Value - 1;
             if (targetSelectionId < 0)
                 return;
 
@@ -34,11 +34,11 @@ namespace Entitas.MatchLine
 
             _game.TryFindEntity<SelectionIdComponent, int>(targetSelectionId, out var targetEntity);
 
-            var targetEntityPosition = targetEntity.Get2<PositionComponent>().Value;
+            var targetEntityPosition = targetEntity.Get<PositionComponent>().Value;
 
             //var targetEntityPosition = _game.Get<PositionComponent>(targetEntity).Value;
 
-            var pointerHoldingPosition = _input.Unique.Get<PointerHoldingPositionComponent>().Component.Value;
+            var pointerHoldingPosition = _input.Unique.Get<PointerHoldingPositionComponent>().Value;
 
             if (pointerHoldingPosition.Equals(targetEntityPosition))
             {
@@ -49,20 +49,20 @@ namespace Entitas.MatchLine
 
         private void SelectEntity(GameEntity targetEntity, int targetSelectionId)
         {
-            var targetEntityId = targetEntity.GetComponent<IdComponent>().Value;
-            _gameState.Unique.Get<LastSelectedComponent>().Apply(targetEntityId);
-            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(targetSelectionId);
+            var targetEntityId = targetEntity.Get<IdComponent>().Value;
+            _gameState.Unique.GetAccessor<LastSelectedComponent>().Apply(targetEntityId);
+            _gameState.Unique.GetAccessor<MaxSelectedElementComponent>().Apply(targetSelectionId);
         }
 
         private void DeselectCurrentEntity()
         {
-            var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Component.Value;
+            var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Value;
             //var lastSelectedEntity = _game.GetSearchIndex<IdComponent>().FindEntity(lastSelectedId);
 
             _game.TryFindEntity<IdComponent, int>(lastSelectedId, out var lastSelectedEntity);
 
             lastSelectedEntity.SetFlag<SelectedComponent>(false);
-            lastSelectedEntity.RemoveComponent<SelectionIdComponent>();
+            lastSelectedEntity.Remove<SelectionIdComponent>();
         }
     }
 

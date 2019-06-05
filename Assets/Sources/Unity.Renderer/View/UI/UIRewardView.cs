@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Entitas.MatchLine;
 using Entitas;
 using System;
+using Entitas.Generics;
 
 public class UIRewardView : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class UIRewardView : MonoBehaviour
 
     private void OnScoreAddedEvent(GameStateEntity entity)
     {
-        OnScore(entity, entity.Get<ScoreComponent>().Component.Value);
+        OnScore(entity, entity.Get<ScoreComponent>().Value);
     }
 
     public void OnScore(GameStateEntity entity, int value)

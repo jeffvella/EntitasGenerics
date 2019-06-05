@@ -30,7 +30,7 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameEntity> entities)
         {
-            GridSize size = _config.Unique.Get<MapSizeComponent>().Component.Value;
+            GridSize size = _config.Unique.Get<MapSizeComponent>().Value;
 
             //foreach (var entity in entities)
             //{

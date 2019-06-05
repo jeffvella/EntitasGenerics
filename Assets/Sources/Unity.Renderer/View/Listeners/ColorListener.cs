@@ -17,6 +17,6 @@ public class ColorListener : MonoBehaviour, IAddedComponentListener<GameEntity, 
 
     public void OnComponentAdded(GameEntity entity)
     {
-        _renderer.material.color = entity.Get<ColorComponent>().Component.Value;
+        _renderer.material.color = entity.Get<ColorComponent>().Value;
     }
 }

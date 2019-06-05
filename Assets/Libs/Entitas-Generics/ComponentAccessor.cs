@@ -11,8 +11,8 @@ namespace Entitas.Generics
         public ComponentAccessor(IGenericEntity entity)
         {
             Entity = entity;
-            Index = entity.GetIndex<TComponent>();
-            Component = entity.GetComponent<TComponent>();
+            Index = entity.GetComponentIndex<TComponent>();
+            Component = entity.Get<TComponent>();
         }
 
         public ComponentAccessor(IGenericEntity entity, int index, TComponent component)
@@ -22,7 +22,7 @@ namespace Entitas.Generics
             Component = component;
         }
 
-        public void Apply() => Entity.ReplaceComponent(Component);
+        public void Apply() => Entity.Replace(Component);
 
         public PersistentComponentAccessor<TComponent> ToPersistant()
             => new PersistentComponentAccessor<TComponent>(Entity, Index, Component);
@@ -34,25 +34,25 @@ namespace Entitas.Generics
     {
         public static void Apply<TComponent, TValue>(this ComponentAccessor<TComponent> accessor, TValue value) where TComponent : class, IValueComponent<TValue>, new()
         {
-            var newComponent = accessor.Entity.CreateComponent<TComponent>();
+            var newComponent = accessor.Entity.Create<TComponent>();
             newComponent.Value = value;
-            accessor.Entity.ReplaceComponent(newComponent);
+            accessor.Entity.Replace(newComponent);
         }
 
         public static void Apply<TComponent, TValue>(this ComponentAccessor<TComponent> accessor, Func<TComponent, TValue> valueProducer) where TComponent : class, IValueComponent<TValue>, new()
         {
-            var newcomponent = accessor.Entity.CreateComponent<TComponent>();
+            var newcomponent = accessor.Entity.Create<TComponent>();
             var newValue = valueProducer(accessor.Component);
             newcomponent.Value = newValue;
-            accessor.Entity.ReplaceComponent(newcomponent);
+            accessor.Entity.Replace(newcomponent);
         }
 
 
         public static void Set<TComponent>(this ComponentAccessor<TComponent> accessor, Action<TComponent> componentModifier) where TComponent : class, IComponent, new()
         {
-            var newComponent = accessor.Entity.CreateComponent<TComponent>();
+            var newComponent = accessor.Entity.Create<TComponent>();
             componentModifier(newComponent);
-            accessor.Entity.ReplaceComponent(newComponent);
+            accessor.Entity.Replace(newComponent);
         }
     }
 
@@ -77,7 +77,7 @@ namespace Entitas.Generics
         public PersistentComponentAccessor(IGenericEntity entity)
         {
             Entity = entity; 
-            Index = entity.GetIndex<TComponent>();
+            Index = entity.GetComponentIndex<TComponent>();
             Refresh();
         }
 
@@ -95,22 +95,22 @@ namespace Entitas.Generics
             _component = component;
         }
 
-        public TComponent Create() => Entity.CreateComponent<TComponent>();
+        public TComponent Create() => Entity.Create<TComponent>();
 
-        public void Apply() => Entity.ReplaceComponent(Component);
+        public void Apply() => Entity.Replace(Component);
 
-        public bool Exists() => Entity.HasComponent<TComponent>();
+        public bool Exists() => Entity.Has<TComponent>();
 
-        public void Remove() => Entity.RemoveComponent<TComponent>();
+        public void Remove() => Entity.Remove<TComponent>();
 
-        public void Add() => Entity.AddComponent(Create());
+        public void Add() => Entity.Add(Create());
 
         public void Refresh()
         {
-            if (!Entity.HasComponent<TComponent>())
+            if (!Entity.Has<TComponent>())
                 Add();
             
-            _component = Entity.GetComponent<TComponent>();
+            _component = Entity.Get<TComponent>();
         }
     }
 
@@ -118,9 +118,9 @@ namespace Entitas.Generics
     {
         public static void Set<TComponent, TValue>(this PersistentComponentAccessor<TComponent> accessor, TValue value) where TComponent : class, IValueComponent<TValue>, new()
         {
-            var newcomponent = accessor.Entity.CreateComponent<TComponent>();
+            var newcomponent = accessor.Entity.Create<TComponent>();
             newcomponent.Value = value;
-            accessor.Entity.ReplaceComponent(newcomponent);
+            accessor.Entity.Replace(newcomponent);
         }
 
         public static void SetFlag<TComponent>(this PersistentComponentAccessor<TComponent> accessor, bool value = true) where TComponent : class, IFlagComponent, new()

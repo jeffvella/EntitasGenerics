@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Entitas.MatchLine;
 using Entitas;
+using Entitas.Generics;
 
 public class UIActionCountView : MonoBehaviour
 {
@@ -19,21 +20,21 @@ public class UIActionCountView : MonoBehaviour
         Contexts.Instance.Config.Unique.RegisterComponentListener<MaxActionCountComponent>(OnMaxActionCountChanged, GroupEvent.Added);
 
         _triggerHash = Animator.StringToHash(_triggerName);
-        _maxActionCount = Contexts.Instance.Config.Unique.Get<MaxActionCountComponent>().Component.Value;    
+        _maxActionCount = Contexts.Instance.Config.Unique.Get<MaxActionCountComponent>().Value;    
         
         Apply();
     }
 
     private void OnActionCountChanged(GameStateEntity entity)
     {
-        _actionCount = entity.GetComponent<ActionCountComponent>().Value;
+        _actionCount = entity.Get<ActionCountComponent>().Value;
         Apply();
     }
 
 
     private void OnMaxActionCountChanged(ConfigEntity entity)
     {
-        _maxActionCount = entity.GetComponent<MaxActionCountComponent>().Value;
+        _maxActionCount = entity.Get<MaxActionCountComponent>().Value;
         Apply();
     }
 

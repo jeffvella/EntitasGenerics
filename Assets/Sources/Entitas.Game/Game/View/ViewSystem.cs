@@ -21,14 +21,14 @@ namespace Entitas.MatchLine
 
         private static bool Filter(IGenericContext<GameEntity> gameContext, GameEntity entity)
         {
-            return entity.HasComponent<AssetComponent>() && !gameContext.Unique.IsFlagged<AssetLoadedComponent>();
+            return entity.Has<AssetComponent>() && !gameContext.Unique.IsFlagged<AssetLoadedComponent>();
         }
 
         protected override void Execute(List<GameEntity> entities)
         {
             foreach (var entity in entities)
             {
-                var assetComponent = entity.GetComponent<AssetComponent>();
+                var assetComponent = entity.Get<AssetComponent>();
                 var assetName = assetComponent.Value;
                 var assetId = assetComponent.id;
                 _viewService.LoadAsset(_contexts, entity, assetName, assetId);

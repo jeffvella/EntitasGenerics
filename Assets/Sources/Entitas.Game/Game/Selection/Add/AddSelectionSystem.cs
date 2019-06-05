@@ -44,8 +44,8 @@ namespace Entitas.MatchLine
 
             //var position = _contexts.input.pointerHoldingPosition.value.ToGridPosition();
 
-            var position = _input.Unique.Get<PointerHoldingPositionComponent>().Component.Value;
-            var mapSize = _config.Unique.Get<MapSizeComponent>().Component.Value;
+            var position = _input.Unique.Get<PointerHoldingPositionComponent>().Value;
+            var mapSize = _config.Unique.Get<MapSizeComponent>().Value;
 
             var horizontalBounded = position.x >= 0 && position.x < mapSize.x;
             var verticalBounded = position.y >= 0 && position.y < mapSize.y;
@@ -61,10 +61,10 @@ namespace Entitas.MatchLine
                 if (entityUnderPointer.IsFlagged<SelectedComponent>())
                     return;
 
-                var entityUnderPointerId = entityUnderPointer.Get<IdComponent>().Component.Value;
+                var entityUnderPointerId = entityUnderPointer.Get<IdComponent>().Value;
                 //var entityUnderPointerId = _game.Get<IdComponent>(entityUnderPointer).Value;
 
-                var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Component.Value;
+                var lastSelectedId = _gameState.Unique.Get<LastSelectedComponent>().Value;
                 if (lastSelectedId == -1)
                 {
                     StartNewSelection(entityUnderPointer, entityUnderPointerId);
@@ -84,9 +84,9 @@ namespace Entitas.MatchLine
             //_gameState.SetUnique<MaxSelectedElementComponent>(c => c.value = 0);
 
             entityUnderPointer.SetFlag<SelectedComponent>(true);
-            entityUnderPointer.Get<SelectionIdComponent>().Apply(0);
-            _gameState.Unique.Get<LastSelectedComponent>().Apply(entityUnderPointerId);
-            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(0);
+            entityUnderPointer.GetAccessor<SelectionIdComponent>().Apply(0);
+            _gameState.Unique.GetAccessor<LastSelectedComponent>().Apply(entityUnderPointerId);
+            _gameState.Unique.GetAccessor<MaxSelectedElementComponent>().Apply(0);
         }
 
         private void AddToExistingSelection(int lastSelectedId, GameEntity entityUnderPointer, int entityUnderPointerId)
@@ -101,24 +101,24 @@ namespace Entitas.MatchLine
 
             if (isLastElementType && isCurrentElementType)
             {
-                var lastElementType = lastSelectedEntity.Get<ElementTypeComponent>().Component.Value;
-                var currentElementType = entityUnderPointer.Get<ElementTypeComponent>().Component.Value;
+                var lastElementType = lastSelectedEntity.Get<ElementTypeComponent>().Value;
+                var currentElementType = entityUnderPointer.Get<ElementTypeComponent>().Value;
 
                 if (lastElementType == currentElementType)
                 {
-                    var lastPosition = lastSelectedEntity.Get2<PositionComponent>().Value;
-                    var currentPosition = entityUnderPointer.Get2<PositionComponent>().Value;
+                    var lastPosition = lastSelectedEntity.Get<PositionComponent>().Value;
+                    var currentPosition = entityUnderPointer.Get<PositionComponent>().Value;
 
                     if (GridPosition.Distance(lastPosition, currentPosition) < 1.25f)
                     {
-                        var selectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Component.Value;
+                        var selectionId = _gameState.Unique.Get<MaxSelectedElementComponent>().Value;
                         selectionId++;
 
-                        entityUnderPointer.Get<SelectionIdComponent>().Apply(selectionId);
+                        entityUnderPointer.GetAccessor<SelectionIdComponent>().Apply(selectionId);
                         entityUnderPointer.SetFlag<SelectedComponent>(true);
 
-                        _gameState.Unique.Get<LastSelectedComponent>().Apply(entityUnderPointerId);
-                        _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(selectionId);
+                        _gameState.Unique.GetAccessor<LastSelectedComponent>().Apply(entityUnderPointerId);
+                        _gameState.Unique.GetAccessor<MaxSelectedElementComponent>().Apply(selectionId);
                     }
                 }
             }

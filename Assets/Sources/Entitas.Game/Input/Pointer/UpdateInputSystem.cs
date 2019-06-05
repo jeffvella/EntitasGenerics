@@ -28,15 +28,15 @@ namespace Entitas.MatchLine
             }
             else
             {
-                var delta = _contexts.Input.Unique.Get<DeltaTimeComponent>().Component.Value;
+                var delta = _contexts.Input.Unique.Get<DeltaTimeComponent>().Value;
                 _inputService.Update(delta);
 
                 _inputUnique.SetFlag<PointerHoldingComponent>(_inputService.IsHolding());
                 _inputUnique.SetFlag<PointerStartedHoldingComponent>(_inputService.IsStartedHolding());
                 _inputUnique.SetFlag<PointerReleasedComponent>(_inputService.IsReleased());
 
-                _inputUnique.Get<PointerHoldingPositionComponent>().Apply(_inputService.HoldingPosition());
-                _inputUnique.Get<PointerHoldingTimeComponent>().Apply(_inputService.HoldingTime());
+                _inputUnique.GetAccessor<PointerHoldingPositionComponent>().Apply(_inputService.HoldingPosition());
+                _inputUnique.GetAccessor<PointerHoldingTimeComponent>().Apply(_inputService.HoldingTime());
             }
         }
     }

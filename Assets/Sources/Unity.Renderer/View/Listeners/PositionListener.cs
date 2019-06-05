@@ -2,6 +2,7 @@
 using UnityEngine;
 using Entitas.MatchLine;
 using System;
+using Entitas.Generics;
 
 public class PositionListener : MonoBehaviour, IEventListener<GameEntity>
 {
@@ -18,7 +19,7 @@ public class PositionListener : MonoBehaviour, IEventListener<GameEntity>
 
     private void OnPositionChanged(GameEntity entity)
     {        
-        _targetPosition = entity.Get2<PositionComponent>().Value.ToVector3();
+        _targetPosition = entity.Get<PositionComponent>().Value.ToVector3();
     }
     
     private void Update()

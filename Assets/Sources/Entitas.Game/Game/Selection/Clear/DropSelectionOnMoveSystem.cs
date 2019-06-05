@@ -28,13 +28,13 @@ namespace Entitas.MatchLine
         {
             foreach (var entity in _selectedGroup.GetEntities(_buffer))
             {
-                Debug.Log($"Drop Selection {entity.Get<SelectionIdComponent>().Component.Value}");
+                Debug.Log($"Drop Selection {entity.Get<SelectionIdComponent>().Value}");
 
                 entity.SetFlag<SelectedComponent>(false);
-                entity.RemoveComponent<SelectionIdComponent>();
+                entity.Remove<SelectionIdComponent>();
             }
-            _gameState.Unique.Get<LastSelectedComponent>().Apply(-1);
-            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(0);
+            _gameState.Unique.GetAccessor<LastSelectedComponent>().Apply(-1);
+            _gameState.Unique.GetAccessor<MaxSelectedElementComponent>().Apply(0);
         }
     }
 }

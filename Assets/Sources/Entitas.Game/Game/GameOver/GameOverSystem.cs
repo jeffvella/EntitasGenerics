@@ -22,8 +22,8 @@ namespace Entitas.MatchLine
 
         protected override void Execute(List<GameStateEntity> entities)
         {
-            var maxActions = _config.Unique.Get<MaxActionCountComponent>().Component.Value;
-            var actionCount = _gameState.Unique.Get<ActionCountComponent>().Component.Value;
+            var maxActions = _config.Unique.Get<MaxActionCountComponent>().Value;
+            var actionCount = _gameState.Unique.Get<ActionCountComponent>().Value;
 
             if (actionCount >= maxActions)
             {

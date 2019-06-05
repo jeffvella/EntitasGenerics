@@ -25,7 +25,7 @@ namespace Entitas.MatchLine
 
             int moveCount = 0;
 
-            var size = _config.Unique.Get<MapSizeComponent>().Component.Value;
+            var size = _config.Unique.Get<MapSizeComponent>().Value;
 
 
 

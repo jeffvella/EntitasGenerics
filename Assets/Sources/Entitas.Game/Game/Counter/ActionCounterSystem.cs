@@ -24,7 +24,7 @@ namespace Entitas.MatchLine
             //var currentActionCount = _gameState.Unique.Get<ActionCountComponent>().Component;
             //_gameState.SetUnique<ActionCountComponent>(c => c.value = currentActionCount.value + 1);
 
-            _gameState.Unique.Get<ActionCountComponent>().Apply(c => c.Value + 1);
+            _gameState.Unique.GetAccessor<ActionCountComponent>().Apply(c => c.Value + 1);
         }
     }
 

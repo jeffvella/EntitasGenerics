@@ -1,6 +1,7 @@
 ﻿using Entitas;
 using UnityEngine;
 using Entitas.MatchLine;
+using Entitas.Generics;
 
 public class UIGameOverView : MonoBehaviour//, IGameOverListener, IGameOverRemovedListener, 
     //IEventObserver<GameOverComponent>, IEventObserver<GameStateEntity, GameOverComponent>

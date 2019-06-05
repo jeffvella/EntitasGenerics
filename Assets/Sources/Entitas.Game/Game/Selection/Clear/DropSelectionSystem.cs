@@ -34,11 +34,11 @@ namespace Entitas.MatchLine
             foreach (var entity in _selectedGroup.GetEntities(_buffer))
             {
                 entity.SetFlag<SelectedComponent>(false);
-                entity.RemoveComponent<SelectionIdComponent>();
+                entity.Remove<SelectionIdComponent>();
             }
 
-            _gameState.Unique.Get<LastSelectedComponent>().Apply(-1);
-            _gameState.Unique.Get<MaxSelectedElementComponent>().Apply(0);
+            _gameState.Unique.GetAccessor<LastSelectedComponent>().Apply(-1);
+            _gameState.Unique.GetAccessor<MaxSelectedElementComponent>().Apply(0);
         }
     }
 }

@@ -26,7 +26,7 @@ public class UIScoreView : MonoBehaviour, IAddedComponentListener<GameStateEntit
 
     public void OnComponentAdded(GameStateEntity entity)
     {
-        _label.text = entity.Get<ScoreComponent>().Component.Value.ToString();
+        _label.text = entity.Get<ScoreComponent>().Value.ToString();
         _animator.SetTrigger(_triggerHash);
     }
 }

@@ -75,7 +75,7 @@ namespace Entitas.Generics
         private TEntity CreateUniqueEntity()
         {
             var entity = CreateEntity();
-            entity.AddComponent(entity.CreateComponent<UniqueComponentsHolder>());
+            entity.Add(entity.Create<UniqueComponentsHolder>());
             return entity;
         }
 

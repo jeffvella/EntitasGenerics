@@ -53,7 +53,7 @@ namespace Entitas.Generics
             if(collector.count == 0)            
                 return;            
 
-            var uniqueExists = _context.Unique.TryGetComponent<TListenerComponent>(out var uniqueComponent);
+            var uniqueExists = _context.Unique.TryGet<TListenerComponent>(out var uniqueComponent);
             var notifyUniqueListeners = uniqueExists && uniqueComponent != null && uniqueComponent.ListenerCount > 0;
 
             LoadBuffer(collector);
@@ -67,9 +67,9 @@ namespace Entitas.Generics
                     notifyUniqueListeners = false;
                 }
 
-                if (entity.HasComponent<TListenerComponent>())
+                if (entity.Has<TListenerComponent>())
                 {
-                    var listenerComponent = entity.GetComponent<TListenerComponent>();
+                    var listenerComponent = entity.Get<TListenerComponent>();
                     if (listenerComponent.ListenerCount > 0)
                     {
                         listenerComponent.Raise(entity);
@@ -179,7 +179,7 @@ namespace Entitas.Generics
             if (collector.count == 0)
                 return;
 
-            var uniqueExists = _context.Unique.TryGetComponent<TListenerComponent>(out var uniqueComponent);
+            var uniqueExists = _context.Unique.TryGet<TListenerComponent>(out var uniqueComponent);
             var notifyUniqueListeners = uniqueExists && uniqueComponent != null && uniqueComponent.ListenerCount > 0;
 
             LoadBuffer(collector);
@@ -193,9 +193,9 @@ namespace Entitas.Generics
                     notifyUniqueListeners = false;
                 }
 
-                if (entity.HasComponent<TListenerComponent>())
+                if (entity.Has<TListenerComponent>())
                 {
-                    var listenerComponent = entity.GetComponent<TListenerComponent>();
+                    var listenerComponent = entity.Get<TListenerComponent>();
                     if (listenerComponent.ListenerCount > 0)
                     {
                         listenerComponent.Raise(entity);

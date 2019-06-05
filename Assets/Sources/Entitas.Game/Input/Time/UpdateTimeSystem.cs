@@ -30,8 +30,8 @@ namespace Entitas.MatchLine
             //var timeSinceStartup = ;
             //_contexts.Input.SetUnique<RealtimeSinceStartupComponent>(c => c.value = timeSinceStartup);
 
-            _contexts.Input.Unique.Get<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
-            _contexts.Input.Unique.Get<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
+            _contexts.Input.Unique.GetAccessor<RealtimeSinceStartupComponent>().Apply(_timeService.RealtimeSinceStartup());
+            _contexts.Input.Unique.GetAccessor<DeltaTimeComponent>().Apply(_timeService.DeltaTime());
         }
     }
 }
